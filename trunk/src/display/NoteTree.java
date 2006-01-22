@@ -41,7 +41,7 @@ public class NoteTree {
 	}
 	
 	public void init() {
-		tree.getTopItem().setExpanded(true);
+		tree.getItem(0).setExpanded(true);
 	}
 	
 	
