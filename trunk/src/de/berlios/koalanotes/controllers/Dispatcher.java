@@ -11,9 +11,9 @@ import org.eclipse.swt.widgets.Event;
 import de.berlios.koalanotes.display.DisplayedDocument;
 import de.berlios.koalanotes.exceptions.KoalaException;
 
-public class Controllers {
+public class Dispatcher {
 	private List<Controller> controllers;
-	public Controllers(DisplayedDocument dd) {
+	public Dispatcher(DisplayedDocument dd) {
 		controllers = new LinkedList<Controller>();
 		controllers.add(new MainController(dd));
 		controllers.add(new MainMenuController(dd));

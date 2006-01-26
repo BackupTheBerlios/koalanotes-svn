@@ -7,7 +7,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -24,11 +23,11 @@ public class NoteTree {
 	private TreeEditor treeEditor;
 	private Listener l;
 	
-	public NoteTree(Shell shell, Composite parent, Listener l) {
+	public NoteTree(Composite parent, Listener l) {
 		
 		// Tree and context menu.
 		tree = new Tree(parent, SWT.MULTI);
-		contextMenu = new TreeContextMenu(shell, tree, l);
+		contextMenu = new TreeContextMenu(tree, l);
 		
 		// Text editor for renaming tree nodes.
 		treeEditor = new TreeEditor(tree);
@@ -57,11 +56,6 @@ public class NoteTree {
 	public void initialiseTreeEditor() {
 		TreeItem ti = tree.getSelection()[0];
 		if (ti == null) return;
-		
-		// HERE: might have to use a Rectangle for this border.
-		// Also should make it so as soon as the text box loses
-		// focus the editor goes away.
-		
 		Text treeTextEditor = new Text(tree, SWT.NONE);
 		treeTextEditor.setText(ti.getText());
 		treeTextEditor.selectAll();

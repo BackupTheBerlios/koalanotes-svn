@@ -1,8 +1,5 @@
 package de.berlios.koalanotes.display;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -19,12 +16,16 @@ public class NoteTabFolder {
 		this.l = l;
 	}
 	
-	public List<NoteTab> getOpenNoteTabs() {
-		List<NoteTab> tabs = new LinkedList<NoteTab>();
+	public void saveNoteTabs() {
 		for (CTabItem tab : tabFolder.getItems()) {
-			tabs.add((NoteTab) tab.getData());
+			((NoteTab) tab.getData()).getDisplayedNote().getNote();
 		}
-		return tabs;
+	}
+	
+	public void closeNoteTabs() {
+		for (CTabItem tab : tabFolder.getItems()) {
+			((NoteTab) tab.getData()).dispose();
+		}
 	}
 	
 	public void addNoteTab(DisplayedNote displayedNote) {

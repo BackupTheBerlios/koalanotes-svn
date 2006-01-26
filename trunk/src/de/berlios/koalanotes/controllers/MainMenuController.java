@@ -1,14 +1,12 @@
 package de.berlios.koalanotes.controllers;
 
 import java.io.File;
-import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 
 import de.berlios.koalanotes.display.DisplayedDocument;
-import de.berlios.koalanotes.display.NoteTab;
 
 public class MainMenuController extends Controller {
 	
@@ -30,16 +28,16 @@ public class MainMenuController extends Controller {
 		FileDialog fileDialog = new FileDialog(dd.getShell(), SWT.OPEN);
 		String filePath = fileDialog.open();
 		if (filePath != null) {
+			dd.getTabFolder().closeNoteTabs();
 			File file = new File(filePath);
 			dd.getTree().loadTree(dd.getDocument().loadNotes(file));
 			dd.getShell().setText(file.getName() + " - Koala Notes");
 		}
-		
 	}
 	
 	public static final String FILE_SAVE = getMethodDescriptor("fileSave");
 	public void fileSave(Event e) {
-		updateNotesFromOpenNoteTabs();
+		dd.getTabFolder().saveNoteTabs();
 		dd.getDocument().saveNotes();
 	}
 	
@@ -49,17 +47,9 @@ public class MainMenuController extends Controller {
 		String filePath = fileDialog.open();
 		if (filePath != null) {
 			File file = new File(filePath);
-			updateNotesFromOpenNoteTabs();
+			dd.getTabFolder().saveNoteTabs();
 			dd.getDocument().saveNotes(file);
 			dd.getShell().setText(file.getName() + " - Koala Notes");
-		}
-	}
-	
-	/** Helper for fileSave() and fileSaveAs(). */
-	private void updateNotesFromOpenNoteTabs() {
-		List<NoteTab> tabs = dd.getTabFolder().getOpenNoteTabs();
-		for (NoteTab tab : tabs) {
-			tab.getDisplayedNote().getNote();
 		}
 	}
 }

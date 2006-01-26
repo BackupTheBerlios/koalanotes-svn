@@ -5,7 +5,7 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Shell;
 
-import de.berlios.koalanotes.controllers.Controllers;
+import de.berlios.koalanotes.controllers.Dispatcher;
 import de.berlios.koalanotes.controllers.Listener;
 
 import de.berlios.koalanotes.data.Document;
@@ -14,7 +14,6 @@ import de.berlios.koalanotes.data.Note;
 public class DisplayedDocument {
 	private Document document;
 	private Listener listener;
-	private Controllers controllers;
 	private Shell shell;
 	private MainMenu mainMenu;
 	private NoteTree tree;
@@ -31,11 +30,9 @@ public class DisplayedDocument {
 		Note root = new Note("root", null, "");
 		document = new Document(root);
 		
-		// Controllers
-		controllers = new Controllers(this);
-		
-		// Listener
-		listener = new Listener(controllers);
+		// Listener, Dispatcher, Controllers
+		Dispatcher dispatcher = new Dispatcher(this);
+		listener = new Listener(dispatcher);
 		
 		// Menu
 		mainMenu = new MainMenu(shell, listener);
@@ -44,7 +41,7 @@ public class DisplayedDocument {
 		SashForm sashForm = new SashForm(shell, SWT.HORIZONTAL);
 		
 		// Tree
-		tree = new NoteTree(shell, sashForm, listener);
+		tree = new NoteTree(sashForm, listener);
 		tree.loadTree(root);
 		tree.init();
 		
@@ -56,7 +53,6 @@ public class DisplayedDocument {
 	
 	public Document getDocument() {return document;}
 	public Listener getListener() {return listener;}
-	public Controllers getControllers() {return controllers;}
 	public Shell getShell() {return shell;}
 	public MainMenu getMainMenu() {return mainMenu;}
 	public NoteTree getTree() {return tree;}

@@ -4,7 +4,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Shell;
 
 import de.berlios.koalanotes.controllers.Listener;
 import de.berlios.koalanotes.controllers.TreeContextMenuController;
@@ -16,10 +15,10 @@ public class TreeContextMenu {
 	MenuItem removeNotes;
 	MenuItem renameNote;
 	
-	public TreeContextMenu(Shell shell, Control parent, Listener l) {
+	public TreeContextMenu(Control parent, Listener l) {
 		
 		// menu
-		menu = new Menu(shell, SWT.POP_UP);
+		menu = new Menu(parent);
 		l.mapEvent(menu, SWT.Show, TreeContextMenuController.INITIALISE_MENU);
 		parent.setMenu(menu);
 		

@@ -3,12 +3,13 @@ package de.berlios.koalanotes.display;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Text;
 
 import de.berlios.koalanotes.controllers.Listener;
-import de.berlios.koalanotes.controllers.MainController;
 
-public class NoteTab {
+public class NoteTab implements DisposeListener {
 	private DisplayedNote displayedNote;
 	private CTabItem tabItem;
 	private Text text;
@@ -18,12 +19,12 @@ public class NoteTab {
 		tabItem = new CTabItem(parent, SWT.NONE);
 		tabItem.setText(displayedNote.getName());
 		tabItem.setData(this);
-		text = new Text(parent, SWT.NONE);
+		tabItem.addDisposeListener(this);
+		text = new Text(parent, SWT.MULTI | SWT.WRAP);
 		text.setText(displayedNote.getNote().getText());
 		tabItem.setControl(text);
 		displayedNote.setTab(this);
 		select();
-		l.mapEvent(tabItem, SWT.Dispose, MainController.CLOSE_TAB);
 	}
 	
 	public DisplayedNote getDisplayedNote() {return displayedNote;}
@@ -33,15 +34,16 @@ public class NoteTab {
 		tabItem.getParent().setSelection(tabItem);
 	}
 	
+	public void setName(String name) {
+		tabItem.setText(name);
+	}
+	
 	public void dispose() {
 		tabItem.dispose();
 	}
 	
-	public void disposeContent() {
+	public void widgetDisposed(DisposeEvent e) {
 		text.dispose();
-	}
-	
-	public void setName(String name) {
-		tabItem.setText(name);
+		displayedNote.setTab(null);
 	}
 }
