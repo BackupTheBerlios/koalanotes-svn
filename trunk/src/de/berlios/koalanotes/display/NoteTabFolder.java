@@ -1,4 +1,4 @@
-package display;
+package de.berlios.koalanotes.display;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -8,7 +8,7 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Composite;
 
-import controllers.Listener;
+import de.berlios.koalanotes.controllers.Listener;
 
 public class NoteTabFolder {
 	private CTabFolder tabFolder;

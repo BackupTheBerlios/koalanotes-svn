@@ -1,6 +1,6 @@
-package display;
+package de.berlios.koalanotes.display;
 
-import data.Note;
+import de.berlios.koalanotes.data.Note;
 
 public class DisplayedNote {
 	private NoteTab tab;

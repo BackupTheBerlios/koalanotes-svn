@@ -1,4 +1,4 @@
-package exceptions;
+package de.berlios.koalanotes.exceptions;
 
 @SuppressWarnings("serial")
 public class KoalaException extends RuntimeException {

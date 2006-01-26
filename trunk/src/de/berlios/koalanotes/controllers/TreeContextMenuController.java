@@ -1,10 +1,10 @@
-package controllers;
+package de.berlios.koalanotes.controllers;
 
 import org.eclipse.swt.widgets.Event;
 
-import data.Note;
-import display.DisplayedDocument;
-import display.NoteTreeNode;
+import de.berlios.koalanotes.data.Note;
+import de.berlios.koalanotes.display.DisplayedDocument;
+import de.berlios.koalanotes.display.NoteTreeNode;
 
 public class TreeContextMenuController extends Controller {
 	

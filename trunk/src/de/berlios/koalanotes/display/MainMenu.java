@@ -1,12 +1,12 @@
-package display;
+package de.berlios.koalanotes.display;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
-import controllers.Listener;
-import controllers.MainController;
+import de.berlios.koalanotes.controllers.Listener;
+import de.berlios.koalanotes.controllers.MainController;
 
 public class MainMenu {
 	public MainMenu(Shell shell, Listener l) {

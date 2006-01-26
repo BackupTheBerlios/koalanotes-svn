@@ -1,4 +1,4 @@
-package display;
+package de.berlios.koalanotes.display;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -8,14 +8,14 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Shell;
 
-import controllers.Controller;
-import controllers.Listener;
-import controllers.MainController;
-import controllers.TreeContextMenuController;
-import controllers.TreeController;
+import de.berlios.koalanotes.controllers.Controller;
+import de.berlios.koalanotes.controllers.Listener;
+import de.berlios.koalanotes.controllers.MainController;
+import de.berlios.koalanotes.controllers.TreeContextMenuController;
+import de.berlios.koalanotes.controllers.TreeController;
 
-import data.Document;
-import data.Note;
+import de.berlios.koalanotes.data.Document;
+import de.berlios.koalanotes.data.Note;
 
 public class DisplayedDocument {
 	private Document document;

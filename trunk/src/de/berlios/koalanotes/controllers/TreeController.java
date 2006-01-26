@@ -1,10 +1,10 @@
-package controllers;
+package de.berlios.koalanotes.controllers;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 
-import display.DisplayedDocument;
-import display.DisplayedNote;
+import de.berlios.koalanotes.display.DisplayedDocument;
+import de.berlios.koalanotes.display.DisplayedNote;
 
 public class TreeController extends Controller {
 	

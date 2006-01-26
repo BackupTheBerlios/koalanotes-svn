@@ -1,4 +1,4 @@
-package controllers;
+package de.berlios.koalanotes.controllers;
 
 import java.io.File;
 import java.util.List;
@@ -8,10 +8,10 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 
-import display.DisplayedDocument;
-import display.DisplayedNote;
-import display.NoteTab;
-import display.NoteTreeNode;
+import de.berlios.koalanotes.display.DisplayedDocument;
+import de.berlios.koalanotes.display.DisplayedNote;
+import de.berlios.koalanotes.display.NoteTab;
+import de.berlios.koalanotes.display.NoteTreeNode;
 
 public class MainController extends Controller {
 	

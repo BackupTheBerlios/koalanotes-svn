@@ -1,4 +1,4 @@
-package data;
+package de.berlios.koalanotes.data;
 
 import java.util.LinkedList;
 import java.util.List;

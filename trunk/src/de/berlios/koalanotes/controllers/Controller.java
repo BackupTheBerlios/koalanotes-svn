@@ -1,4 +1,4 @@
-package controllers;
+package de.berlios.koalanotes.controllers;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -6,8 +6,8 @@ import java.util.Iterator;
 
 import org.eclipse.swt.widgets.Event;
 
-import display.DisplayedDocument;
-import exceptions.KoalaException;
+import de.berlios.koalanotes.display.DisplayedDocument;
+import de.berlios.koalanotes.exceptions.KoalaException;
 
 public abstract class Controller {
 	

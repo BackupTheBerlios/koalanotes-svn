@@ -1,10 +1,10 @@
-package display;
+package de.berlios.koalanotes.display;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
-import data.Note;
+import de.berlios.koalanotes.data.Note;
 
 public class NoteTreeNode {
 	private DisplayedNote displayedNote;

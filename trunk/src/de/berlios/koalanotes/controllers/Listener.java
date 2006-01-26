@@ -1,4 +1,4 @@
-package controllers;
+package de.berlios.koalanotes.controllers;
 
 import java.util.HashMap;
 

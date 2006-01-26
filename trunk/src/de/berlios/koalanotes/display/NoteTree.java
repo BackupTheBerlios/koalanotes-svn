@@ -1,4 +1,4 @@
-package display;
+package de.berlios.koalanotes.display;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -12,11 +12,11 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
-import controllers.Listener;
-import controllers.MainController;
-import controllers.TreeController;
+import de.berlios.koalanotes.controllers.Listener;
+import de.berlios.koalanotes.controllers.MainController;
+import de.berlios.koalanotes.controllers.TreeController;
 
-import data.Note;
+import de.berlios.koalanotes.data.Note;
 
 public class NoteTree {
 	private Tree tree;

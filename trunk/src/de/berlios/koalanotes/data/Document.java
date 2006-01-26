@@ -1,4 +1,4 @@
-package data;
+package de.berlios.koalanotes.data;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,7 +13,7 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
-import exceptions.KoalaException;
+import de.berlios.koalanotes.exceptions.KoalaException;
 
 public class Document {
 	File file;

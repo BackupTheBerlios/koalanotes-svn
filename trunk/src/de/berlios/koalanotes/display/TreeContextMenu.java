@@ -1,4 +1,4 @@
-package display;
+package de.berlios.koalanotes.display;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
@@ -6,8 +6,8 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
-import controllers.Listener;
-import controllers.TreeContextMenuController;
+import de.berlios.koalanotes.controllers.Listener;
+import de.berlios.koalanotes.controllers.TreeContextMenuController;
 
 public class TreeContextMenu {
 	Menu menu;
