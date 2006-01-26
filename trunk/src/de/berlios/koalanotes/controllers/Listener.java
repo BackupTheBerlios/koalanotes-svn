@@ -7,10 +7,10 @@ import org.eclipse.swt.widgets.Widget;
 
 public class Listener implements org.eclipse.swt.widgets.Listener {
 	private HashMap<Widget, HashMap<Integer, String>> srcToEvtToMethod;
-	private Controller anyController;
+	private Controllers controllers;
 	
-	public Listener(Controller anyController) {
-		this.anyController = anyController;
+	public Listener(Controllers controllers) {
+		this.controllers = controllers;
 		srcToEvtToMethod = new HashMap<Widget, HashMap<Integer, String>>();
 	}
 	
@@ -26,7 +26,7 @@ public class Listener implements org.eclipse.swt.widgets.Listener {
 	
 	public void handleEvent(Event e) {
 		String methodDescriptor = srcToEvtToMethod.get(e.widget).get(e.type);
-		anyController.invokeControllerMethod(methodDescriptor, e);
+		controllers.invokeControllerMethod(methodDescriptor, e);
 	}
 	
 	public void removeMappingFor(Widget source) {

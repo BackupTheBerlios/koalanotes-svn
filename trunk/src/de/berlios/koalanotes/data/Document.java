@@ -23,6 +23,10 @@ public class Document {
 		this.root = root;
 	}
 	
+	public boolean hasFile() {
+		return (file != null);
+	}
+	
 	public Note loadNotes() {
 		org.jdom.Document jdomDocument = null;
 		try {

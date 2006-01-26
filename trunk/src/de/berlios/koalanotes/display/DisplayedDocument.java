@@ -1,18 +1,12 @@
 package de.berlios.koalanotes.display;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Shell;
 
-import de.berlios.koalanotes.controllers.Controller;
+import de.berlios.koalanotes.controllers.Controllers;
 import de.berlios.koalanotes.controllers.Listener;
-import de.berlios.koalanotes.controllers.MainController;
-import de.berlios.koalanotes.controllers.TreeContextMenuController;
-import de.berlios.koalanotes.controllers.TreeController;
 
 import de.berlios.koalanotes.data.Document;
 import de.berlios.koalanotes.data.Note;
@@ -20,8 +14,9 @@ import de.berlios.koalanotes.data.Note;
 public class DisplayedDocument {
 	private Document document;
 	private Listener listener;
-	private List<Controller> controllers;
+	private Controllers controllers;
 	private Shell shell;
+	private MainMenu mainMenu;
 	private NoteTree tree;
 	private NoteTabFolder tabFolder;
 	
@@ -37,16 +32,13 @@ public class DisplayedDocument {
 		document = new Document(root);
 		
 		// Controllers
-		controllers = new LinkedList<Controller>();
-		controllers.add(new MainController(this));
-		controllers.add(new TreeContextMenuController(this));
-		controllers.add(new TreeController(this));
+		controllers = new Controllers(this);
 		
 		// Listener
-		listener = new Listener(controllers.get(0));
+		listener = new Listener(controllers);
 		
 		// Menu
-		new MainMenu(shell, listener);
+		mainMenu = new MainMenu(shell, listener);
 		
 		// SashForm
 		SashForm sashForm = new SashForm(shell, SWT.HORIZONTAL);
@@ -64,8 +56,9 @@ public class DisplayedDocument {
 	
 	public Document getDocument() {return document;}
 	public Listener getListener() {return listener;}
-	public List<Controller> getControllers() {return controllers;}
+	public Controllers getControllers() {return controllers;}
 	public Shell getShell() {return shell;}
+	public MainMenu getMainMenu() {return mainMenu;}
 	public NoteTree getTree() {return tree;}
 	public NoteTabFolder getTabFolder() {return tabFolder;}
 }
