@@ -74,9 +74,9 @@ public class Document {
 		String name = el.getAttributeValue("name");
 		String text = el.getAttributeValue("text");
 		Note n = new Note(name, parent, text);
-		List<Element> es = (List<Element>) el.getChildren();
-		for (Element childElement : es) {
-			createNoteFromElement(childElement, n);
+		List es = el.getChildren();
+		for (Object childElement : es) {
+			createNoteFromElement((Element) childElement, n);
 		}
 		return n;
 	}
