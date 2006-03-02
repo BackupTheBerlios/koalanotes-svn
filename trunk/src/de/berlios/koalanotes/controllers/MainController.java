@@ -6,7 +6,6 @@ import org.eclipse.swt.widgets.Event;
 
 import de.berlios.koalanotes.display.DisplayedDocument;
 import de.berlios.koalanotes.display.DisplayedNote;
-import de.berlios.koalanotes.display.NoteTreeNode;
 
 public class MainController extends Controller {
 	
@@ -20,14 +19,9 @@ public class MainController extends Controller {
 	
 	public static final String DISPLAY_TAB = getMethodDescriptor("displayTab");
 	public void displayTab(Event e) {
-		List<NoteTreeNode> treeNodes = dd.getTree().getSelectedNodes();
-		for (NoteTreeNode treeNode : treeNodes) {
-			DisplayedNote dn = treeNode.getDisplayedNote();
-			if (dn.getTab() == null) {
-				dd.getTabFolder().addNoteTab(dn);
-			} else {
-				dn.getTab().select();
-			}
+		List<DisplayedNote> selectedNotes = dd.getTree().getSelectedNotes();
+		for (DisplayedNote selectedNote : selectedNotes) {
+			selectedNote.displayTab(dd.getTabFolder());
 		}
 	}
 }

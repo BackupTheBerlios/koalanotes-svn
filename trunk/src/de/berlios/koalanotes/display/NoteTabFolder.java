@@ -28,7 +28,7 @@ public class NoteTabFolder {
 		}
 	}
 	
-	public void addNoteTab(DisplayedNote displayedNote) {
-		new NoteTab(tabFolder, l, displayedNote);
+	public NoteTab addNoteTab(DisplayedNote displayedNote) {
+		return new NoteTab(tabFolder, l, displayedNote);
 	}
 }

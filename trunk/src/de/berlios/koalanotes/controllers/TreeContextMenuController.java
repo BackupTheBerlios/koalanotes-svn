@@ -4,7 +4,7 @@ import org.eclipse.swt.widgets.Event;
 
 import de.berlios.koalanotes.data.Note;
 import de.berlios.koalanotes.display.DisplayedDocument;
-import de.berlios.koalanotes.display.NoteTreeNode;
+import de.berlios.koalanotes.display.DisplayedNote;
 
 public class TreeContextMenuController extends Controller {
 	
@@ -23,16 +23,17 @@ public class TreeContextMenuController extends Controller {
 	
 	public static final String ADD_NOTE = getMethodDescriptor("addNote");
 	public void addNote(Event e) {
-		NoteTreeNode parentTreeNode = dd.getTree().getSelectedNode();
-		Note parentNote = parentTreeNode.getDisplayedNote().getNote();
+		DisplayedNote parentDisplayed = dd.getTree().getSelectedNote();
+		Note parentNote = parentDisplayed.getNote();
 		Note newNote = new Note("new", parentNote, "");
-		parentTreeNode.addChild(newNote);
+		new DisplayedNote(parentDisplayed, newNote);
 	}
 	
 	public static final String REMOVE_NOTES = getMethodDescriptor("removeNotes");
 	public void removeNotes(Event e) {
-		for (NoteTreeNode node : dd.getTree().getSelectedNodes()) {
-			node.dispose();
+		for (DisplayedNote removeMe : dd.getTree().getSelectedNotes()) {
+			removeMe.disposeDisplayedWidgets(); // remove visual evidence of note
+			removeMe.getNote().removeFromParent(); // remove note from underlying data
 		}
 	}
 	

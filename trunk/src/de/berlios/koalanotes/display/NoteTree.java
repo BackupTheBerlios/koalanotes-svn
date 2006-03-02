@@ -83,7 +83,7 @@ public class NoteTree {
 	
 	public void loadTree(Note root) {
 		tree.removeAll();
-		new NoteTreeNode(tree, root);
+		new DisplayedNote(tree, root);
 		init();
 	}
 	
@@ -95,17 +95,17 @@ public class NoteTree {
 		return tree.getSelectionCount();
 	}
 	
-	public NoteTreeNode getSelectedNode() {
+	public DisplayedNote getSelectedNote() {
 		TreeItem ti = tree.getSelection()[0];
 		if (ti == null) return null;
-		return (NoteTreeNode) ti.getData();
+		return ((NoteTreeNode) ti.getData()).getDisplayedNote();
 	}
 	
-	public List<NoteTreeNode> getSelectedNodes() {
+	public List<DisplayedNote> getSelectedNotes() {
 		TreeItem[] tis = tree.getSelection();
-		List<NoteTreeNode> result = new LinkedList<NoteTreeNode>();
+		List<DisplayedNote> result = new LinkedList<DisplayedNote>();
 		for (TreeItem ti : tis) {
-			result.add((NoteTreeNode) ti.getData());
+			result.add(((NoteTreeNode) ti.getData()).getDisplayedNote());
 		}
 		return result;
 	}

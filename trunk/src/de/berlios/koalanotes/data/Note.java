@@ -26,6 +26,7 @@ public class Note {
 	public Note getParent() {return parent;}
 	public List<Note> getChildren() {return children;}
 	public void addChild(Note note) {children.add(note);}
+	public void removeFromParent() {parent.getChildren().remove(this);}
 	
 	public String getText() {return text;}
 	public void setText(String text) {this.text = text;}

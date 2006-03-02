@@ -23,7 +23,6 @@ public class NoteTab implements DisposeListener {
 		text = new Text(parent, SWT.MULTI | SWT.WRAP);
 		text.setText(displayedNote.getNote().getText());
 		tabItem.setControl(text);
-		displayedNote.setTab(this);
 		select();
 	}
 	
@@ -44,6 +43,6 @@ public class NoteTab implements DisposeListener {
 	
 	public void widgetDisposed(DisposeEvent e) {
 		text.dispose();
-		displayedNote.setTab(null);
+		displayedNote.tabDisposed();
 	}
 }

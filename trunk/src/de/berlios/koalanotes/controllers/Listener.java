@@ -1,6 +1,7 @@
 package de.berlios.koalanotes.controllers;
 
 import java.util.HashMap;
+import java.util.Set;
 
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Widget;
@@ -30,6 +31,13 @@ public class Listener implements org.eclipse.swt.widgets.Listener {
 	}
 	
 	public void removeMappingFor(Widget source) {
-		srcToEvtToMethod.remove(source);
+		HashMap<Integer, String> evtToMethod = srcToEvtToMethod.get(source);
+		if (evtToMethod != null) {
+			Set<Integer> eventTypes = evtToMethod.keySet();
+			for (Integer eventType : eventTypes) {
+				source.removeListener(eventType, this);
+			}
+			srcToEvtToMethod.remove(source);
+		}
 	}
 }

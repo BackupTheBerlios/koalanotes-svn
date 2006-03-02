@@ -19,10 +19,9 @@ public class TreeController extends Controller {
 	public static final String RENAME_NOTE = getMethodDescriptor("renameNote");
 	public void renameNote(Event e) {
 		String newName = dd.getTree().getTreeEditorText();
-		DisplayedNote dn = dd.getTree().getSelectedNode().getDisplayedNote();
+		DisplayedNote dn = dd.getTree().getSelectedNote();
 		dn.getNote().setName(newName);
-		dn.getTreeNode().setName(newName);
-		if (dn.getTab() != null) dn.getTab().setName(newName);
+		dn.setName(newName);
 	}
 	
 	public static final String FINISH_RENAME_NOTE = getMethodDescriptor("finishRenameNote");
