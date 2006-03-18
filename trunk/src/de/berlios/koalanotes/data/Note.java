@@ -3,30 +3,29 @@ package de.berlios.koalanotes.data;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Note {
+public class Note implements NoteHolder {
 	private String name;
-	
 	private Note parent;
-	private List<Note> children;
-	
+	private List<Note> notes;
 	private String text;
 	
-	public Note(String name, Note parent, String text) {
+	public Note(String name, NoteHolder holder, String text) {
 		this.name = name;
-		this.parent = parent;
-		this.children = new LinkedList<Note>();
+		if (holder instanceof Note) parent = (Note) holder;
+		this.notes = new LinkedList<Note>();
 		this.text = text;
-		
-		if (parent != null) parent.addChild(this);
+		holder.addNote(this);
 	}
 	
 	public String getName() {return name;}
 	public void setName(String name) {this.name = name;}
 	
 	public Note getParent() {return parent;}
-	public List<Note> getChildren() {return children;}
-	public void addChild(Note note) {children.add(note);}
-	public void removeFromParent() {parent.getChildren().remove(this);}
+	
+	// Implement NoteHolder
+	public List<Note> getNotes() {return notes;}
+	public void addNote(Note note) {notes.add(note);}
+	public void removeNote(Note note) {notes.remove(note);}
 	
 	public String getText() {return text;}
 	public void setText(String text) {this.text = text;}

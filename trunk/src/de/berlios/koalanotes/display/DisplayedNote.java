@@ -1,5 +1,8 @@
 package de.berlios.koalanotes.display;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eclipse.swt.widgets.Tree;
 
 import de.berlios.koalanotes.data.Note;
@@ -9,18 +12,24 @@ public class DisplayedNote {
 	private NoteTreeNode treeNode;
 	private Note note;
 	
+	private List<DisplayedNote> children;
+	
 	public DisplayedNote(DisplayedNote parent, Note note) {
+		parent.children.add(this);
 		this.note = note;
 		this.treeNode = new NoteTreeNode(parent.treeNode, this);
-		for (Note n : note.getChildren()) {
-			new DisplayedNote(this, n);
-		}
+		init();
 	}
 	
 	public DisplayedNote(Tree tree, Note root) {
 		this.note = root;
 		this.treeNode = new NoteTreeNode(tree, this);
-		for (Note n : note.getChildren()) {
+		init();
+	}
+	
+	private void init() {
+		this.children = new LinkedList<DisplayedNote>();
+		for (Note n : note.getNotes()) {
 			new DisplayedNote(this, n);
 		}
 	}
@@ -47,8 +56,12 @@ public class DisplayedNote {
 		tab = null;
 	}
 	
-	public void disposeDisplayedWidgets() {
+	public void deleteSelfAndChildren() {
+		for (DisplayedNote child : children) {
+			child.deleteSelfAndChildren();
+		}
 		treeNode.dispose();
 		if (tab != null) tab.dispose();
+		note.getParent().removeNote(note);
 	}
 }

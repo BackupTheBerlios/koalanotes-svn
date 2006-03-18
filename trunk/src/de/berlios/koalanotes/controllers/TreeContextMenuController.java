@@ -32,8 +32,7 @@ public class TreeContextMenuController extends Controller {
 	public static final String REMOVE_NOTES = getMethodDescriptor("removeNotes");
 	public void removeNotes(Event e) {
 		for (DisplayedNote removeMe : dd.getTree().getSelectedNotes()) {
-			removeMe.disposeDisplayedWidgets(); // remove visual evidence of note
-			removeMe.getNote().removeFromParent(); // remove note from underlying data
+			removeMe.deleteSelfAndChildren();
 		}
 	}
 	

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.jdom.Attribute;
@@ -15,19 +16,26 @@ import org.jdom.output.XMLOutputter;
 
 import de.berlios.koalanotes.exceptions.KoalaException;
 
-public class Document {
-	File file;
-	Note root;
+public class Document implements NoteHolder {
 	
-	public Document(Note root) {
-		this.root = root;
+	private File file;
+	private List<Note> roots;
+	
+	public Document() {
+		this.roots = new LinkedList<Note>();
 	}
 	
 	public boolean hasFile() {
 		return (file != null);
 	}
 	
-	public Note loadNotes() {
+	// Implement NoteHolder
+	public List<Note> getNotes() {return roots;}
+	public void addNote(Note note) {roots.add(note);}
+	public void removeNote(Note note) {roots.remove(note);}
+	
+	public List<Note> loadNotes(File file) {
+		this.file = file;
 		org.jdom.Document jdomDocument = null;
 		try {
 			jdomDocument = new SAXBuilder().build(file);
@@ -37,17 +45,23 @@ public class Document {
 			throw new KoalaException("Koala Notes could not build a document from file '" + file.getName() + "'.", jdomex);
 		}
 		Element rootElement = jdomDocument.getRootElement();
-		root = createNoteFromElement(rootElement, null);
-		return root;
-	}
-	
-	public Note loadNotes(File file) {
-		this.file = file;
-		return loadNotes();
+		if (!rootElement.getName().equals("root")) {
+			throw new KoalaException("Koala Notes could not load a document from file '"
+			                         + file.getName() + "', the format is incorrect.");
+		}
+		roots = new LinkedList<Note>();
+		for (Object el : rootElement.getChildren()) {
+			createNoteFromElement((Element) el, this);
+		}
+		return roots;
 	}
 	
 	public void saveNotes() {
-		org.jdom.Document jdomDocument = new org.jdom.Document(createElementFromNote(root));
+		Element rootElement = new Element("root");
+		for (Note root : roots) {
+			rootElement.addContent(createElementFromNote(root));
+		}
+		org.jdom.Document jdomDocument = new org.jdom.Document(rootElement);
 		XMLOutputter out = new XMLOutputter(Format.getPrettyFormat());
 		try {
 			FileOutputStream fos = new FileOutputStream(file);
@@ -65,15 +79,14 @@ public class Document {
 	}
 	
 	/** Helper for loadNotes(). */
-	private Note createNoteFromElement(Element el, Note parent) {
+	private Note createNoteFromElement(Element el, NoteHolder holder) {
 		if (!el.getName().equals("note")) {
-			throw new KoalaException("Koala Notes could not build a document from file '"
-			                         + file.getName() + "': expected a note element but got a "
-			                         + el.getName() + ".");
+			throw new KoalaException("Koala Notes could not load a document from file '"
+									 + file.getName() + "', the format is incorrect.");
 		}
 		String name = el.getAttributeValue("name");
 		String text = el.getAttributeValue("text");
-		Note n = new Note(name, parent, text);
+		Note n = new Note(name, holder, text);
 		List es = el.getChildren();
 		for (Object childElement : es) {
 			createNoteFromElement((Element) childElement, n);
@@ -86,7 +99,7 @@ public class Document {
 		Element el = new Element("note");
 		el.setAttribute(new Attribute("name", n.getName()));
 		el.setAttribute(new Attribute("text", n.getText()));
-		for (Note childNote : n.getChildren()) {
+		for (Note childNote : n.getNotes()) {
 			el.addContent(createElementFromNote(childNote));
 		}
 		return el;

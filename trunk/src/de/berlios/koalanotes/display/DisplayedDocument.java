@@ -1,5 +1,7 @@
 package de.berlios.koalanotes.display;
 
+import java.util.LinkedList;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
@@ -27,8 +29,10 @@ public class DisplayedDocument {
 		shell.setLayout(new FillLayout(SWT.VERTICAL));
 		
 		// Document
-		Note root = new Note("root", null, "");
-		document = new Document(root);
+		document = new Document();
+		Note root = new Note("root", document, "");
+		LinkedList<Note> roots = new LinkedList<Note>();
+		roots.add(root);
 		
 		// Listener, Dispatcher, Controllers
 		Dispatcher dispatcher = new Dispatcher(this);
@@ -42,7 +46,7 @@ public class DisplayedDocument {
 		
 		// Tree
 		tree = new NoteTree(sashForm, listener);
-		tree.loadTree(root);
+		tree.loadTree(roots);
 		tree.init();
 		
 		// TabFolder

@@ -27,9 +27,6 @@ public class NoteTreeNode {
 	public DisplayedNote getDisplayedNote() {return displayedNote;}
 	
 	public void dispose() {
-		for (TreeItem childTi : treeItem.getItems()) {
-			((NoteTreeNode) childTi.getData()).dispose();
-		}
 		treeItem.dispose();
 	}
 	

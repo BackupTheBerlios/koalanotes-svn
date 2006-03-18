@@ -1,3 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<note name="root" text="My fishy has a first name, it's fishy fishy fish." />
-
+<root>
+  <note name="root" text="My fishy has a first name, it's fishy fishy fish.">
+    <note name="moonote" text="moomoomoo" />
+  </note>
+</root>

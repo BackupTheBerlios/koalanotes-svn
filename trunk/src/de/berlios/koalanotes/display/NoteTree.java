@@ -81,14 +81,12 @@ public class NoteTree {
 	
 	// Nodes
 	
-	public void loadTree(Note root) {
+	public void loadTree(List<Note> roots) {
 		tree.removeAll();
-		new DisplayedNote(tree, root);
+		for (Note root : roots) {
+			new DisplayedNote(tree, root);
+		}
 		init();
-	}
-	
-	public NoteTreeNode getRoot() {
-		return (NoteTreeNode) tree.getTopItem().getData();
 	}
 	
 	public int getSelectionCount() {
