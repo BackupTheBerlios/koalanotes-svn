@@ -41,6 +41,7 @@ public class DisplayedNote {
 	
 	public String getName() {return note.getName();}
 	public void setName(String name) {
+		note.setName(name);
 		treeNode.setName(name);
 		if (tab != null) tab.setName(name);
 	}

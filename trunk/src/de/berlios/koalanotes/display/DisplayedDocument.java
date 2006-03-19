@@ -9,13 +9,15 @@ import org.eclipse.swt.widgets.Shell;
 
 import de.berlios.koalanotes.controllers.Dispatcher;
 import de.berlios.koalanotes.controllers.Listener;
+import de.berlios.koalanotes.controllers.MainController;
+import de.berlios.koalanotes.controllers.MainMenuController;
+import de.berlios.koalanotes.controllers.TreeController;
 
 import de.berlios.koalanotes.data.Document;
 import de.berlios.koalanotes.data.Note;
 
 public class DisplayedDocument {
 	private Document document;
-	private Listener listener;
 	private Shell shell;
 	private MainMenu mainMenu;
 	private NoteTree tree;
@@ -34,9 +36,9 @@ public class DisplayedDocument {
 		LinkedList<Note> roots = new LinkedList<Note>();
 		roots.add(root);
 		
-		// Listener, Dispatcher, Controllers
-		Dispatcher dispatcher = new Dispatcher(this);
-		listener = new Listener(dispatcher);
+		// Listener and Dispatcher
+		Dispatcher dispatcher = new Dispatcher();
+		Listener listener = new Listener(dispatcher);
 		
 		// Menu
 		mainMenu = new MainMenu(shell, listener);
@@ -52,11 +54,16 @@ public class DisplayedDocument {
 		// TabFolder
 		tabFolder = new NoteTabFolder(sashForm, listener);
 		
+		// Finish SashForm
 		sashForm.setWeights(new int[] {20, 80});
+		
+		// Controllers
+		dispatcher.registerController(new MainController(this));
+		dispatcher.registerController(new MainMenuController(this));
+		dispatcher.registerController(new TreeController(tree, dispatcher));
 	}
 	
 	public Document getDocument() {return document;}
-	public Listener getListener() {return listener;}
 	public Shell getShell() {return shell;}
 	public MainMenu getMainMenu() {return mainMenu;}
 	public NoteTree getTree() {return tree;}

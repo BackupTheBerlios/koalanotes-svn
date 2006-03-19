@@ -7,6 +7,7 @@ import org.eclipse.swt.widgets.MenuItem;
 
 import de.berlios.koalanotes.controllers.Listener;
 import de.berlios.koalanotes.controllers.TreeContextMenuController;
+import de.berlios.koalanotes.controllers.TreeController;
 
 public class TreeContextMenu {
 	Menu menu;
@@ -19,7 +20,8 @@ public class TreeContextMenu {
 		
 		// menu
 		menu = new Menu(parent);
-		l.mapEvent(menu, SWT.Show, TreeContextMenuController.INITIALISE_MENU);
+		l.mapEvent(menu, SWT.Show, TreeController.INITIALISE_CONTEXT_MENU);
+		l.mapEvent(menu, SWT.Dispose, TreeController.DISPOSE_CONTEXT_MENU);
 		parent.setMenu(menu);
 		
 		// menu items

@@ -10,12 +10,14 @@ import de.berlios.koalanotes.display.DisplayedDocument;
 
 public class MainMenuController extends Controller {
 	
+	private DisplayedDocument dd;
+	
 	public static String getMethodDescriptor(String methodName) {
 		return getMethodDescriptor(MainMenuController.class, methodName);
 	}
 	
 	public MainMenuController(DisplayedDocument displayedDocument) {
-		super(displayedDocument);
+		this.dd = displayedDocument;
 	}
 	
 	public static final String INITIALISE_MENU = getMethodDescriptor("initialiseMenu");

@@ -9,12 +9,14 @@ import de.berlios.koalanotes.display.DisplayedNote;
 
 public class MainController extends Controller {
 	
+	private DisplayedDocument dd;
+	
 	public static String getMethodDescriptor(String methodName) {
 		return getMethodDescriptor(MainController.class, methodName);
 	}
 	
 	public MainController(DisplayedDocument displayedDocument) {
-		super(displayedDocument);
+		this.dd = displayedDocument;
 	}
 	
 	public static final String DISPLAY_TAB = getMethodDescriptor("displayTab");
