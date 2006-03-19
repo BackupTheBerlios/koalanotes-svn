@@ -3,13 +3,17 @@ package de.berlios.koalanotes;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import de.berlios.koalanotes.controllers.Dispatcher;
+import de.berlios.koalanotes.controllers.Listener;
 import de.berlios.koalanotes.display.DisplayedDocument;
 
 public class KoalaNotes {
 	public static void main(String[] args) {
 		Display display = new Display();
 		Shell shell = new Shell(display);
-		new DisplayedDocument(shell);
+		Dispatcher dispatcher = new Dispatcher();
+		Listener listener = new Listener(dispatcher);
+		new DisplayedDocument(shell, listener, dispatcher);
 		shell.open();
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) display.sleep();

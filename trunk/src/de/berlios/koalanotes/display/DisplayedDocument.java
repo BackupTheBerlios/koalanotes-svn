@@ -16,6 +16,11 @@ import de.berlios.koalanotes.controllers.TreeController;
 import de.berlios.koalanotes.data.Document;
 import de.berlios.koalanotes.data.Note;
 
+/**
+ * DisplayedDocument holds the state of the display, as well the document being displayed.
+ * Specifically DisplayedDocument holds the document, shell, main menu, tree and tab folder.
+ * As DisplayedNote is to Note, DisplayedDocument is to Document.
+ */
 public class DisplayedDocument {
 	private Document document;
 	private Shell shell;
@@ -23,7 +28,7 @@ public class DisplayedDocument {
 	private NoteTree tree;
 	private NoteTabFolder tabFolder;
 	
-	public DisplayedDocument(Shell shell) {
+	public DisplayedDocument(Shell shell, Listener listener, Dispatcher dispatcher) {
 		
 		// Shell
 		this.shell = shell;
@@ -35,10 +40,6 @@ public class DisplayedDocument {
 		Note root = new Note("root", document, "");
 		LinkedList<Note> roots = new LinkedList<Note>();
 		roots.add(root);
-		
-		// Listener and Dispatcher
-		Dispatcher dispatcher = new Dispatcher();
-		Listener listener = new Listener(dispatcher);
 		
 		// Menu
 		mainMenu = new MainMenu(shell, listener);
