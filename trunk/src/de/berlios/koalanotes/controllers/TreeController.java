@@ -9,27 +9,18 @@ import de.berlios.koalanotes.display.NoteTree;
 public class TreeController extends Controller {
 	
 	private NoteTree tree;
-	private Dispatcher dispatcher;
 	
 	public static String getMethodDescriptor(String methodName) {
 		return getMethodDescriptor(TreeController.class, methodName);
 	}
 	
-	public TreeController(NoteTree tree, Dispatcher dispatcher) {
+	public TreeController(NoteTree tree) {
 		this.tree = tree;
-		this.dispatcher = dispatcher;
 	}
 	
 	public static final String INITIALISE_CONTEXT_MENU = getMethodDescriptor("initialiseContextMenu");
 	public void initialiseContextMenu(Event e) {
-		dispatcher.registerController(new TreeContextMenuController(tree));
 		tree.initialiseContextMenu();
-	}
-	
-	public static final String DISPOSE_CONTEXT_MENU = getMethodDescriptor("disposeContextMenu");
-	public void disposeContextMenu(Event e) {
-		String controllerSig = Controller.getControllerSignature(TreeContextMenuController.ADD_NOTE);
-		dispatcher.deregisterController(controllerSig);
 	}
 	
 	public static final String RENAME_NOTE = getMethodDescriptor("renameNote");

@@ -21,7 +21,6 @@ public class TreeContextMenu {
 		// menu
 		menu = new Menu(parent);
 		l.mapEvent(menu, SWT.Show, TreeController.INITIALISE_CONTEXT_MENU);
-		l.mapEvent(menu, SWT.Dispose, TreeController.DISPOSE_CONTEXT_MENU);
 		parent.setMenu(menu);
 		
 		// menu items

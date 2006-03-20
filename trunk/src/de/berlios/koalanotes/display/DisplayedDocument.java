@@ -11,6 +11,7 @@ import de.berlios.koalanotes.controllers.Dispatcher;
 import de.berlios.koalanotes.controllers.Listener;
 import de.berlios.koalanotes.controllers.MainController;
 import de.berlios.koalanotes.controllers.MainMenuController;
+import de.berlios.koalanotes.controllers.TreeContextMenuController;
 import de.berlios.koalanotes.controllers.TreeController;
 
 import de.berlios.koalanotes.data.Document;
@@ -61,7 +62,8 @@ public class DisplayedDocument {
 		// Controllers
 		dispatcher.registerController(new MainController(this));
 		dispatcher.registerController(new MainMenuController(this));
-		dispatcher.registerController(new TreeController(tree, dispatcher));
+		dispatcher.registerController(new TreeController(tree));
+		dispatcher.registerController(new TreeContextMenuController(tree));
 	}
 	
 	public Document getDocument() {return document;}
