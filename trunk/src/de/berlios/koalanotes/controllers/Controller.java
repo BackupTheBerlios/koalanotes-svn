@@ -1,8 +1,11 @@
 package de.berlios.koalanotes.controllers;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.eclipse.swt.widgets.Event;
+
+import de.berlios.koalanotes.exceptions.KoalaException;
 
 public abstract class Controller {
 	
@@ -21,14 +24,30 @@ public abstract class Controller {
 		return getClass().getCanonicalName();
 	}
 	
-	protected Method getMethod(String methodDescriptor) {
+	protected void invokeMethod(String methodDescriptor, Event e) {
+		
+		// Get the method.
+		Method method = null;
 		String controllerSignature = getControllerSignature();
-		if (!methodDescriptor.startsWith(controllerSignature)) return null;
+		if (!methodDescriptor.startsWith(controllerSignature)) {
+			throw new KoalaException("Wrong controller nominated to execute '" + methodDescriptor + "'.");
+		}
 		int separator = controllerSignature.length();
 		try {
-			return getClass().getMethod(methodDescriptor.substring(separator + 1), METHOD_ARGS);
+			method = getClass().getMethod(methodDescriptor.substring(separator + 1), METHOD_ARGS);
 		} catch (NoSuchMethodException ex) {
-			return null;
+			throw new KoalaException("Koala Notes could not find method '" + methodDescriptor + "'.");
+		}
+		
+		// Invoke the method.
+		try {
+			method.invoke(this, new Object[] {e});
+		} catch (IllegalAccessException iaex) {
+			throw new KoalaException("Koala Notes could not access method '" + methodDescriptor + "'.", iaex);
+		} catch (InvocationTargetException itex) {
+			if (itex.getCause() instanceof RuntimeException) {
+				throw (RuntimeException) itex.getCause();
+			} else throw new KoalaException(itex.getCause());
 		}
 	}
 }
