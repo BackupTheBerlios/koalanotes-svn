@@ -5,13 +5,13 @@ import java.util.List;
 
 public class Note implements NoteHolder {
 	private String name;
-	private Note parent;
+	private NoteHolder holder;
 	private List<Note> notes;
 	private String text;
 	
 	public Note(String name, NoteHolder holder, String text) {
 		this.name = name;
-		if (holder instanceof Note) parent = (Note) holder;
+		this.holder = holder;
 		this.notes = new LinkedList<Note>();
 		this.text = text;
 		holder.addNote(this);
@@ -20,7 +20,7 @@ public class Note implements NoteHolder {
 	public String getName() {return name;}
 	public void setName(String name) {this.name = name;}
 	
-	public Note getParent() {return parent;}
+	public NoteHolder getHolder() {return holder;}
 	
 	// Implement NoteHolder
 	public List<Note> getNotes() {return notes;}

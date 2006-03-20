@@ -63,6 +63,6 @@ public class DisplayedNote {
 		}
 		treeNode.dispose();
 		if (tab != null) tab.dispose();
-		note.getParent().removeNote(note);
+		note.getHolder().removeNote(note);
 	}
 }
