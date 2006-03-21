@@ -14,8 +14,11 @@ public class Dispatcher {
 		controllers = new HashMap<String, Controller>();
 	}
 	
-	public void registerController(Controller c) {controllers.put(c.getControllerSignature(), c);}
-	public void deregisterController(String controllerSignature) {controllers.remove(controllerSignature);}
+	/** Controllers register and deregister themselves. */
+	protected void registerController(Controller c) {controllers.put(c.getControllerSignature(), c);}
+	
+	/** Controllers register and deregister themselves. */
+	protected void deregisterController(Controller c) {controllers.remove(c.getControllerSignature());}
 	
 	public void invokeControllerMethod(String methodDescriptor, Event e) {
 		Controller controller = controllers.get(Controller.getControllerSignature(methodDescriptor));

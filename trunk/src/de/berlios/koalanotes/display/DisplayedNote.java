@@ -46,6 +46,11 @@ public class DisplayedNote {
 		if (tab != null) tab.setName(name);
 	}
 	
+	public void select() {
+		treeNode.select();
+		if (tab != null) tab.select();
+	}
+	
 	public void displayTab(NoteTabFolder tabFolder) {
 		if (tab == null) {
 			this.tab = tabFolder.addNoteTab(this);

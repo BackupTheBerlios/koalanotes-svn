@@ -60,10 +60,10 @@ public class DisplayedDocument {
 		sashForm.setWeights(new int[] {20, 80});
 		
 		// Controllers
-		dispatcher.registerController(new MainController(this));
-		dispatcher.registerController(new MainMenuController(this));
-		dispatcher.registerController(new TreeController(tree));
-		dispatcher.registerController(new TreeContextMenuController(tree));
+		new MainController(dispatcher, this);
+		new MainMenuController(dispatcher, this);
+		new TreeController(dispatcher, tree);
+		new TreeContextMenuController(dispatcher, this, listener);
 	}
 	
 	public Document getDocument() {return document;}

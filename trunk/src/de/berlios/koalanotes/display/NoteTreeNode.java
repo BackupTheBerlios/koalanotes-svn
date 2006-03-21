@@ -26,11 +26,15 @@ public class NoteTreeNode {
 	
 	public DisplayedNote getDisplayedNote() {return displayedNote;}
 	
-	public void dispose() {
-		treeItem.dispose();
-	}
-	
 	public void setName(String name) {
 		treeItem.setText(name);
+	}
+	
+	public void select() {
+		treeItem.getParent().setSelection(new TreeItem[] {treeItem});
+	}
+	
+	public void dispose() {
+		treeItem.dispose();
 	}
 }

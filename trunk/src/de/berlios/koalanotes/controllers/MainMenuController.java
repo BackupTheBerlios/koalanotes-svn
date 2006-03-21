@@ -16,7 +16,8 @@ public class MainMenuController extends Controller {
 		return getMethodDescriptor(MainMenuController.class, methodName);
 	}
 	
-	public MainMenuController(DisplayedDocument displayedDocument) {
+	public MainMenuController(Dispatcher d, DisplayedDocument displayedDocument) {
+		super(d);
 		this.dd = displayedDocument;
 	}
 	

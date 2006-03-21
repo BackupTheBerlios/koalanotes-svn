@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
-  <note name="Main" text="This commit is about allowing multiple root nodes in the back end (although currently the Add Note command only adds children).  Need to test that it works by editing a sample file.&#xA;&#xA; - Allow a note to be moved Up/Down/Left/Right.&#xA; - Popup dialog for creation of a note so user can type in the name.&#xA; - Give note creation dialog a way of choosing a parent note (a dropdown for the most likely options plus a Browse button to choose from the tree).&#xA;">
-    <note name="blah" text="" />
-  </note>
+  <note name="Main" text="&#xA;Next steps:&#xA; - Two menu options for adding a note: Add Note After and Add Note Under &#xA; - Allow a note to be moved Up/Down/Left/Right.&#xA;&#xA;Later:&#xA; - Automated tests!&#xA;" />
   <note name="Test" text="This is a second root note, for testing." />
   <note name="Test2" text="This is yet another root note, for testing." />
 </root>

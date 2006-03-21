@@ -14,7 +14,8 @@ public class TreeController extends Controller {
 		return getMethodDescriptor(TreeController.class, methodName);
 	}
 	
-	public TreeController(NoteTree tree) {
+	public TreeController(Dispatcher d, NoteTree tree) {
+		super(d);
 		this.tree = tree;
 	}
 	
