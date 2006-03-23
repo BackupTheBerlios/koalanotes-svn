@@ -24,10 +24,16 @@ public class TreeContextMenuController extends Controller {
 		this.l = l;
 	}
 	
-	public static final String ADD_NOTE = getMethodDescriptor("addNote");
-	public void addNote(Event e) {
+	public static final String ADD_NOTE_AFTER = getMethodDescriptor("addNoteAfter");
+	public void addNoteAfter(Event e) {
 		AddNoteDialog and = new AddNoteDialog(dd.getShell(), l);
-		new AddNoteController(d, dd, and);
+		new AddNoteController(d, dd, true, and);
+	}
+	
+	public static final String ADD_NOTE_UNDER = getMethodDescriptor("addNoteUnder");
+	public void addNoteUnder(Event e) {
+		AddNoteDialog and = new AddNoteDialog(dd.getShell(), l);
+		new AddNoteController(d, dd, false, and);
 	}
 	
 	public static final String REMOVE_NOTES = getMethodDescriptor("removeNotes");

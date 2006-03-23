@@ -12,5 +12,6 @@ import java.util.List;
 public interface NoteHolder {
 	public List<Note> getNotes();
 	public void addNote(Note note);
+	public void addNote(Note note, int index);
 	public void removeNote(Note note);
 }

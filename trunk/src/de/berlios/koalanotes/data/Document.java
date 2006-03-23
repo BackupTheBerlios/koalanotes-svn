@@ -32,6 +32,7 @@ public class Document implements NoteHolder {
 	// Implement NoteHolder
 	public List<Note> getNotes() {return roots;}
 	public void addNote(Note note) {roots.add(note);}
+	public void addNote(Note note, int index) {roots.add(index, note);}
 	public void removeNote(Note note) {roots.remove(note);}
 	
 	public List<Note> loadNotes(File file) {

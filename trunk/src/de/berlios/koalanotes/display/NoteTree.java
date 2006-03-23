@@ -89,6 +89,10 @@ public class NoteTree {
 		init();
 	}
 	
+	public DisplayedNote addRoot(Note root) {
+		return new DisplayedNote(tree, root);
+	}
+	
 	public int getSelectionCount() {
 		return tree.getSelectionCount();
 	}

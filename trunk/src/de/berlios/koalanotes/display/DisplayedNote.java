@@ -12,27 +12,32 @@ public class DisplayedNote {
 	private NoteTreeNode treeNode;
 	private Note note;
 	
+	private DisplayedNote parent;
 	private List<DisplayedNote> children;
 	
 	public DisplayedNote(DisplayedNote parent, Note note) {
-		parent.children.add(this);
 		this.note = note;
+		this.children = new LinkedList<DisplayedNote>();
+		this.parent = parent;
+		parent.children.add(note.getIndex(), this);
 		this.treeNode = new NoteTreeNode(parent.treeNode, this);
 		init();
 	}
 	
 	public DisplayedNote(Tree tree, Note root) {
 		this.note = root;
+		this.children = new LinkedList<DisplayedNote>();
 		this.treeNode = new NoteTreeNode(tree, this);
 		init();
 	}
 	
 	private void init() {
-		this.children = new LinkedList<DisplayedNote>();
 		for (Note n : note.getNotes()) {
 			new DisplayedNote(this, n);
 		}
 	}
+	
+	public DisplayedNote getParent() {return parent;}
 	
 	public Note getNote() {
 		if (tab != null) note.setText(tab.getText());

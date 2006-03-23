@@ -9,12 +9,12 @@ public class NoteTreeNode {
 	private TreeItem treeItem;
 	
 	public NoteTreeNode(NoteTreeNode parent, DisplayedNote data) {
-		treeItem = new TreeItem(parent.treeItem, SWT.NONE);
+		treeItem = new TreeItem(parent.treeItem, SWT.NONE, data.getNote().getIndex());
 		init(data);
 	}
 	
 	public NoteTreeNode(Tree tree, DisplayedNote root) {
-		treeItem = new TreeItem(tree, SWT.NONE);
+		treeItem = new TreeItem(tree, SWT.NONE, root.getNote().getIndex());
 		init(root);
 	}
 	
@@ -36,5 +36,30 @@ public class NoteTreeNode {
 	
 	public void dispose() {
 		treeItem.dispose();
+	}
+	
+	public void moveAfter(NoteTreeNode siblingBefore) {
+		Tree tree = treeItem.getParent();
+		treeItem.dispose();
+		TreeItem treeItemBefore = siblingBefore.treeItem;
+		TreeItem parent = treeItemBefore.getParentItem();
+		if (parent != null) {
+			int index = parent.indexOf(treeItemBefore);
+			treeItem = new TreeItem(parent, SWT.NONE, index);
+		} else {
+			int index = tree.indexOf(treeItemBefore);
+			treeItem = new TreeItem(tree, SWT.NONE, index);
+		}
+	}
+	
+	public void moveUnder(NoteTreeNode parent) {
+		treeItem.dispose();
+		treeItem = new TreeItem(parent.treeItem, SWT.NONE, 0);
+	}
+	
+	public void moveToTopRoot() {
+		Tree tree = treeItem.getParent();
+		treeItem.dispose();
+		treeItem = new TreeItem(tree, SWT.NONE, 0);
 	}
 }

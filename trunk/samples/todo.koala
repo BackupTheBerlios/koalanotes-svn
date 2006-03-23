@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
-  <note name="Main" text="&#xA;Next steps:&#xA; - Two menu options for adding a note: Add Note After and Add Note Under &#xA; - Allow a note to be moved Up/Down/Left/Right.&#xA;&#xA;Later:&#xA; - Automated tests!&#xA;" />
+  <note name="Main" text="&#xA;Next steps:&#xA; - Allow a note to be moved Up/Down/Left/Right.&#xA;&#xA;Later:&#xA; - Automated tests!&#xA;" />
   <note name="Test" text="This is a second root note, for testing." />
   <note name="Test2" text="This is yet another root note, for testing." />
 </root>

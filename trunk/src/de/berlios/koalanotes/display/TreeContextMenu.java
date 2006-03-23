@@ -12,7 +12,10 @@ import de.berlios.koalanotes.controllers.TreeController;
 public class TreeContextMenu {
 	Menu menu;
 	
-	MenuItem addNote;
+	MenuItem addNoteSubmenu;
+	MenuItem addNoteAfter;
+	MenuItem addNoteUnder;
+	
 	MenuItem removeNotes;
 	MenuItem renameNote;
 	
@@ -23,8 +26,15 @@ public class TreeContextMenu {
 		l.mapEvent(menu, SWT.Show, TreeController.INITIALISE_CONTEXT_MENU);
 		parent.setMenu(menu);
 		
-		// menu items
-		addNote = createMenuItem(menu, "Add Note", l, TreeContextMenuController.ADD_NOTE);
+		// add note submenu
+		Menu addNoteSubmenuMenu = new Menu(menu);
+		addNoteSubmenu = new MenuItem(menu, SWT.CASCADE);
+		addNoteSubmenu.setText("Add Note");
+		addNoteSubmenu.setMenu(addNoteSubmenuMenu);
+		addNoteAfter = createMenuItem(addNoteSubmenuMenu, "After", l, TreeContextMenuController.ADD_NOTE_AFTER);
+		addNoteUnder = createMenuItem(addNoteSubmenuMenu, "Under", l, TreeContextMenuController.ADD_NOTE_UNDER);
+		
+		// remove note/s and rename note
 		removeNotes = createMenuItem(menu, "Remove Notes", l, TreeContextMenuController.REMOVE_NOTES);
 		renameNote = createMenuItem(menu, "Rename Note", l, TreeContextMenuController.RENAME_NOTE);
 	}
@@ -39,11 +49,11 @@ public class TreeContextMenu {
 	
 	public void initialise(int selectionCount) {
 		if (selectionCount == 1) {
-			addNote.setEnabled(true);
+			addNoteSubmenu.setEnabled(true);
 			removeNotes.setText("Remove Note");
 			renameNote.setEnabled(true);
 		} else {
-			addNote.setEnabled(false);
+			addNoteSubmenu.setEnabled(false);
 			removeNotes.setText("Remove Notes");
 			renameNote.setEnabled(false);
 		}
