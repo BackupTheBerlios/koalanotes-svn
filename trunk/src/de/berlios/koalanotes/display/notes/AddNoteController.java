@@ -39,16 +39,13 @@ public class AddNoteController extends Controller {
 		if (after) {
 			Note newNote = new Note(addNoteDialog.getName(), note.getHolder(),
 			                        note.getIndex() + 1, "");
-			if (dn.getParent() == null) {
-				newDn = dd.getTree().addRoot(newNote);
-			} else {
-				newDn = new DisplayedNote(dn.getParent(), newNote);
-			}
+			newDn = new DisplayedNote(dn.getHolder(), dd.getTree(), newNote);
 		} else {
 			Note newNote = new Note(addNoteDialog.getName(), note, 0, "");
-			newDn = new DisplayedNote(dn, newNote);
+			newDn = new DisplayedNote(dn, dd.getTree(), newNote);
 		}
-		newDn.select();
+		dn.setSelected(false);
+		newDn.setSelected(true);
 		newDn.displayTab(dd.getTabFolder());
 		addNoteDialog.dispose();
 		deregister();

@@ -16,6 +16,12 @@ public class TreeContextMenu {
 	MenuItem addNoteAfter;
 	MenuItem addNoteUnder;
 	
+	MenuItem moveNoteSubmenu;
+	MenuItem moveNoteLeft;
+	MenuItem moveNoteRight;
+	MenuItem moveNoteUp;
+	MenuItem moveNoteDown;
+	
 	MenuItem removeNotes;
 	MenuItem renameNote;
 	
@@ -34,6 +40,16 @@ public class TreeContextMenu {
 		addNoteAfter = createMenuItem(addNoteSubmenuMenu, "After", l, TreeContextMenuController.ADD_NOTE_AFTER);
 		addNoteUnder = createMenuItem(addNoteSubmenuMenu, "Under", l, TreeContextMenuController.ADD_NOTE_UNDER);
 		
+		// move note submenu
+		Menu moveNoteSubmenuMenu = new Menu(menu);
+		moveNoteSubmenu = new MenuItem(menu, SWT.CASCADE);
+		moveNoteSubmenu.setText("Move Note");
+		moveNoteSubmenu.setMenu(moveNoteSubmenuMenu);
+		moveNoteLeft = createMenuItem(moveNoteSubmenuMenu, "Left", l, TreeContextMenuController.MOVE_NOTE_LEFT);
+		moveNoteRight = createMenuItem(moveNoteSubmenuMenu, "Right", l, TreeContextMenuController.MOVE_NOTE_RIGHT);
+		moveNoteUp = createMenuItem(moveNoteSubmenuMenu, "Up", l, TreeContextMenuController.MOVE_NOTE_UP);
+		moveNoteDown = createMenuItem(moveNoteSubmenuMenu, "Down", l, TreeContextMenuController.MOVE_NOTE_DOWN);
+		
 		// remove note/s and rename note
 		removeNotes = createMenuItem(menu, "Remove Notes", l, TreeContextMenuController.REMOVE_NOTES);
 		renameNote = createMenuItem(menu, "Rename Note", l, TreeContextMenuController.RENAME_NOTE);
@@ -50,10 +66,12 @@ public class TreeContextMenu {
 	public void initialise(int selectionCount) {
 		if (selectionCount == 1) {
 			addNoteSubmenu.setEnabled(true);
+			moveNoteSubmenu.setEnabled(true);
 			removeNotes.setText("Remove Note");
 			renameNote.setEnabled(true);
 		} else {
 			addNoteSubmenu.setEnabled(false);
+			moveNoteSubmenu.setEnabled(false);
 			removeNotes.setText("Remove Notes");
 			renameNote.setEnabled(false);
 		}

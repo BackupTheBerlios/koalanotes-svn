@@ -1,12 +1,15 @@
 package de.berlios.koalanotes.controllers;
 
 import java.io.File;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 
+import de.berlios.koalanotes.data.Note;
 import de.berlios.koalanotes.display.DisplayedDocument;
+import de.berlios.koalanotes.display.DisplayedNote;
 
 public class MainMenuController extends Controller {
 	
@@ -30,12 +33,15 @@ public class MainMenuController extends Controller {
 	public void fileOpen(Event e) {
 		FileDialog fileDialog = new FileDialog(dd.getShell(), SWT.OPEN);
 		String filePath = fileDialog.open();
-		if (filePath != null) {
-			dd.getTabFolder().closeNoteTabs();
-			File file = new File(filePath);
-			dd.getTree().loadTree(dd.getDocument().loadNotes(file));
-			dd.getShell().setText(file.getName() + " - Koala Notes");
+		if (filePath == null) return;
+		dd.getTabFolder().closeNoteTabs();
+		dd.getTree().removeAll();
+		File file = new File(filePath);
+		List<Note> notes = dd.getDocument().loadNotes(file);
+		for (Note root : notes) {
+			new DisplayedNote(dd, dd.getTree(), root);
 		}
+		dd.getShell().setText(file.getName() + " - Koala Notes");
 	}
 	
 	public static final String FILE_SAVE = getMethodDescriptor("fileSave");

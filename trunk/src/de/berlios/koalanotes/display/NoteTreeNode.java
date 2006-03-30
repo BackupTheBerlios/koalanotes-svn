@@ -1,5 +1,9 @@
 package de.berlios.koalanotes.display;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -30,36 +34,27 @@ public class NoteTreeNode {
 		treeItem.setText(name);
 	}
 	
-	public void select() {
-		treeItem.getParent().setSelection(new TreeItem[] {treeItem});
+	public boolean isSelected() {
+		TreeItem[] selection = treeItem.getParent().getSelection();
+		for (TreeItem selected : selection) {
+			if (treeItem.equals(selected)) return true;
+		}
+		return false;
+	}
+	
+	public void setSelected(boolean selected) {
+		List<TreeItem> selectionTemp = Arrays.asList(treeItem.getParent().getSelection());
+		List<TreeItem> selection = new LinkedList<TreeItem>(selectionTemp);
+		if (selected) {
+			selection.add(treeItem);
+		} else {
+			selection.remove(treeItem);
+		}
+		TreeItem[] newSelection = selection.toArray(new TreeItem[selection.size()]);
+		treeItem.getParent().setSelection(newSelection);
 	}
 	
 	public void dispose() {
 		treeItem.dispose();
-	}
-	
-	public void moveAfter(NoteTreeNode siblingBefore) {
-		Tree tree = treeItem.getParent();
-		treeItem.dispose();
-		TreeItem treeItemBefore = siblingBefore.treeItem;
-		TreeItem parent = treeItemBefore.getParentItem();
-		if (parent != null) {
-			int index = parent.indexOf(treeItemBefore);
-			treeItem = new TreeItem(parent, SWT.NONE, index);
-		} else {
-			int index = tree.indexOf(treeItemBefore);
-			treeItem = new TreeItem(tree, SWT.NONE, index);
-		}
-	}
-	
-	public void moveUnder(NoteTreeNode parent) {
-		treeItem.dispose();
-		treeItem = new TreeItem(parent.treeItem, SWT.NONE, 0);
-	}
-	
-	public void moveToTopRoot() {
-		Tree tree = treeItem.getParent();
-		treeItem.dispose();
-		treeItem = new TreeItem(tree, SWT.NONE, 0);
 	}
 }

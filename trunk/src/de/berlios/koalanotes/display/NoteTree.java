@@ -15,8 +15,6 @@ import de.berlios.koalanotes.controllers.Listener;
 import de.berlios.koalanotes.controllers.MainController;
 import de.berlios.koalanotes.controllers.TreeController;
 
-import de.berlios.koalanotes.data.Note;
-
 public class NoteTree {
 	private Tree tree;
 	private TreeContextMenu contextMenu;
@@ -37,10 +35,6 @@ public class NoteTree {
 		// Events.
 		this.l = l;
 		l.mapEvent(tree, SWT.MouseDoubleClick, MainController.DISPLAY_TAB);
-	}
-	
-	public void init() {
-		tree.getItem(0).setExpanded(true);
 	}
 	
 	
@@ -81,16 +75,16 @@ public class NoteTree {
 	
 	// Nodes
 	
-	public void loadTree(List<Note> roots) {
-		tree.removeAll();
-		for (Note root : roots) {
-			new DisplayedNote(tree, root);
-		}
-		init();
+	public NoteTreeNode addRootNode(DisplayedNote displayedNote) {
+		return new NoteTreeNode(tree, displayedNote);
 	}
 	
-	public DisplayedNote addRoot(Note root) {
-		return new DisplayedNote(tree, root);
+	public NoteTreeNode addTreeNode(NoteTreeNode parent, DisplayedNote displayedNote) {
+		return new NoteTreeNode(parent, displayedNote);
+	}
+	
+	public void removeAll() {
+		tree.removeAll();
 	}
 	
 	public int getSelectionCount() {

@@ -37,6 +37,12 @@ public class Note implements NoteHolder {
 	public void addNote(Note note, int index) {notes.add(index, note);}
 	public void removeNote(Note note) {notes.remove(note);}
 	
+	public void move(NoteHolder newHolder, int index) {
+		holder.removeNote(this);
+		holder = newHolder;
+		holder.addNote(this, index);
+	}
+	
 	public String getText() {return text;}
 	public void setText(String text) {this.text = text;}
 }

@@ -1,6 +1,7 @@
 package de.berlios.koalanotes.display;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -16,18 +17,20 @@ import de.berlios.koalanotes.controllers.TreeController;
 
 import de.berlios.koalanotes.data.Document;
 import de.berlios.koalanotes.data.Note;
+import de.berlios.koalanotes.data.NoteHolder;
 
 /**
  * DisplayedDocument holds the state of the display, as well the document being displayed.
  * Specifically DisplayedDocument holds the document, shell, main menu, tree and tab folder.
  * As DisplayedNote is to Note, DisplayedDocument is to Document.
  */
-public class DisplayedDocument {
+public class DisplayedDocument implements DisplayedNoteHolder {
 	private Document document;
 	private Shell shell;
 	private MainMenu mainMenu;
 	private NoteTree tree;
 	private NoteTabFolder tabFolder;
+	private List<DisplayedNote> displayedNotes; // root notes
 	
 	public DisplayedDocument(Shell shell, Listener listener, Dispatcher dispatcher) {
 		
@@ -39,8 +42,6 @@ public class DisplayedDocument {
 		// Document
 		document = new Document();
 		Note root = new Note("root", document, "");
-		LinkedList<Note> roots = new LinkedList<Note>();
-		roots.add(root);
 		
 		// Menu
 		mainMenu = new MainMenu(shell, listener);
@@ -48,10 +49,10 @@ public class DisplayedDocument {
 		// SashForm
 		SashForm sashForm = new SashForm(shell, SWT.HORIZONTAL);
 		
-		// Tree
+		// Tree and DisplayedNotes
+		this.displayedNotes = new LinkedList<DisplayedNote>();
 		tree = new NoteTree(sashForm, listener);
-		tree.loadTree(roots);
-		tree.init();
+		new DisplayedNote(this, tree, root);
 		
 		// TabFolder
 		tabFolder = new NoteTabFolder(sashForm, listener);
@@ -71,4 +72,11 @@ public class DisplayedDocument {
 	public MainMenu getMainMenu() {return mainMenu;}
 	public NoteTree getTree() {return tree;}
 	public NoteTabFolder getTabFolder() {return tabFolder;}
+	
+	// Implement DisplayedNoteHolder
+	public List<DisplayedNote> getDisplayedNotes() {return displayedNotes;}
+	public void addDisplayedNote(DisplayedNote dn) {displayedNotes.add(dn);}
+	public void addDisplayedNote(DisplayedNote dn, int index) {displayedNotes.add(index, dn);}
+	public void removeDisplayedNote(DisplayedNote dn) {displayedNotes.remove(dn);}
+	public NoteHolder getNoteHolder() {return document;}
 }
