@@ -11,8 +11,6 @@ import org.eclipse.swt.widgets.Shell;
 import de.berlios.koalanotes.controllers.Dispatcher;
 import de.berlios.koalanotes.controllers.Listener;
 import de.berlios.koalanotes.controllers.MainController;
-import de.berlios.koalanotes.controllers.MainMenuController;
-import de.berlios.koalanotes.controllers.TreeContextMenuController;
 import de.berlios.koalanotes.controllers.TreeController;
 
 import de.berlios.koalanotes.data.Document;
@@ -44,7 +42,7 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 		Note root = new Note("root", document, "");
 		
 		// Menu
-		mainMenu = new MainMenu(shell, listener);
+		mainMenu = new MainMenu(shell, listener, dispatcher, this);
 		
 		// SashForm
 		SashForm sashForm = new SashForm(shell, SWT.HORIZONTAL);
@@ -62,9 +60,7 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 		
 		// Controllers
 		new MainController(dispatcher, this);
-		new MainMenuController(dispatcher, this);
 		new TreeController(dispatcher, tree);
-		new TreeContextMenuController(dispatcher, this, listener);
 	}
 	
 	public Document getDocument() {return document;}
