@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
-  <note name="Main" text="&#xA;Next steps:&#xA; - Shortcut keys&#xA; - Dividers for main view&#xA;&#xA;Later:&#xA; - Toolbar&#xA; - Automated tests&#xA;" />
+  <note name="Main" text="&#xA;Next steps:&#xA; - Shortcut keys for use only when the tree is in focus eg. Del to delete a note.&#xA; - Ctrl-Shift-Up/Down/Left/Right shortcuts for moving a note.&#xA; - Cut/Copy/Paste for notes in tree and relevant shortcut keys.&#xA; - Drag-Drop for moving notes in the tree.&#xA; - File-&gt;Exit.&#xA; - Prompt user to save if they exit without saving.&#xA; - Dividers for main view.&#xA;&#xA;Later:&#xA; - Save view of document eg. what tabs were open in what view panes and where they were scrolled to.&#xA; - Option to save view of document a) as part of document b) in a nominated file.  Default to option a.&#xA; - Toolbar.&#xA; - Automated tests.&#xA;&#xA;After first release:&#xA; - Rich text&#xA; - HTML Export&#xA; - Templates!  Eg. Character." />
 </root>
 
