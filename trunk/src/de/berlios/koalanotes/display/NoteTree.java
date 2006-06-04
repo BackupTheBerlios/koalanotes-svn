@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
+import de.berlios.koalanotes.controllers.Dispatcher;
 import de.berlios.koalanotes.controllers.Listener;
 import de.berlios.koalanotes.controllers.MainController;
 import de.berlios.koalanotes.controllers.TreeController;
@@ -19,13 +20,13 @@ public class NoteTree {
 	private Tree tree;
 	private TreeContextMenu contextMenu;
 	private TreeEditor treeEditor;
-	private Listener l;
+	private Dispatcher d;
 	
-	public NoteTree(Composite parent, Listener l) {
+	public NoteTree(Composite parent, Dispatcher d) {
 		
 		// Tree and context menu.
 		tree = new Tree(parent, SWT.MULTI);
-		contextMenu = new TreeContextMenu(tree, l);
+		contextMenu = new TreeContextMenu(tree, d);
 		
 		// Text editor for renaming tree nodes.
 		treeEditor = new TreeEditor(tree);
@@ -33,8 +34,8 @@ public class NoteTree {
 		treeEditor.minimumWidth = 50;
 		
 		// Events.
-		this.l = l;
-		l.mapEvent(tree, SWT.MouseDoubleClick, MainController.DISPLAY_TAB);
+		this.d = d;
+		tree.addListener(SWT.MouseDoubleClick, new Listener(d, MainController.DISPLAY_TAB));
 	}
 	
 	
@@ -55,9 +56,9 @@ public class NoteTree {
 		treeTextEditor.selectAll();
 		treeTextEditor.setFocus();
 		treeEditor.setEditor(treeTextEditor, ti);
-		l.mapEvent(treeTextEditor, SWT.Modify, TreeController.RENAME_NOTE);
-		l.mapEvent(treeTextEditor, SWT.FocusOut, TreeController.FINISH_RENAME_NOTE);
-		l.mapEvent(treeTextEditor, SWT.KeyDown, TreeController.FINISH_RENAME_NOTE);
+		treeTextEditor.addListener(SWT.Modify, new Listener(d, TreeController.RENAME_NOTE));
+		treeTextEditor.addListener(SWT.FocusOut, new Listener(d, TreeController.FINISH_RENAME_NOTE));
+		treeTextEditor.addListener(SWT.KeyDown, new Listener(d, TreeController.FINISH_RENAME_NOTE));
 	}
 	
 	public String getTreeEditorText() {
@@ -67,7 +68,6 @@ public class NoteTree {
 	public void disposeTreeEditor() {
 		Control treeTextEditor = treeEditor.getEditor();
 		if (treeTextEditor != null) {
-			l.removeMappingFor(treeTextEditor);
 			treeTextEditor.dispose();
 		}
 	}

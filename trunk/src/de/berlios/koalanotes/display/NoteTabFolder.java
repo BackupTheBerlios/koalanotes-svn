@@ -5,15 +5,11 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Composite;
 
-import de.berlios.koalanotes.controllers.Listener;
-
 public class NoteTabFolder {
 	private CTabFolder tabFolder;
-	private Listener l;
 	
-	public NoteTabFolder(Composite parent, Listener l) {
+	public NoteTabFolder(Composite parent) {
 		tabFolder = new CTabFolder(parent, SWT.TOP | SWT.CLOSE);
-		this.l = l;
 	}
 	
 	public void saveNoteTabs() {
@@ -29,6 +25,6 @@ public class NoteTabFolder {
 	}
 	
 	public NoteTab addNoteTab(DisplayedNote displayedNote) {
-		return new NoteTab(tabFolder, l, displayedNote);
+		return new NoteTab(tabFolder, displayedNote);
 	}
 }

@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
+import de.berlios.koalanotes.controllers.Dispatcher;
 import de.berlios.koalanotes.controllers.Listener;
 
 /**
@@ -21,14 +22,14 @@ public class Dialog {
 	private static final String OK = "Ok";
 	private static final String CANCEL = "Cancel";
 	
-	private Listener l;
+	private Dispatcher d;
 	private Shell myDialog;
 	private Composite mainSection;
 	private Composite buttonSection;
 	private List<Button> buttons;
 	
-	public Dialog(Shell parent, Listener l) {
-		this.l = l;
+	public Dialog(Shell parent, Dispatcher d) {
+		this.d = d;
 		myDialog = new Shell(parent, SWT.DIALOG_TRIM);
 		RowLayout myDialogLayout = new RowLayout(SWT.VERTICAL);
 		myDialogLayout.fill = true;
@@ -39,10 +40,10 @@ public class Dialog {
 		buttons = new LinkedList<Button>();
 	}
 	
-	public Dialog(Shell parent, Listener l,
+	public Dialog(Shell parent, Dispatcher d,
 	              String okControllerMethodDescriptor,
 	              String cancelMethodDescriptor) {
-		this(parent, l);
+		this(parent, d);
 		Button okButton = addButton(OK, okControllerMethodDescriptor);
 		addButton(CANCEL, cancelMethodDescriptor);
 		myDialog.setDefaultButton(okButton);
@@ -64,7 +65,7 @@ public class Dialog {
 		Button b = new Button(buttonSection, SWT.NONE);
 		b.setText(buttonName);
 		b.setLayoutData(fdata);
-		l.mapEvent(b, SWT.Selection, controllerMethodDescriptor);
+		b.addListener(SWT.Selection, new Listener(d, controllerMethodDescriptor));
 		buttons.add(b);
 		return b;
 	}

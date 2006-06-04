@@ -4,7 +4,6 @@ import org.eclipse.swt.widgets.Event;
 
 import de.berlios.koalanotes.controllers.Controller;
 import de.berlios.koalanotes.controllers.Dispatcher;
-import de.berlios.koalanotes.controllers.Listener;
 import de.berlios.koalanotes.display.DisplayedDocument;
 import de.berlios.koalanotes.display.DisplayedNote;
 import de.berlios.koalanotes.display.DisplayedNoteHolder;
@@ -15,18 +14,16 @@ public class NoteMenuController extends Controller {
 	
 	private Dispatcher d;
 	private DisplayedDocument dd;
-	private Listener l;
 	private NoteMenu noteMenu; // the instance of NoteMenu that resides on the main menu bar
 	
 	public static String getMethodDescriptor(String methodName) {
 		return getMethodDescriptor(NoteMenuController.class, methodName);
 	}
 	
-	public NoteMenuController(Dispatcher d, DisplayedDocument dd, Listener l, NoteMenu noteMenu) {
+	public NoteMenuController(Dispatcher d, DisplayedDocument dd, NoteMenu noteMenu) {
 		super(d);
 		this.d = d;
 		this.dd = dd;
-		this.l = l;
 		this.noteMenu = noteMenu;
 	}
 	
@@ -37,13 +34,13 @@ public class NoteMenuController extends Controller {
 	
 	public static final String ADD_NOTE_AFTER = getMethodDescriptor("addNoteAfter");
 	public void addNoteAfter(Event e) {
-		AddNoteDialog and = new AddNoteDialog(dd.getShell(), l);
+		AddNoteDialog and = new AddNoteDialog(dd.getShell(), d);
 		new AddNoteController(d, dd, true, and);
 	}
 	
 	public static final String ADD_NOTE_UNDER = getMethodDescriptor("addNoteUnder");
 	public void addNoteUnder(Event e) {
-		AddNoteDialog and = new AddNoteDialog(dd.getShell(), l);
+		AddNoteDialog and = new AddNoteDialog(dd.getShell(), d);
 		new AddNoteController(d, dd, false, and);
 	}
 	

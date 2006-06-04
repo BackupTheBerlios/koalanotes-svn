@@ -7,14 +7,12 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Text;
 
-import de.berlios.koalanotes.controllers.Listener;
-
 public class NoteTab implements DisposeListener {
 	private DisplayedNote displayedNote;
 	private CTabItem tabItem;
 	private Text text;
 	
-	public NoteTab(final CTabFolder parent, Listener l, DisplayedNote displayedNote) {
+	public NoteTab(final CTabFolder parent, DisplayedNote displayedNote) {
 		this.displayedNote = displayedNote;
 		tabItem = new CTabItem(parent, SWT.NONE);
 		tabItem.setText(displayedNote.getName());

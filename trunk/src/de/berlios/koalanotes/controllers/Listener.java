@@ -1,43 +1,24 @@
 package de.berlios.koalanotes.controllers;
 
-import java.util.HashMap;
-import java.util.Set;
-
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Widget;
 
+/**
+ * SWT's Listener customised to the KoalaNotes listener/dispatcher/controller framework.  All events
+ * in KoalaNotes are picked up by either a KoalaNotes Action or a KoalaNotes Listener, and are then
+ * sent to the Dispatcher to be dispatched to a Controller.
+ *  
+ * @author alison
+ */
 public class Listener implements org.eclipse.swt.widgets.Listener {
-	private HashMap<Widget, HashMap<Integer, String>> srcToEvtToMethod;
 	private Dispatcher dispatcher;
+	private String controllerMethodDescriptor;
 	
-	public Listener(Dispatcher dispatcher) {
+	public Listener(Dispatcher dispatcher, String controllerMethodDescriptor) {
 		this.dispatcher = dispatcher;
-		srcToEvtToMethod = new HashMap<Widget, HashMap<Integer, String>>();
-	}
-	
-	public void mapEvent(Widget source, int eventType, String controllerMethod) {
-		source.addListener(eventType, this);
-		HashMap<Integer, String> evtToMethod = srcToEvtToMethod.get(source);
-		if (evtToMethod == null) {
-			evtToMethod = new HashMap<Integer, String>();
-			srcToEvtToMethod.put(source, evtToMethod);
-		}
-		evtToMethod.put(eventType, controllerMethod);
+		this.controllerMethodDescriptor = controllerMethodDescriptor;
 	}
 	
 	public void handleEvent(Event e) {
-		String methodDescriptor = srcToEvtToMethod.get(e.widget).get(e.type);
-		dispatcher.invokeControllerMethod(methodDescriptor, e);
-	}
-	
-	public void removeMappingFor(Widget source) {
-		HashMap<Integer, String> evtToMethod = srcToEvtToMethod.get(source);
-		if (evtToMethod != null) {
-			Set<Integer> eventTypes = evtToMethod.keySet();
-			for (Integer eventType : eventTypes) {
-				source.removeListener(eventType, this);
-			}
-			srcToEvtToMethod.remove(source);
-		}
+		dispatcher.invokeControllerMethod(controllerMethodDescriptor, e);
 	}
 }

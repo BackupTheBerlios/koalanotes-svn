@@ -7,15 +7,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import de.berlios.koalanotes.controllers.Listener;
+import de.berlios.koalanotes.controllers.Dispatcher;
 import de.berlios.koalanotes.display.Dialog;
 
 public class AddNoteDialog {
 	private Dialog dialog;
 	private Text name;
 	
-	public AddNoteDialog(Shell shell, Listener l) {
-		dialog = new Dialog(shell, l, AddNoteController.OK, AddNoteController.CANCEL);
+	public AddNoteDialog(Shell shell, Dispatcher d) {
+		dialog = new Dialog(shell, d, AddNoteController.OK, AddNoteController.CANCEL);
 		Composite mainSection = dialog.getMainSection();
 		mainSection.setLayout(new RowLayout());
 		name = new Text(dialog.getMainSection(), SWT.LEFT);

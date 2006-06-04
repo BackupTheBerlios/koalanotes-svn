@@ -9,7 +9,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Shell;
 
 import de.berlios.koalanotes.controllers.Dispatcher;
-import de.berlios.koalanotes.controllers.Listener;
 import de.berlios.koalanotes.controllers.MainController;
 import de.berlios.koalanotes.controllers.TreeController;
 
@@ -30,7 +29,7 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 	private NoteTabFolder tabFolder;
 	private List<DisplayedNote> displayedNotes; // root notes
 	
-	public DisplayedDocument(Shell shell, Listener listener, Dispatcher dispatcher) {
+	public DisplayedDocument(Shell shell, Dispatcher dispatcher) {
 		
 		// Shell
 		this.shell = shell;
@@ -42,18 +41,18 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 		Note root = new Note("root", document, "");
 		
 		// Menu
-		mainMenu = new MainMenu(shell, listener, dispatcher, this);
+		mainMenu = new MainMenu(shell, dispatcher, this);
 		
 		// SashForm
 		SashForm sashForm = new SashForm(shell, SWT.HORIZONTAL);
 		
 		// Tree and DisplayedNotes
 		this.displayedNotes = new LinkedList<DisplayedNote>();
-		tree = new NoteTree(sashForm, listener);
+		tree = new NoteTree(sashForm, dispatcher);
 		new DisplayedNote(this, tree, root);
 		
 		// TabFolder
-		tabFolder = new NoteTabFolder(sashForm, listener);
+		tabFolder = new NoteTabFolder(sashForm);
 		
 		// Finish SashForm
 		sashForm.setWeights(new int[] {20, 80});
