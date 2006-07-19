@@ -12,7 +12,7 @@ public abstract class Controller {
 	private static final Class[] METHOD_ARGS = new Class[] {Event.class};
 	private static final String SEPARATOR = ".";
 	
-	private Dispatcher d;
+	protected Dispatcher d;
 	
 	public Controller(Dispatcher d) {
 		this.d = d;
