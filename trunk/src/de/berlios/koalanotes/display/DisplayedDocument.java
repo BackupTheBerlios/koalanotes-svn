@@ -3,11 +3,14 @@ package de.berlios.koalanotes.display;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Shell;
 
+import de.berlios.koalanotes.controllers.ActionGroup;
 import de.berlios.koalanotes.controllers.Dispatcher;
 import de.berlios.koalanotes.controllers.MainController;
 import de.berlios.koalanotes.controllers.TreeController;
@@ -15,6 +18,10 @@ import de.berlios.koalanotes.controllers.TreeController;
 import de.berlios.koalanotes.data.Document;
 import de.berlios.koalanotes.data.Note;
 import de.berlios.koalanotes.data.NoteHolder;
+import de.berlios.koalanotes.display.menus.FileActionGroup;
+import de.berlios.koalanotes.display.menus.FileMenuController;
+import de.berlios.koalanotes.display.menus.NoteActionGroup;
+import de.berlios.koalanotes.display.menus.NoteMenuController;
 
 /**
  * DisplayedDocument holds the state of the display, as well the document being displayed.
@@ -24,10 +31,10 @@ import de.berlios.koalanotes.data.NoteHolder;
 public class DisplayedDocument implements DisplayedNoteHolder {
 	private Document document;
 	private Shell shell;
-	private MainMenu mainMenu;
 	private NoteTree tree;
 	private NoteTabFolder tabFolder;
 	private List<DisplayedNote> displayedNotes; // root notes
+	private List<ActionGroup> actionGroups; // groups of menu/toolbar items
 	
 	public DisplayedDocument(Shell shell, Dispatcher dispatcher) {
 		
@@ -39,9 +46,6 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 		// Document
 		document = new Document();
 		Note root = new Note("root", document, "");
-		
-		// Menu
-		mainMenu = new MainMenu(shell, dispatcher, this);
 		
 		// SashForm
 		SashForm sashForm = new SashForm(shell, SWT.HORIZONTAL);
@@ -57,16 +61,33 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 		// Finish SashForm
 		sashForm.setWeights(new int[] {20, 80});
 		
+		// Action Groups
+		actionGroups = new LinkedList<ActionGroup>();
+		actionGroups.add(new FileActionGroup(dispatcher, document));
+		actionGroups.add(new NoteActionGroup(dispatcher, tree));
+		
+		// Menu Bar and Tree Context Menu
+		MenuManager menuBar = new MenuManager();
+		MenuManager treeContextMenu = new MenuManager();
+		for (ActionGroup ag : actionGroups) {
+			ag.populateMenuBar(menuBar);
+			ag.populateTreeContextMenu(treeContextMenu);
+		}
+		tree.setContextMenu(treeContextMenu);
+		shell.setMenuBar(menuBar.createMenuBar((Decorations) shell));
+		
 		// Controllers
+		new FileMenuController(dispatcher, this);
+		new NoteMenuController(dispatcher, this);
 		new MainController(dispatcher, this);
 		new TreeController(dispatcher, tree);
 	}
 	
 	public Document getDocument() {return document;}
 	public Shell getShell() {return shell;}
-	public MainMenu getMainMenu() {return mainMenu;}
 	public NoteTree getTree() {return tree;}
 	public NoteTabFolder getTabFolder() {return tabFolder;}
+	public List<ActionGroup> getActionGroups() {return actionGroups;}
 	
 	// Implement DisplayedNoteHolder
 	public List<DisplayedNote> getDisplayedNotes() {return displayedNotes;}

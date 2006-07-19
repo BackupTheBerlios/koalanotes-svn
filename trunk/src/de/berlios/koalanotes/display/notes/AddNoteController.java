@@ -46,7 +46,7 @@ public class AddNoteController extends Controller {
 		}
 		dn.setSelected(false);
 		newDn.setSelected(true);
-		newDn.displayTab(dd.getTabFolder());
+		newDn.displayTab(dd.getTabFolder(), d);
 		addNoteDialog.dispose();
 		deregister();
 	}

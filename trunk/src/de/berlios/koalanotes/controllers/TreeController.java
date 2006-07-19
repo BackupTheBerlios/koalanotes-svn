@@ -19,11 +19,6 @@ public class TreeController extends Controller {
 		this.tree = tree;
 	}
 	
-	public static final String INITIALISE_CONTEXT_MENU = getMethodDescriptor("initialiseContextMenu");
-	public void initialiseContextMenu(Event e) {
-		tree.initialiseContextMenu();
-	}
-	
 	public static final String RENAME_NOTE = getMethodDescriptor("renameNote");
 	public void renameNote(Event e) {
 		String newName = tree.getTreeEditorText();

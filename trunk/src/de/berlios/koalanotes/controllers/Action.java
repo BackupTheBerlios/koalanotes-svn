@@ -14,25 +14,25 @@ public class Action extends org.eclipse.jface.action.Action {
 	private String controllerMethodDescriptor;
 	
 	/** See org.eclipse.jface.action.Action. */
-	protected Action(Dispatcher dispatcher, String controllerMethod) {
+	public Action(Dispatcher dispatcher, String controllerMethod) {
 		super();
 		init(dispatcher, controllerMethod);
 	}
     
 	/** See org.eclipse.jface.action.Action. */
-	protected Action(Dispatcher dispatcher, String controllerMethod, String text) {
+	public Action(Dispatcher dispatcher, String controllerMethod, String text) {
 		super(text);
 		init(dispatcher, controllerMethod);
 	}
 	
 	/** See org.eclipse.jface.action.Action. */
-	protected Action(Dispatcher dispatcher, String controllerMethod, String text, ImageDescriptor image) {
+	public Action(Dispatcher dispatcher, String controllerMethod, String text, ImageDescriptor image) {
 		super(text, image);
 		init(dispatcher, controllerMethod);
 	}
 	
 	/** See org.eclipse.jface.action.Action. */
-	protected Action(Dispatcher dispatcher, String controllerMethod, String text, int style) {
+	public Action(Dispatcher dispatcher, String controllerMethod, String text, int style) {
 		super(text, style);
 		init(dispatcher, controllerMethod);
 	}

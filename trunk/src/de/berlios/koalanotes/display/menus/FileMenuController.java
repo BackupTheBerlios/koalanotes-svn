@@ -14,23 +14,15 @@ import de.berlios.koalanotes.display.DisplayedDocument;
 import de.berlios.koalanotes.display.DisplayedNote;
 
 public class FileMenuController extends Controller {
-	
 	private DisplayedDocument dd;
-	private FileMenu fileMenu;
 	
 	public static String getMethodDescriptor(String methodName) {
 		return getMethodDescriptor(FileMenuController.class, methodName);
 	}
 	
-	public FileMenuController(Dispatcher d, DisplayedDocument dd, FileMenu fileMenu) {
+	public FileMenuController(Dispatcher d, DisplayedDocument dd) {
 		super(d);
 		this.dd = dd;
-		this.fileMenu = fileMenu;
-	}
-	
-	public static final String INITIALISE_MENU = getMethodDescriptor("initialiseMenu");
-	public void initialiseMenu(Event e) {
-		fileMenu.initialise(dd.getDocument().hasFile());
 	}
 	
 	public static final String FILE_OPEN = getMethodDescriptor("fileOpen");

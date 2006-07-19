@@ -11,25 +11,15 @@ import de.berlios.koalanotes.display.notes.AddNoteController;
 import de.berlios.koalanotes.display.notes.AddNoteDialog;
 
 public class NoteMenuController extends Controller {
-	
-	private Dispatcher d;
 	private DisplayedDocument dd;
-	private NoteMenu noteMenu; // the instance of NoteMenu that resides on the main menu bar
 	
 	public static String getMethodDescriptor(String methodName) {
 		return getMethodDescriptor(NoteMenuController.class, methodName);
 	}
 	
-	public NoteMenuController(Dispatcher d, DisplayedDocument dd, NoteMenu noteMenu) {
+	public NoteMenuController(Dispatcher d, DisplayedDocument dd) {
 		super(d);
-		this.d = d;
 		this.dd = dd;
-		this.noteMenu = noteMenu;
-	}
-	
-	public static final String INITIALISE_MENU = getMethodDescriptor("initialiseMenu");
-	public void initialiseMenu(Event e) {
-		noteMenu.initialise(dd.getTree().getSelectionCount());
 	}
 	
 	public static final String ADD_NOTE_AFTER = getMethodDescriptor("addNoteAfter");
@@ -87,6 +77,6 @@ public class NoteMenuController extends Controller {
 	
 	public static final String RENAME_NOTE = getMethodDescriptor("renameNote");
 	public void renameNote(Event e) {
-		dd.getTree().initialiseTreeEditor();
+		dd.getTree().initialiseTreeEditor(d);
 	}
 }

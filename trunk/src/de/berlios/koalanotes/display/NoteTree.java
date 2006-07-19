@@ -3,6 +3,7 @@ package de.berlios.koalanotes.display;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
 import org.eclipse.swt.widgets.Composite;
@@ -18,15 +19,12 @@ import de.berlios.koalanotes.controllers.TreeController;
 
 public class NoteTree {
 	private Tree tree;
-	private TreeContextMenu contextMenu;
 	private TreeEditor treeEditor;
-	private Dispatcher d;
 	
 	public NoteTree(Composite parent, Dispatcher d) {
 		
 		// Tree and context menu.
 		tree = new Tree(parent, SWT.MULTI);
-		contextMenu = new TreeContextMenu(tree, d);
 		
 		// Text editor for renaming tree nodes.
 		treeEditor = new TreeEditor(tree);
@@ -34,21 +32,23 @@ public class NoteTree {
 		treeEditor.minimumWidth = 50;
 		
 		// Events.
-		this.d = d;
 		tree.addListener(SWT.MouseDoubleClick, new Listener(d, MainController.DISPLAY_TAB));
+		Listener contextChangedListener = new Listener(d, MainController.CONTEXT_CHANGED);
+		tree.addListener(SWT.FocusIn, contextChangedListener);
+		tree.addListener(SWT.Selection, contextChangedListener);
 	}
 	
 	
 	// Context Menu
 	
-	public void initialiseContextMenu() {
-		contextMenu.initialise(tree.getSelectionCount());
+	public void setContextMenu(MenuManager contextMenu) {
+		tree.setMenu(contextMenu.createContextMenu(tree));
 	}
 	
 	
 	// Tree Editor
 	
-	public void initialiseTreeEditor() {
+	public void initialiseTreeEditor(Dispatcher d) {
 		TreeItem ti = tree.getSelection()[0];
 		if (ti == null) return;
 		Text treeTextEditor = new Text(tree, SWT.NONE);
@@ -57,8 +57,9 @@ public class NoteTree {
 		treeTextEditor.setFocus();
 		treeEditor.setEditor(treeTextEditor, ti);
 		treeTextEditor.addListener(SWT.Modify, new Listener(d, TreeController.RENAME_NOTE));
-		treeTextEditor.addListener(SWT.FocusOut, new Listener(d, TreeController.FINISH_RENAME_NOTE));
-		treeTextEditor.addListener(SWT.KeyDown, new Listener(d, TreeController.FINISH_RENAME_NOTE));
+		Listener finishRenameListener = new Listener(d, TreeController.FINISH_RENAME_NOTE);
+		treeTextEditor.addListener(SWT.FocusOut, finishRenameListener);
+		treeTextEditor.addListener(SWT.KeyDown, finishRenameListener);
 	}
 	
 	public String getTreeEditorText() {
