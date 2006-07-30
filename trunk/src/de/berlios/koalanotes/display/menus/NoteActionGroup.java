@@ -1,6 +1,7 @@
 package de.berlios.koalanotes.display.menus;
 
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.swt.SWT;
 
 import de.berlios.koalanotes.controllers.Action;
 import de.berlios.koalanotes.controllers.ActionGroup;
@@ -36,25 +37,34 @@ public class NoteActionGroup implements ActionGroup {
 		moveNoteUp = new Action(d, NoteMenuController.MOVE_NOTE_UP, "&Up");
 		moveNoteDown = new Action(d, NoteMenuController.MOVE_NOTE_DOWN, "&Down");
 		removeNotes = new Action(d, NoteMenuController.REMOVE_NOTES, "&Remove Notes");
+		removeNotes.setAccelerator(SWT.DEL);
 		renameNote = new Action(d, NoteMenuController.RENAME_NOTE, "Re&name Note");
 	}
 	
 	public void update() {
-		if (tree.getSelectionCount() == 1) {
-			addNoteSubmenu.setVisible(true);
-			moveNoteSubmenu.setVisible(true);
-			removeNotes.setText("Remove Note");
-			renameNote.setEnabled(true);
+		if (tree.hasFocus()) {
+			removeNotes.setEnabled(true);
+			if (tree.getSelectionCount() == 1) {
+				addNoteSubmenu.setVisible(true);
+				moveNoteSubmenu.setVisible(true);
+				removeNotes.setText("Remove Note");
+				renameNote.setEnabled(true);
+			} else {
+				addNoteSubmenu.setVisible(false);
+				moveNoteSubmenu.setVisible(false);
+				removeNotes.setText("Remove Notes");
+				renameNote.setEnabled(false);
+			}
 		} else {
 			addNoteSubmenu.setVisible(false);
 			moveNoteSubmenu.setVisible(false);
-			removeNotes.setText("Remove Notes");
+			removeNotes.setEnabled(false);
 			renameNote.setEnabled(false);
 		}
 	}
 	
 	public void populateMenuBar(MenuManager menuBar) {
-		noteMenu = new MenuManager("Note");
+		noteMenu = new MenuManager("&Note");
 		menuBar.add(noteMenu);
 		
 		addNoteSubmenu = new MenuManager("&Add Note");

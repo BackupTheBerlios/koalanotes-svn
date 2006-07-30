@@ -22,9 +22,9 @@ public class NoteTab implements DisposeListener {
 		tabItem.setText(displayedNote.getName());
 		tabItem.setData(this);
 		tabItem.addDisposeListener(this);
-		tabItem.addListener(SWT.FocusIn, new Listener(d, MainController.CONTEXT_CHANGED));
 		text = new Text(parent, SWT.MULTI | SWT.WRAP);
 		text.setText(displayedNote.getNote().getText());
+		text.addListener(SWT.FocusIn, new Listener(d, MainController.CONTEXT_CHANGED));
 		tabItem.setControl(text);
 		select();
 	}

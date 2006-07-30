@@ -39,6 +39,13 @@ public class NoteTree {
 	}
 	
 	
+	// Tree
+	
+	public boolean hasFocus() {
+		return tree.isFocusControl();
+	}
+	
+	
 	// Context Menu
 	
 	public void setContextMenu(MenuManager contextMenu) {
