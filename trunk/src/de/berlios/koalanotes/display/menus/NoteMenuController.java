@@ -70,7 +70,8 @@ public class NoteMenuController extends Controller {
 	
 	public static final String REMOVE_NOTES = getMethodDescriptor("removeNotes");
 	public void removeNotes(Event e) {
-		for (DisplayedNote removeMe : dd.getTree().getSelectedNotes()) {
+		while (dd.getTree().getSelectedNotes().size() > 0) {
+			DisplayedNote removeMe = dd.getTree().getSelectedNotes().get(0);
 			removeMe.deleteSelfAndChildren();
 		}
 	}

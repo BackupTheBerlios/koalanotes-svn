@@ -68,7 +68,8 @@ public class DisplayedNote implements DisplayedNoteHolder {
 	}
 	
 	public void deleteSelfAndChildren() {
-		for (DisplayedNote child : displayedNotes) {
+		while (displayedNotes.size() > 0) {
+			DisplayedNote child = displayedNotes.get(0);
 			child.deleteSelfAndChildren();
 		}
 		treeNode.dispose();
