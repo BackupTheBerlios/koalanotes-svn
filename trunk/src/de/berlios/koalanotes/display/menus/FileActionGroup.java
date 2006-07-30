@@ -21,8 +21,8 @@ public class FileActionGroup implements ActionGroup {
 		this.document = document;
 		open = new Action(d, FileMenuController.FILE_OPEN, "&Open");
 		save = new Action(d, FileMenuController.FILE_SAVE, "&Save");
-		save.setAccelerator(SWT.CONTROL | 's');
-		saveAs = new Action(d, FileMenuController.FILE_SAVE_AS, "&SaveAs");
+		save.setAccelerator(SWT.CONTROL | 'S');
+		saveAs = new Action(d, FileMenuController.FILE_SAVE_AS, "Save &As");
 	}
 	
 	public void update() {
@@ -30,7 +30,7 @@ public class FileActionGroup implements ActionGroup {
 	}
 	
 	public void populateMenuBar(MenuManager menuBar) {
-		fileMenu = new MenuManager("File");
+		fileMenu = new MenuManager("&File");
 		fileMenu.add(open);
 		fileMenu.add(save);
 		fileMenu.add(saveAs);
