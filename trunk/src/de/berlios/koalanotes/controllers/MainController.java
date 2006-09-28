@@ -26,6 +26,8 @@ public class MainController extends Controller {
 		for (ActionGroup ag : actionGroups) {
 			ag.update();
 		}
+		dd.getMenuBar().updateAll(true);
+		dd.getTreeContextMenu().updateAll(true);
 	}
 	
 	public static final String DISPLAY_TAB = getMethodDescriptor("displayTab");

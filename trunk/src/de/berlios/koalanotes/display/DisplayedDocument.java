@@ -34,6 +34,8 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 	private NoteTree tree;
 	private NoteTabFolder tabFolder;
 	private List<DisplayedNote> displayedNotes; // root notes
+	private MenuManager menuBar;
+	private MenuManager treeContextMenu;
 	private List<ActionGroup> actionGroups; // groups of menu/toolbar items
 	
 	public DisplayedDocument(Shell shell, Dispatcher dispatcher) {
@@ -61,20 +63,20 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 		// Finish SashForm
 		sashForm.setWeights(new int[] {20, 80});
 		
+		// Menu Bar and Tree Context Menu
+		menuBar = new MenuManager();
+		treeContextMenu = new MenuManager();
+		tree.setContextMenu(treeContextMenu);
+		shell.setMenuBar(menuBar.createMenuBar((Decorations) shell));
+		
 		// Action Groups
 		actionGroups = new LinkedList<ActionGroup>();
 		actionGroups.add(new FileActionGroup(dispatcher, document));
 		actionGroups.add(new NoteActionGroup(dispatcher, tree));
-		
-		// Menu Bar and Tree Context Menu
-		MenuManager menuBar = new MenuManager();
-		MenuManager treeContextMenu = new MenuManager();
 		for (ActionGroup ag : actionGroups) {
 			ag.populateMenuBar(menuBar);
 			ag.populateTreeContextMenu(treeContextMenu);
 		}
-		tree.setContextMenu(treeContextMenu);
-		shell.setMenuBar(menuBar.createMenuBar((Decorations) shell));
 		
 		// Controllers
 		new FileMenuController(dispatcher, this);
@@ -87,6 +89,8 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 	public Shell getShell() {return shell;}
 	public NoteTree getTree() {return tree;}
 	public NoteTabFolder getTabFolder() {return tabFolder;}
+	public MenuManager getMenuBar() {return menuBar;}
+	public MenuManager getTreeContextMenu() {return treeContextMenu;}
 	public List<ActionGroup> getActionGroups() {return actionGroups;}
 	
 	// Implement DisplayedNoteHolder

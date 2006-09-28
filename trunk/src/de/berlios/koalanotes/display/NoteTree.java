@@ -23,7 +23,7 @@ public class NoteTree {
 	
 	public NoteTree(Composite parent, Dispatcher d) {
 		
-		// Tree and context menu.
+		// Tree.
 		tree = new Tree(parent, SWT.MULTI);
 		
 		// Text editor for renaming tree nodes.
@@ -31,11 +31,15 @@ public class NoteTree {
 		treeEditor.grabHorizontal = true;
 		treeEditor.minimumWidth = 50;
 		
+		// The context changed listener listens for all events that would change the context (eg
+		// selection of tree nodes), so it can notify the main controller.
+		Listener contextChangedListener = new Listener(d, MainController.CONTEXT_CHANGED);
+		
 		// Events.
 		tree.addListener(SWT.MouseDoubleClick, new Listener(d, MainController.DISPLAY_TAB));
-		Listener contextChangedListener = new Listener(d, MainController.CONTEXT_CHANGED);
 		tree.addListener(SWT.FocusIn, contextChangedListener);
 		tree.addListener(SWT.Selection, contextChangedListener);
+		tree.addListener(SWT.DefaultSelection, contextChangedListener);
 	}
 	
 	
@@ -83,16 +87,8 @@ public class NoteTree {
 	
 	// Nodes
 	
-	public NoteTreeNode addRootNode(DisplayedNote displayedNote) {
-		return new NoteTreeNode(tree, displayedNote);
-	}
-	
-	public NoteTreeNode addTreeNode(NoteTreeNode parent, DisplayedNote displayedNote) {
-		return new NoteTreeNode(parent, displayedNote);
-	}
-	
-	public void removeAll() {
-		tree.removeAll();
+	public boolean isEmpty() {
+		return (tree.getItemCount() == 0);
 	}
 	
 	public int getSelectionCount() {
@@ -112,5 +108,17 @@ public class NoteTree {
 			result.add(((NoteTreeNode) ti.getData()).getDisplayedNote());
 		}
 		return result;
+	}
+	
+	public NoteTreeNode addRootNode(DisplayedNote displayedNote) {
+		return new NoteTreeNode(tree, displayedNote);
+	}
+	
+	public NoteTreeNode addTreeNode(NoteTreeNode parent, DisplayedNote displayedNote) {
+		return new NoteTreeNode(parent, displayedNote);
+	}
+	
+	public void removeAll() {
+		tree.removeAll();
 	}
 }

@@ -4,6 +4,7 @@ import org.eclipse.swt.widgets.Event;
 
 import de.berlios.koalanotes.controllers.Controller;
 import de.berlios.koalanotes.controllers.Dispatcher;
+import de.berlios.koalanotes.controllers.MainController;
 import de.berlios.koalanotes.display.DisplayedDocument;
 import de.berlios.koalanotes.display.DisplayedNote;
 import de.berlios.koalanotes.display.DisplayedNoteHolder;
@@ -74,6 +75,7 @@ public class NoteMenuController extends Controller {
 			DisplayedNote removeMe = dd.getTree().getSelectedNotes().get(0);
 			removeMe.deleteSelfAndChildren();
 		}
+		d.invokeControllerMethod(MainController.CONTEXT_CHANGED, e);
 	}
 	
 	public static final String RENAME_NOTE = getMethodDescriptor("renameNote");
