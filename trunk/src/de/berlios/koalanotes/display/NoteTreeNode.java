@@ -12,12 +12,14 @@ public class NoteTreeNode {
 	private DisplayedNote displayedNote;
 	private TreeItem treeItem;
 	
-	public NoteTreeNode(NoteTreeNode parent, DisplayedNote data) {
+	/** A NoteTreeNode should only be created by the NoteTree. */
+	protected NoteTreeNode(NoteTreeNode parent, DisplayedNote data) {
 		treeItem = new TreeItem(parent.treeItem, SWT.NONE, data.getNote().getIndex());
 		init(data);
 	}
 	
-	public NoteTreeNode(Tree tree, DisplayedNote root) {
+	/** A NoteTreeNode should only be created by the NoteTree. */
+	protected NoteTreeNode(Tree tree, DisplayedNote root) {
 		treeItem = new TreeItem(tree, SWT.NONE, root.getNote().getIndex());
 		init(root);
 	}
@@ -43,6 +45,10 @@ public class NoteTreeNode {
 	}
 	
 	public void setSelected(boolean selected) {
+		if (isSelected() == selected) {
+			return; // this is important as the selection is stored as an array rather than a set,
+			        // and we don't want the tree item to be in there multiple times
+		}
 		List<TreeItem> selectionTemp = Arrays.asList(treeItem.getParent().getSelection());
 		List<TreeItem> selection = new LinkedList<TreeItem>(selectionTemp);
 		if (selected) {
