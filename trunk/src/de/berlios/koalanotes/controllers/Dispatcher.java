@@ -28,10 +28,11 @@ public class Dispatcher {
 	
 	/**
 	 * All events come through this method to be dispatched to the appropriate controller.  The
-	 * events will have come via a KoalaNotes Action or a KoalaNotes Listener.  If the event came
-	 * via a KoalaNotes Action, the event argument will be null.
+	 * events will most likely have come via a KoalaNotes Action or a KoalaNotes Listener.  If the
+	 * event came via an Action, the event argument will be null; if it came via a Listener, the
+	 * event argument will be populated.  KoalaNotes Controllers also occasionally call this method.
 	 */
-	protected void invokeControllerMethod(String methodDescriptor, Event event) {
+	public void invokeControllerMethod(String methodDescriptor, Event event) {
 		Controller controller = controllers.get(Controller.getControllerSignature(methodDescriptor));
 		if (controller == null) {
 			throw new KoalaException("Koala Notes could not find controller '"
