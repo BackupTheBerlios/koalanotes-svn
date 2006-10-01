@@ -32,7 +32,7 @@ public class DisableableMenuManager extends MenuManager {
 	public void setEnabled(boolean enabled) {
 		if (this.enabled != enabled) {
 			this.enabled = enabled;
-			if (headingItem != null) headingItem.setEnabled(enabled);
+			if (headingItem != null && !headingItem.isDisposed()) headingItem.setEnabled(enabled);
 		}
 	}
 	
@@ -49,7 +49,7 @@ public class DisableableMenuManager extends MenuManager {
 	@Override
 	public void update() {
 		super.update();
-		if (headingItem != null && headingItem.isEnabled() != enabled) {
+		if (headingItem != null && !headingItem.isDisposed() && headingItem.isEnabled() != enabled) {
 			headingItem.setEnabled(enabled);
 		}
 	}
@@ -57,7 +57,7 @@ public class DisableableMenuManager extends MenuManager {
 	@Override
 	public void update(boolean arg0) {
 		super.update(arg0);
-		if (headingItem != null && headingItem.isEnabled() != enabled) {
+		if (headingItem != null && !headingItem.isDisposed() && headingItem.isEnabled() != enabled) {
 			headingItem.setEnabled(enabled);
 		}
 	}
@@ -65,7 +65,7 @@ public class DisableableMenuManager extends MenuManager {
 	@Override
 	protected void update(boolean arg0, boolean arg1) {
 		super.update(arg0, arg1);
-		if (headingItem != null && headingItem.isEnabled() != enabled) {
+		if (headingItem != null && !headingItem.isDisposed() && headingItem.isEnabled() != enabled) {
 			headingItem.setEnabled(enabled);
 		}
 	}
@@ -73,7 +73,7 @@ public class DisableableMenuManager extends MenuManager {
 	@Override
 	public void update(String arg0) {
 		super.update(arg0);
-		if (headingItem != null && headingItem.isEnabled() != enabled) {
+		if (headingItem != null && !headingItem.isDisposed() && headingItem.isEnabled() != enabled) {
 			headingItem.setEnabled(enabled);
 		}
 	}
@@ -81,7 +81,7 @@ public class DisableableMenuManager extends MenuManager {
 	@Override
 	public void updateAll(boolean arg0) {
 		super.updateAll(arg0);
-		if (headingItem != null && headingItem.isEnabled() != enabled) {
+		if (headingItem != null && !headingItem.isDisposed() && headingItem.isEnabled() != enabled) {
 			headingItem.setEnabled(enabled);
 		}
 	}
