@@ -59,8 +59,14 @@ public class NoteActionGroup implements ActionGroup {
 		moveNoteUp = new Action(d, NoteMenuController.MOVE_NOTE_UP, "&Up");
 		moveNoteDown = new Action(d, NoteMenuController.MOVE_NOTE_DOWN, "&Down");
 		removeNotes = new Action(d, NoteMenuController.REMOVE_NOTES, "&Remove Notes");
-		removeNotes.setAccelerator(SWT.DEL);
 		renameNote = new Action(d, NoteMenuController.RENAME_NOTE, "Re&name Note");
+		
+		// set action shortcut keys
+		moveNoteLeft.setAccelerator(SWT.CONTROL | SWT.SHIFT | SWT.ARROW_LEFT);
+		moveNoteRight.setAccelerator(SWT.CONTROL | SWT.SHIFT | SWT.ARROW_RIGHT);
+		moveNoteUp.setAccelerator(SWT.CONTROL | SWT.SHIFT | SWT.ARROW_UP);
+		moveNoteDown.setAccelerator(SWT.CONTROL | SWT.SHIFT | SWT.ARROW_DOWN);
+		removeNotes.setAccelerator(SWT.DEL);
 		
 		// construct action group helpers
 		allSubmenusAndActions = new ActionGroupHelper();
