@@ -1,5 +1,6 @@
 package de.berlios.koalanotes.display.menus;
 
+import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 
@@ -22,12 +23,17 @@ public class NoteActionGroup implements ActionGroup {
 	
 	// menu managers
 	private MenuManager noteMenu;
-	private DisableableMenuManager addNoteSubmenuMenubar;
-	private DisableableMenuManager moveNoteSubmenuMenubar;
+	private DisableableMenuManager addNoteSubmenuMenuBar;
 	private DisableableMenuManager addNoteSubmenuTree;
+	private DisableableMenuManager moveNoteSubmenuMenuBar;
 	private DisableableMenuManager moveNoteSubmenuTree;
 	
+	// contribution items (need to keep track of contribution items for actions that can be invisible)
+	private ActionContributionItem addNoteContributionMenuBar;
+	private ActionContributionItem addNoteContributionTree;
+	
 	// add note actions
+	private Action addNote; // only visible when the tree is empty
 	private Action addNoteAfter;
 	private Action addNoteUnder;
 	
@@ -45,6 +51,7 @@ public class NoteActionGroup implements ActionGroup {
 		this.tree = tree;
 		
 		// construct actions
+		addNote = new Action(d, NoteMenuController.ADD_NOTE_AFTER, "&Add");
 		addNoteAfter = new Action(d, NoteMenuController.ADD_NOTE_AFTER, "&After");
 		addNoteUnder = new Action(d, NoteMenuController.ADD_NOTE_UNDER, "&Under");
 		moveNoteLeft = new Action(d, NoteMenuController.MOVE_NOTE_LEFT, "&Left");
@@ -73,31 +80,69 @@ public class NoteActionGroup implements ActionGroup {
 		moveNoteSubmenuAndActions.add(moveNoteDown);
 		ungroupedActions.add(removeNotes);
 		ungroupedActions.add(renameNote);
+		
+		// construct action contribution items
+		addNoteContributionMenuBar = new ActionContributionItem(addNote);
+		addNoteContributionMenuBar.setVisible(false);
+		addNoteContributionTree = new ActionContributionItem(addNote);
+		addNoteContributionTree.setVisible(false);
+		
+		// construct submenus
+		addNoteSubmenuMenuBar = new DisableableMenuManager("&Add Note");
+		addNoteSubmenuTree = new DisableableMenuManager("&Add Note");
+		moveNoteSubmenuMenuBar = new DisableableMenuManager("&Move Note");
+		moveNoteSubmenuTree = new DisableableMenuManager("&Move Note");
+		
+		// populate submenus
+		addNoteSubmenuAndActions.addActionsToMenuManager(addNoteSubmenuMenuBar);
+		addNoteSubmenuAndActions.addActionsToMenuManager(addNoteSubmenuTree);
+		addNoteSubmenuAndActions.add(addNoteSubmenuMenuBar);
+		addNoteSubmenuAndActions.add(addNoteSubmenuTree);
+		moveNoteSubmenuAndActions.addActionsToMenuManager(moveNoteSubmenuMenuBar);
+		moveNoteSubmenuAndActions.addActionsToMenuManager(moveNoteSubmenuTree);
+		moveNoteSubmenuAndActions.add(moveNoteSubmenuMenuBar);
+		moveNoteSubmenuAndActions.add(moveNoteSubmenuTree);
 	}
 	
 	public void update() {
 		
-		// If the tree doesn't have focus, no actions from this group can be performed.
-		if (!tree.hasFocus()) {
+		// STEP 1: Make sure the correct actions are visible.
+		
+		// If the tree is empty, only a single add action is needed, if not then a pair of add
+		// actions should be visible.
+		if (tree.isEmpty()) {
 			allSubmenusAndActions.setEnabled(false);
+			addNoteSubmenuMenuBar.setVisible(false);
+			addNoteSubmenuTree.setVisible(false);
+			addNoteContributionMenuBar.setVisible(true);
+			addNoteContributionTree.setVisible(true);
+			return;
+		}
+		if (addNoteContributionMenuBar.isVisible()) {
+			addNoteSubmenuMenuBar.setVisible(true);
+			addNoteSubmenuTree.setVisible(true);
+			addNoteContributionMenuBar.setVisible(false);
+			addNoteContributionTree.setVisible(false);
 			return;
 		}
 		
+		// STEP 2: Make sure the correct actions are enabled.
+		
+		// If the tree doesn't have focus, no actions from this group can be performed.
+		if (!tree.hasFocus()) {
+			allSubmenusAndActions.setEnabled(false);
+		
 		// If a single tree item is selected, any action can be performed.
-		if (tree.hasFocus() && tree.getSelectionCount() == 1) {
+		} else if (tree.getSelectionCount() == 1) {
 			allSubmenusAndActions.setEnabled(true);
 			removeNotes.setText("Remove Note");
 			
 		// Otherwise, most actions cannot be performed.
 		} else {
 			allSubmenusAndActions.setEnabled(false);
-			
-			// An empty tree can be added to.
-			if (tree.isEmpty()) {
-				addNoteSubmenuAndActions.setEnabled(true);
 				
 			// If multiple items are selected all that can be done is remove them.
-			} else if (tree.getSelectionCount() > 0) {
+			if (tree.getSelectionCount() > 0) {
 				removeNotes.setEnabled(true);
 				removeNotes.setText("Remove Notes");
 			}
@@ -106,32 +151,17 @@ public class NoteActionGroup implements ActionGroup {
 	
 	public void populateMenuBar(MenuManager menuBar) {
 		noteMenu = new MenuManager("&Note");
-		
-		addNoteSubmenuMenubar = new DisableableMenuManager("&Add Note");
-		addNoteSubmenuAndActions.addActionsToMenuManager(addNoteSubmenuMenubar);
-		addNoteSubmenuAndActions.add(addNoteSubmenuMenubar);
-		noteMenu.add(addNoteSubmenuMenubar);
-		
-		moveNoteSubmenuMenubar = new DisableableMenuManager("&Move Note");
-		moveNoteSubmenuAndActions.addActionsToMenuManager(moveNoteSubmenuMenubar);
-		moveNoteSubmenuAndActions.add(moveNoteSubmenuMenubar);
-		noteMenu.add(moveNoteSubmenuMenubar);
-		
+		noteMenu.add(addNoteContributionMenuBar);
+		noteMenu.add(addNoteSubmenuMenuBar);
+		noteMenu.add(moveNoteSubmenuMenuBar);
 		ungroupedActions.addActionsToMenuManager(noteMenu);
 		menuBar.add(noteMenu);
 	}
 	
 	public void populateTreeContextMenu(MenuManager treeContextMenu) {
-		addNoteSubmenuTree = new DisableableMenuManager("&Add Note");
-		addNoteSubmenuAndActions.addActionsToMenuManager(addNoteSubmenuTree);
-		addNoteSubmenuAndActions.add(addNoteSubmenuTree);
+		treeContextMenu.add(addNoteContributionTree);
 		treeContextMenu.add(addNoteSubmenuTree);
-		
-		moveNoteSubmenuTree = new DisableableMenuManager("&Move Note");
-		moveNoteSubmenuAndActions.addActionsToMenuManager(moveNoteSubmenuTree);
-		moveNoteSubmenuAndActions.add(moveNoteSubmenuTree);
 		treeContextMenu.add(moveNoteSubmenuTree);
-		
 		ungroupedActions.addActionsToMenuManager(treeContextMenu);
 	}
 }
