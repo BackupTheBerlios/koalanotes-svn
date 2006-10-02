@@ -78,6 +78,10 @@ public class DisplayedNote implements DisplayedNoteHolder {
 		note.getHolder().removeNote(note);
 	}
 	
+	/**
+	 * Move this DisplayedNote to a new DisplayedNoteHolder, moves the equivalent Note to the new
+	 * NoteHolder, and the NoteTreeNode to its new place in the tree.
+	 */
 	public void move(DisplayedNoteHolder newHolder, NoteTree tree, int index) {
 		
 		// Move DisplayedNote
@@ -89,13 +93,24 @@ public class DisplayedNote implements DisplayedNoteHolder {
 		note.move(newHolder.getNoteHolder(), index);
 		
 		// Move Tree Node
-		boolean selected = treeNode.isSelected();
+		moveTreeNode(newHolder, tree);
+		treeNode.setSelected(true);
+	}
+	
+	/**
+	 * A helper for move(DisplayedNoteHolder, NoteTree, int) to move the NoteTreeNode to its new
+	 * parent node; the node actually needs to be destroyed and recreated for this and therefore
+	 * so do all its child nodes.
+	 */
+	private void moveTreeNode(DisplayedNoteHolder newHolder, NoteTree tree) {
 		treeNode.dispose();
 		if (holder instanceof DisplayedNote) {
-			this.treeNode = tree.addTreeNode(((DisplayedNote) holder).treeNode, this);
+			treeNode = tree.addTreeNode(((DisplayedNote) newHolder).treeNode, this);
 		} else {
-			this.treeNode = tree.addRootNode(this);
+			treeNode = tree.addRootNode(this);
 		}
-		treeNode.setSelected(selected);
+		for (DisplayedNote dn : displayedNotes) {
+			dn.moveTreeNode(this, tree);
+		}
 	}
 }
