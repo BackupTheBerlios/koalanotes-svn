@@ -26,7 +26,7 @@ public class FileActionGroup implements ActionGroup {
 	}
 	
 	public void update() {
-		if (document.hasFile()) save.setEnabled(true); else save.setEnabled(false);
+		if (document.hasStore()) save.setEnabled(true); else save.setEnabled(false);
 	}
 	
 	public void populateMenuBar(MenuManager menuBar) {
