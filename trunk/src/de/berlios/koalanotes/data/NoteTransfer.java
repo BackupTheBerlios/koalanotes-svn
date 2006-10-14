@@ -35,8 +35,11 @@ public class NoteTransfer extends ByteArrayTransfer {
 	@SuppressWarnings("unchecked")
 	public void javaToNative(Object object, TransferData transferData) {
 		
-		// If null Object or unsupported TransferData, return.
-		if (object == null || !(object instanceof Note[])) return;
+		// If Object contains null or invalid data or TransferData is unsupported, return.
+		if (object == null) return;
+		if (!(object instanceof List)) return;
+		if (((List) object).isEmpty()) return;
+		if (!(((List) object).get(0) instanceof Note)) return;
 		if (!isSupportedType(transferData)) return;
 		
 		// Write data to a byte[].
