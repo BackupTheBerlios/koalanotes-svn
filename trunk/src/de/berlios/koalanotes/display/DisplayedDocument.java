@@ -54,7 +54,7 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 		
 		// Tree and DisplayedNotes
 		this.displayedNotes = new LinkedList<DisplayedNote>();
-		tree = new NoteTree(sashForm, dispatcher);
+		tree = new NoteTree(sashForm, dispatcher, this);
 		new DisplayedNote(this, tree, root);
 		
 		// TabFolder

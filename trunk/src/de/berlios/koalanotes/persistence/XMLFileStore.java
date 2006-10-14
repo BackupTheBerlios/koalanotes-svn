@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
@@ -20,7 +19,6 @@ import de.berlios.koalanotes.exceptions.KoalaException;
  * An XMLFileStore saves to and loads from a particular XML file.
  */
 public class XMLFileStore {
-	private static final String ROOT_NODE_NAME = "root";
 	
 	private File file;
 	
@@ -42,23 +40,12 @@ public class XMLFileStore {
 		} catch (JDOMException jdomex) {
 			throw new KoalaException("Koala Notes could not build a document from file '" + file.getName() + "'.", jdomex);
 		}
-		Element rootElement = jdomDocument.getRootElement();
-		if (!rootElement.getName().equals(ROOT_NODE_NAME)) {
-			throw new KoalaException("Koala Notes could not load a document from file '"
-			                         + file.getName() + "', the format is incorrect.");
-		}
-		for (Object el : rootElement.getChildren()) {
-			XMLNoteSerializer.createNoteFromElement((Element) el, noteHolder);
-		}
+		XMLNoteSerializer.createNotesFromJDOMDocument(jdomDocument, noteHolder);
 	}
 	
 	/** Save the given Notes to storage. */
 	public void saveNotes(List<Note> roots) {
-		Element rootElement = new Element(ROOT_NODE_NAME);
-		for (Note root : roots) {
-			rootElement.addContent(XMLNoteSerializer.createElementFromNote(root));
-		}
-		org.jdom.Document jdomDocument = new org.jdom.Document(rootElement);
+		org.jdom.Document jdomDocument = XMLNoteSerializer.createJDOMDocumentFromNotes(roots);
 		XMLOutputter out = new XMLOutputter(Format.getPrettyFormat());
 		try {
 			FileOutputStream fos = new FileOutputStream(file);

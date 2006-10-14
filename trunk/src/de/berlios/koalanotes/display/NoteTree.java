@@ -21,7 +21,7 @@ public class NoteTree {
 	private Tree tree;
 	private TreeEditor treeEditor;
 	
-	public NoteTree(Composite parent, Dispatcher d) {
+	public NoteTree(Composite parent, Dispatcher d, DisplayedDocument dd) {
 		
 		// Tree.
 		tree = new Tree(parent, SWT.MULTI);
@@ -30,6 +30,9 @@ public class NoteTree {
 		treeEditor = new TreeEditor(tree);
 		treeEditor.grabHorizontal = true;
 		treeEditor.minimumWidth = 50;
+		
+		// Drag-n-drop support.
+		new NoteTreeDragNDropSupport(this, tree, dd);
 		
 		// The context changed listener listens for all events that would change the context (eg
 		// selection of tree nodes), so it can notify the main controller.
