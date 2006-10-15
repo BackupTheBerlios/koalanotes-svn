@@ -67,7 +67,12 @@ class NoteTreeDragNDropSupport extends DropTargetAdapter implements DragSourceLi
 	
 	/** Implements the method defined by DragSourceListener. */
 	public void dragStart(DragSourceEvent event) {
-		dragInProgress = true;
+		List<DisplayedNote> selectedNotes = noteTree.getSelectedNotes();
+		if (selectedNotes == null || selectedNotes.isEmpty()) {
+			event.doit = false;
+		} else {
+			dragInProgress = true;
+		}
 	}
 	
 	/** Implements the method defined by DragSourceListener. */
@@ -200,7 +205,7 @@ class NoteTreeDragNDropSupport extends DropTargetAdapter implements DragSourceLi
 			List<Note> notesToCopy = null;
 			
 			// If it's a local copy, then the notes to copy are the currently selected
-			// DisplayedNotes, otherwise their in the event data.
+			// DisplayedNotes, otherwise the notes to copy are in the event data.
 			if (isLocalDrop) {
 				notesToCopy = new LinkedList<Note>();
 				List<DisplayedNote> displayedNotes = getDisplayedNotesToUseInDragData();
@@ -214,11 +219,6 @@ class NoteTreeDragNDropSupport extends DropTargetAdapter implements DragSourceLi
 			// Do the copy.
 			copyNotes(notesToCopy, holder, index);
 		}
-		
-		// TODO when you hold down the control key to do a copy style drag-drop, it's a little
-		// counter-intuitive because control also toggles the selection and sometimes you think
-		// you're dragging something when in fact you're dragging nothing.  I'll see if I can do
-		// something about it.
 		
 		// TODO in future the received notes will be contained in a Document object, which will
 		// have the version number of the KoalaNotes instance which the notes came from.  If the
