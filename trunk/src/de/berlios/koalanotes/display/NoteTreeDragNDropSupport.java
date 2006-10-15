@@ -219,10 +219,6 @@ class NoteTreeDragNDropSupport extends DropTargetAdapter implements DragSourceLi
 			// Do the copy.
 			copyNotes(notesToCopy, holder, index);
 		}
-		
-		// TODO in future the received notes will be contained in a Document object, which will
-		// have the version number of the KoalaNotes instance which the notes came from.  If the
-		// version number is inconsistent with ours, the drop should be refused.
 	}
 	
 	/**

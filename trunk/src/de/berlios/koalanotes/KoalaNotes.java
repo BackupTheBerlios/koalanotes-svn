@@ -7,6 +7,8 @@ import de.berlios.koalanotes.controllers.Dispatcher;
 import de.berlios.koalanotes.display.DisplayedDocument;
 
 public class KoalaNotes {
+	public static final String KOALA_NOTES_VERSION = "0.1";
+	
 	public static void main(String[] args) {
 		Display display = new Display();
 		Shell shell = new Shell(display);
