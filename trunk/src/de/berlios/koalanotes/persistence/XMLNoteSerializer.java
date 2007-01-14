@@ -27,6 +27,9 @@ public class XMLNoteSerializer {
 	
 	/**
 	 * Creates Note instances from the data stored in jdomDocument, and adds the Notes to holder.
+	 * 
+	 * @throws KoalaException if the KoalaNotes version number in the document is inconsistent with
+	 * that of the running application, or if the format of the document is incorrect.
 	 */
 	public static void createNotesFromJDOMDocument(Document jdomDocument, NoteHolder holder) {
 		
@@ -60,7 +63,8 @@ public class XMLNoteSerializer {
 	}
 	
 	/**
-	 * Creates a Note from el, and add it to holder.
+	 * Creates a Note from el, and add it to holder, recurse for the children of el.
+	 * @throws KoalaException If the el is not a note element, or is missing a mandatory attribute.
 	 */
 	private static void createNoteFromElement(Element el, NoteHolder holder) {
 		checkElementName(el, NOTE);
@@ -86,6 +90,9 @@ public class XMLNoteSerializer {
 		return el;
 	}
 	
+	/**
+	 * @throws KoalaException If the element does not have the expected name.
+	 */
 	private static void checkElementName(Element el, String expectedName) {
 		if (!el.getName().equals(expectedName)) {
 			throw new KoalaException("Koala Notes was expecting XML element '" + expectedName
@@ -94,6 +101,10 @@ public class XMLNoteSerializer {
 		}
 	}
 	
+	/**
+	 * @return String the value of the required attribute.
+	 * @throws KoalaException If the element did not have the required attribute.
+	 */
 	private static String getMandatoryAttributeValue(Element el, String attributeName) {
 		String attVal = el.getAttributeValue(attributeName);
 		if (attVal == null) {

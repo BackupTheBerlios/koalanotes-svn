@@ -30,7 +30,12 @@ public class XMLFileStore {
 		this.file = file;
 	}
 	
-	/** Load Notes from storage, putting them into the given NoteHolder. */
+	/**
+	 * Load Notes from storage, putting them into the given NoteHolder.
+	 * 
+	 * @throws KoalaException If the file could not be read from or the xml contained was invalid,
+	 * or the document could not be built.
+	 */
 	public void loadNotes(NoteHolder noteHolder) {
 		org.jdom.Document jdomDocument = null;
 		try {
@@ -43,17 +48,35 @@ public class XMLFileStore {
 		XMLNoteSerializer.createNotesFromJDOMDocument(jdomDocument, noteHolder);
 	}
 	
-	/** Save the given Notes to storage. */
+	/**
+	 * Save the given Notes to storage.
+	 * 
+	 * @throws KoalaException If the file could not be found or could be not written to.
+	 */
 	public void saveNotes(List<Note> roots) {
 		org.jdom.Document jdomDocument = XMLNoteSerializer.createJDOMDocumentFromNotes(roots);
 		XMLOutputter out = new XMLOutputter(Format.getPrettyFormat());
+		FileOutputStream fos = null;
+		boolean exceptionThrown = false;
 		try {
-			FileOutputStream fos = new FileOutputStream(file);
+			fos = new FileOutputStream(file);
 			out.output(jdomDocument, fos);
 		} catch (FileNotFoundException fnfex) {
+			exceptionThrown = true;
 			throw new KoalaException("Koala Notes could not find file '" + file.getName() + "'.", fnfex);
 		} catch (IOException ioex) {
+			exceptionThrown = true;
 			throw new KoalaException("Koala Notes could not write to file '" + file.getName() + "'.", ioex);
+		} finally {
+			if (fos != null) {
+				try {
+					fos.close();
+				} catch (IOException ioex2) {
+					if (!exceptionThrown) {
+						throw new KoalaException("Koala Notes could not close file '" + file.getName() + "'.", ioex2);
+					}
+				}
+			}
 		}
 	}
 }
