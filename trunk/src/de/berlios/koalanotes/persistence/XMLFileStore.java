@@ -30,6 +30,10 @@ public class XMLFileStore {
 		this.file = file;
 	}
 	
+	public String getFileAbsolutePath() {
+		return file.getAbsolutePath();
+	}
+	
 	/**
 	 * Load Notes from storage, putting them into the given NoteHolder.
 	 * 

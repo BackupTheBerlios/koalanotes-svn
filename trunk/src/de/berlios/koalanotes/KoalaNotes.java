@@ -11,6 +11,7 @@ import de.berlios.koalanotes.exceptions.KoalaException;
 public class KoalaNotes {
 	public static final String KOALA_NOTES_VERSION = "0.1";
 	public static final String LOG_LOCATION = "System.out";
+	public static final String DEFAULT_BACKUP_PATH = "backup.bak";
 	
 	public static void main(String[] args) {
 		
@@ -18,7 +19,7 @@ public class KoalaNotes {
 		Display display = new Display();
 		Shell shell = new Shell(display);
 		Dispatcher dispatcher = new Dispatcher();
-		new DisplayedDocument(shell, dispatcher);
+		DisplayedDocument dd = new DisplayedDocument(shell, dispatcher);
 		shell.open();
 		
 		// Main event loop.
@@ -33,11 +34,18 @@ public class KoalaNotes {
 			} catch (KoalaException ke) {
 				new KoalaErrorDialog(shell, ke).open();
 				
-			// If any other exception or error is thrown then show an error dialog, print the stack
-			// trace, and shut down the application.
+			// If any other exception or error is thrown then print the stack trace, save a backup
+			// of the document, display an error dialog and shut down the application.
 			} catch (Throwable t) {
-				new KoalaErrorDialog(shell, t).open();
+				String backupLocation = null;
+				try {
+					dd.getTabFolder().saveNoteTabs();
+					backupLocation = dd.getDocument().saveBackup();
+				} catch (Throwable t2) {
+					t2.printStackTrace();
+				}
 				t.printStackTrace();
+				new KoalaErrorDialog(shell, t, backupLocation).open();
 				shell.dispose();
 			}
 		}

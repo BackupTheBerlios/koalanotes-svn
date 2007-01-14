@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.berlios.koalanotes.KoalaNotes;
 import de.berlios.koalanotes.exceptions.KoalaException;
 import de.berlios.koalanotes.persistence.XMLFileStore;
 
@@ -61,5 +62,21 @@ public class Document implements NoteHolder {
 			throw new KoalaException("Koala Notes does not know where to save to.");
 		}
 		store.saveNotes(roots);
+	}
+	
+	/**
+	 * Save a backup of the currently loaded Notes, return a description of the backup location.
+	 */
+	public String saveBackup() {
+		XMLFileStore backupStore;
+		if (store == null) {
+			File f = new File(KoalaNotes.DEFAULT_BACKUP_PATH);
+			backupStore = new XMLFileStore(f);
+		} else {
+			File f = new File(store.getFileAbsolutePath() + ".bak");
+			backupStore = new XMLFileStore(f);
+		}
+		backupStore.saveNotes(roots);
+		return backupStore.getFileAbsolutePath();
 	}
 }

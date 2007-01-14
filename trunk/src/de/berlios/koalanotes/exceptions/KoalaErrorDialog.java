@@ -31,6 +31,20 @@ public class KoalaErrorDialog {
 		                  + "\nFurther information has been printed to the logs at " + KoalaNotes.LOG_LOCATION + ".");
 	}
 	
+	public KoalaErrorDialog(Shell shell, Throwable t, String documentBackupLocation) {
+		initialiseDialog(shell);
+		String backupMessage = "A backup of your document could not be saved.";
+		if (documentBackupLocation != null) {
+			backupMessage = "A backup of your document has been saved at " + documentBackupLocation;
+		}
+		dialog.setMessage("An unexpected error occurred:\n"
+		                  + t.getMessage()
+		                  + "\nThe application will be shut down.\n"
+		                  + backupMessage
+		                  + "\nFurther information has been printed to the logs at "
+		                  + KoalaNotes.LOG_LOCATION + ".");
+	}
+	
 	public void open() {dialog.open();}
 	
 	private void initialiseDialog(Shell shell) {
