@@ -68,9 +68,12 @@ public class NoteMenuController extends Controller {
 			}
 		}
 		Clipboard cb = new Clipboard(dd.getShell().getDisplay());
-		cb.setContents(new Object[] {clipboardDocument},
-		               new Transfer[] {NoteTransfer.getInstance()});
-		cb.dispose();
+		try {
+			cb.setContents(new Object[] {clipboardDocument},
+			               new Transfer[] {NoteTransfer.getInstance()});
+		} finally {
+			cb.dispose();
+		}
 	}
 	
 	public static final String CUT_OR_COPY_ATTEMPT = getMethodDescriptor("cutOrCopyAttempt");
@@ -131,9 +134,9 @@ public class NoteMenuController extends Controller {
 		Document clipboardDocument = (Document) clipboardData;
 		
 		// Place the new notes.
-		for (Note placeMe : clipboardDocument.getNotes()) {
-			placeMe.copy(holder.getNoteHolder(), index);
-			new DisplayedNote(holder, dd.getTree(), placeMe);
+		for (Note copyMe : clipboardDocument.getNotes()) {
+			Note displayMe = copyMe.copy(holder.getNoteHolder(), index);
+			new DisplayedNote(holder, dd.getTree(), displayMe);
 		}
 	}
 	

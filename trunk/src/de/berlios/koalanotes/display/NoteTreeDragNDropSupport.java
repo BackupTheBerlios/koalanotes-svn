@@ -206,9 +206,9 @@ class NoteTreeDragNDropSupport extends DropTargetAdapter implements DragSourceLi
 				}
 			} else {
 				Document transferDocument = (Document) event.data;
-				for (Note placeMe : transferDocument.getNotes()) {
-					placeMe.copy(holder.getNoteHolder(), index);
-					new DisplayedNote(holder, noteTree, placeMe);
+				for (Note copyMe : transferDocument.getNotes()) {
+					Note displayMe = copyMe.copy(holder.getNoteHolder(), index);
+					new DisplayedNote(holder, noteTree, displayMe);
 				}
 			}
 		}
