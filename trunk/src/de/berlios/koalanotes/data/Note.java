@@ -37,6 +37,16 @@ public class Note implements NoteHolder {
 	public void addNote(Note note, int index) {notes.add(index, note);}
 	public void removeNote(Note note) {notes.remove(note);}
 	
+	public Note copy(NoteHolder newHolder, int index) {
+		Note newNote = new Note(name, newHolder, index, text);
+		int i = 0;
+		for (Note n : notes) {
+			n.copy(newNote, i);
+			i++;
+		}
+		return newNote;
+	}
+	
 	public void move(NoteHolder newHolder, int index) {
 		holder.removeNote(this);
 		holder = newHolder;

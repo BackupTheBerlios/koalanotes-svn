@@ -52,6 +52,14 @@ public class NoteTree {
 		return tree.isFocusControl();
 	}
 	
+	public void addKeydownListener(Listener l) {
+		tree.addListener(SWT.KeyDown, l);
+	}
+	
+	public void removeKeydownListener(Listener l) {
+		tree.removeListener(SWT.KeyDown, l);
+	}
+	
 	
 	// Context Menu
 	
@@ -113,6 +121,17 @@ public class NoteTree {
 		return result;
 	}
 	
+	public DisplayedNote getLastNote() {
+		TreeItem[] items = tree.getItems();
+		TreeItem lastItem = null;
+		if (items == null || items.length == 0) return null;
+		while (items != null && items.length > 0) {
+			lastItem = items[items.length - 1];
+			items = lastItem.getItems();
+		}
+		return ((NoteTreeNode) lastItem.getData()).getDisplayedNote();
+	}
+	
 	public NoteTreeNode addRootNode(DisplayedNote displayedNote) {
 		return new NoteTreeNode(tree, displayedNote);
 	}
@@ -123,5 +142,25 @@ public class NoteTree {
 	
 	public void removeAll() {
 		tree.removeAll();
+	}
+	
+	// Drag/Cut/Copy
+	
+	/**
+	 * The selection is able to be moved (by drag or cut or copy) if the selected notes are all
+	 * under the same immediate parent.
+	 */
+	public boolean isSelectionValidForMoving() {
+		TreeItem[] tis = tree.getSelection();
+		if (tis == null || tis.length == 0) {
+			return false;
+		}
+		TreeItem parentItem = tis[0].getParentItem();
+		for (TreeItem ti : tis) {
+			if (ti.getParentItem() != parentItem) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

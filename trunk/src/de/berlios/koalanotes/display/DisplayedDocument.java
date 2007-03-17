@@ -95,6 +95,7 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 	
 	// Implement DisplayedNoteHolder
 	public List<DisplayedNote> getDisplayedNotes() {return displayedNotes;}
+	public int getDisplayedNoteCount() {return displayedNotes.size();}
 	public void addDisplayedNote(DisplayedNote dn) {displayedNotes.add(dn);}
 	public void addDisplayedNote(DisplayedNote dn, int index) {displayedNotes.add(index, dn);}
 	public void removeDisplayedNote(DisplayedNote dn) {displayedNotes.remove(dn);}

@@ -14,6 +14,7 @@ import de.berlios.koalanotes.data.NoteHolder;
  */
 public interface DisplayedNoteHolder {
 	public List<DisplayedNote> getDisplayedNotes();
+	public int getDisplayedNoteCount();
 	public void addDisplayedNote(DisplayedNote dn);
 	public void addDisplayedNote(DisplayedNote dn, int index);
 	public void removeDisplayedNote(DisplayedNote dn);

@@ -1,7 +1,5 @@
 package de.berlios.koalanotes.display;
 
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.swt.dnd.DND;
@@ -15,6 +13,7 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
+import de.berlios.koalanotes.data.Document;
 import de.berlios.koalanotes.data.Note;
 import de.berlios.koalanotes.data.NoteTransfer;
 
@@ -65,14 +64,14 @@ class NoteTreeDragNDropSupport extends DropTargetAdapter implements DragSourceLi
 		dropTarget.addDropListener(this);
 	}
 	
-	/** Implements the method defined by DragSourceListener. */
+	/**
+	 * Implements the method defined by DragSourceListener.
+	 * 
+	 * The drag can only be started if NoteTree.isSelectionValidForMoving returns true.
+	 */
 	public void dragStart(DragSourceEvent event) {
-		List<DisplayedNote> selectedNotes = noteTree.getSelectedNotes();
-		if (selectedNotes == null || selectedNotes.isEmpty()) {
-			event.doit = false;
-		} else {
-			dragInProgress = true;
-		}
+		dragInProgress = noteTree.isSelectionValidForMoving();
+		event.doit = dragInProgress;
 	}
 	
 	/** Implements the method defined by DragSourceListener. */
@@ -111,21 +110,18 @@ class NoteTreeDragNDropSupport extends DropTargetAdapter implements DragSourceLi
 	 * 
 	 * If the drop is local (i.e. within the same KoalaNotes window), then no data need be set.
 	 * Otherwise a NoteTransfer object is created containing an XML format of the drag data.
-	 * 
-	 * The drag data is all the selected notes minus the ones that are children of other selected
-	 * notes.  The children will be moved with their parent whether they are selected or not
-	 * (because if they weren't, where would they go?).  If the children are held in the top level
-	 * in the drag data they will be added to the top level at their destination, alongside their
-	 * parent, which <sound of my head exploding/>.
 	 */
 	public void dragSetData(DragSourceEvent event) {
-		if (isLocalDrop) return;
-		List<DisplayedNote> displayedNotes = getDisplayedNotesToUseInDragData();
-		List<Note> notes = new LinkedList<Note>();
-		for (DisplayedNote dn : displayedNotes) {
-			notes.add(dn.getNote());
+		if (isLocalDrop) {
+			return;
 		}
-		event.data = notes;
+		Document transferDocument = new Document();
+		int i = 0;
+		for (DisplayedNote dn : noteTree.getSelectedNotes()) {
+			dn.getNote().copy(transferDocument, i);
+			i++;
+		}
+		event.data = transferDocument;
 	}
 	
 	/**
@@ -147,22 +143,21 @@ class NoteTreeDragNDropSupport extends DropTargetAdapter implements DragSourceLi
 		DisplayedNoteHolder holder = null;
 		int index = 0;
 		if (dropLocation == null) {
-			holder = getHolderForLastNoteInTree();
-			if (holder.getDisplayedNotes() != null) {
-				index = holder.getDisplayedNotes().size();
-			}
-		} else {
-			if (dropAction == DND.FEEDBACK_SELECT) {
-				holder = dropLocation;
-				if (dropLocation.getDisplayedNotes() != null) {
-					index = dropLocation.getDisplayedNotes().size();
-				}
+			DisplayedNote lastNote = noteTree.getLastNote();
+			if (lastNote == null) {
+				holder = dd;
 			} else {
-				holder = dropLocation.getHolder();
-				index = dropLocation.getNote().getIndex();
-				if (dropAction == DND.FEEDBACK_INSERT_AFTER) {
-					index++;
-				}
+				holder = lastNote.getHolder();
+			}
+			index = holder.getDisplayedNoteCount();
+		} else if (dropAction == DND.FEEDBACK_SELECT) {
+			holder = dropLocation;
+			index = holder.getDisplayedNoteCount();
+		} else {
+			holder = dropLocation.getHolder();
+			index = dropLocation.getNote().getIndex();
+			if (dropAction == DND.FEEDBACK_INSERT_AFTER) {
+				index++;
 			}
 		}
 		
@@ -170,7 +165,7 @@ class NoteTreeDragNDropSupport extends DropTargetAdapter implements DragSourceLi
 		// move themselves to the new location, but watch out for changing indices when they get
 		// removed from their previous location.
 		if (isDropMove) {
-			List<DisplayedNote> displayedNotes = getDisplayedNotesToUseInDragData();
+			List<DisplayedNote> displayedNotes = noteTree.getSelectedNotes();
 			
 			// First pass: cancel if any of the moves are illegal.
 			for (DisplayedNote dragMe : displayedNotes) {
@@ -186,12 +181,11 @@ class NoteTreeDragNDropSupport extends DropTargetAdapter implements DragSourceLi
 			// Second pass: do the moves.
 			for (DisplayedNote dragMe : displayedNotes) {
 				
-				// If the move is to a larger (or equal) index within the same parent, then the
-				// destination index needs to be adjusted down one.  For example if the user wants
-				// to drag a tree item from index 0 to 1, the previous code in this method would
-				// calculate the destination index as 2 since it doesn't take into account the item
-				// that is being moved.
-				if ((dragMe.getHolder() == holder) && (dragMe.getNote().getIndex() <= index)) {
+				// If the move is to a larger index within the same parent, then the destination
+				// index needs to be adjusted down one.  For example if the user wants to drag a
+				// tree item from index 0 to 1, the previous code in this method would calculate the
+				// destination index as 2 since it doesn't take into account the item being moved.
+				if ((dragMe.getHolder() == holder) && (dragMe.getNote().getIndex() < index)) {
 					index--; 
 				}
 				
@@ -202,46 +196,22 @@ class NoteTreeDragNDropSupport extends DropTargetAdapter implements DragSourceLi
 		
 		// Otherwise it's a copy, which may or may not be local.
 		} else {
-			List<Note> notesToCopy = null;
 			
-			// If it's a local copy, then the notes to copy are the currently selected
-			// DisplayedNotes, otherwise the notes to copy are in the event data.
+			// If it's a local copy, then copy the notes currently selected in the tree, otherwise
+			// use the notes in the event data.
 			if (isLocalDrop) {
-				notesToCopy = new LinkedList<Note>();
-				List<DisplayedNote> displayedNotes = getDisplayedNotesToUseInDragData();
-				for (DisplayedNote copyMe : displayedNotes) {
-					notesToCopy.add(copyMe.getNote());
+				for (DisplayedNote copyMe : noteTree.getSelectedNotes()) {
+					Note displayMe = copyMe.getNote().copy(holder.getNoteHolder(), index);
+					new DisplayedNote(holder, noteTree, displayMe);
 				}
 			} else {
-				notesToCopy = (List<Note>) event.data;
-			}
-			
-			// Do the copy.
-			copyNotes(notesToCopy, holder, index);
-		}
-	}
-	
-	/**
-	 * The drag data is all the selected notes minus the ones that are children of other selected
-	 * notes, see dragSetData().  This method is called by dragSetData() and drop().
-	 */
-	private List<DisplayedNote> getDisplayedNotesToUseInDragData() {
-		List<DisplayedNote> displayedNotes = noteTree.getSelectedNotes();
-		Iterator<DisplayedNote> dnIter = displayedNotes.iterator();
-		while (dnIter.hasNext()) {
-			DisplayedNote checkNote = dnIter.next();
-			if (checkNote.getHolder() instanceof DisplayedDocument) continue;
-			boolean removeNote = false;
-			for (DisplayedNote dn : displayedNotes) {
-				if (checkNote.getHolder() == dn) {
-					removeNote = true;
-					break;
+				Document transferDocument = (Document) event.data;
+				for (Note placeMe : transferDocument.getNotes()) {
+					placeMe.copy(holder.getNoteHolder(), index);
+					new DisplayedNote(holder, noteTree, placeMe);
 				}
 			}
-			if (removeNote) dnIter.remove(); // Was too scared to remove it during the above for
-			                                 // loop since it loops over the same list.
 		}
-		return displayedNotes;
 	}
 	
 	/**
@@ -265,32 +235,6 @@ class NoteTreeDragNDropSupport extends DropTargetAdapter implements DragSourceLi
 			return DND.FEEDBACK_SELECT;
 		} else {
 			return DND.FEEDBACK_INSERT_AFTER;
-		}
-	}
-	
-	/**
-	 * A helper for drop().
-	 */
-	private DisplayedNoteHolder getHolderForLastNoteInTree() {
-		TreeItem[] items = tree.getItems();
-		TreeItem lastItem = null;
-		if (items == null || items.length == 0) return dd;
-		while (items != null && items.length > 0) {
-			lastItem = items[items.length - 1];
-			items = lastItem.getItems();
-		}
-		return ((NoteTreeNode) lastItem.getData()).getDisplayedNote().getHolder();
-	}
-	
-	/**
-	 * A helper for drop().
-	 */
-	private void copyNotes(List<Note> notes, DisplayedNoteHolder holder, int index) {
-		for (Note originalNote : notes) {
-			Note newNote = new Note(originalNote.getName(), holder.getNoteHolder(), index, originalNote.getText());
-			DisplayedNote newDisplayedNote = new DisplayedNote(holder, noteTree, newNote);
-			copyNotes(originalNote.getNotes(), newDisplayedNote, 0);
-			index++;
 		}
 	}
 }

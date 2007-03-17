@@ -3,7 +3,6 @@ package de.berlios.koalanotes.data;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.List;
 
 import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.TransferData;
@@ -16,10 +15,10 @@ import de.berlios.koalanotes.exceptions.KoalaException;
 import de.berlios.koalanotes.persistence.XMLNoteSerializer;
 
 /**
- * For Dragging-n-dropping a list of Notes.
+ * For Dragging-n-dropping a KoalaNotes Document.
  */
 public class NoteTransfer extends ByteArrayTransfer {
-	private static final String NOTE_TRANSFER_TYPE_NAME = "koala_notes_note";
+	private static final String NOTE_TRANSFER_TYPE_NAME = "koala_notes_document";
 	private static final int NOTE_TRANSFER_TYPE_ID = registerType(NOTE_TRANSFER_TYPE_NAME);
 	
 	private static final String ERROR_TEXT = "Koala Notes had an error transferring a Note";
@@ -32,21 +31,18 @@ public class NoteTransfer extends ByteArrayTransfer {
 		return instance;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void javaToNative(Object object, TransferData transferData) {
-		
+
 		// If Object contains null or invalid data or TransferData is unsupported, return.
 		if (object == null) return;
-		if (!(object instanceof List)) return;
-		if (((List) object).isEmpty()) return;
-		if (!(((List) object).get(0) instanceof Note)) return;
+		if (!(object instanceof Document)) return;
 		if (!isSupportedType(transferData)) return;
 		
 		// Write data to a byte[].
-		List<Note> notes = (List<Note>) object;
-		org.jdom.Document jdomDocument = XMLNoteSerializer.createJDOMDocumentFromNotes(notes);
+		Document koalaDocument = (Document) object;
+		org.jdom.Document jdomDocument = XMLNoteSerializer.createJDOMDocumentFromNotes(koalaDocument.getNotes());
 		ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
-		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat());
+		XMLOutputter xmlOut = new XMLOutputter(Format.getRawFormat());
 		try {
 			xmlOut.output(jdomDocument, bytesOut);
 		} catch (IOException ioe) {
@@ -77,7 +73,7 @@ public class NoteTransfer extends ByteArrayTransfer {
 		}
 		Document koalaDocument = new Document();
 		XMLNoteSerializer.createNotesFromJDOMDocument(jdomDocument, koalaDocument);
-		return koalaDocument.getNotes();
+		return koalaDocument;
 	}	
 	
 	protected String[] getTypeNames() {

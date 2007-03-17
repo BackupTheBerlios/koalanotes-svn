@@ -39,6 +39,7 @@ public class DisplayedNote implements DisplayedNoteHolder {
 	
 	// Implement DisplayedNoteHolder
 	public List<DisplayedNote> getDisplayedNotes() {return displayedNotes;}
+	public int getDisplayedNoteCount() {return displayedNotes.size();}
 	public void addDisplayedNote(DisplayedNote dn) {displayedNotes.add(dn);}
 	public void addDisplayedNote(DisplayedNote dn, int index) {displayedNotes.add(index, dn);}
 	public void removeDisplayedNote(DisplayedNote dn) {displayedNotes.remove(dn);}
@@ -67,15 +68,27 @@ public class DisplayedNote implements DisplayedNoteHolder {
 		tab = null;
 	}
 	
-	public void deleteSelfAndChildren() {
+	/**
+	 * Delete any displayed elements and remove the note from its holder.  Child notes are also
+	 * removed from the display but not from their holder.
+	 */
+	public void delete() {
+		deleteFromDisplay();
+		note.getHolder().removeNote(note);
+	}
+	
+	/**
+	 * Delete this note and its children from the display but do not remove the note from its
+	 * holder.
+	 */
+	private void deleteFromDisplay() {
 		while (displayedNotes.size() > 0) {
 			DisplayedNote child = displayedNotes.get(0);
-			child.deleteSelfAndChildren();
+			child.deleteFromDisplay();
 		}
 		treeNode.dispose();
 		if (tab != null) tab.dispose();
 		holder.removeDisplayedNote(this);
-		note.getHolder().removeNote(note);
 	}
 	
 	/**

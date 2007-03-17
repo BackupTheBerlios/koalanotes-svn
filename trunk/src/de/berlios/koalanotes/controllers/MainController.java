@@ -20,6 +20,10 @@ public class MainController extends Controller {
 		this.dd = displayedDocument;
 	}
 	
+	/**
+	 * Called when the context of the application has changed, for example a change in the selection
+	 * in the tree, the selected tab, or the contents of the clipboard.
+	 */
 	public static final String CONTEXT_CHANGED = getMethodDescriptor("contextChanged");
 	public void contextChanged(Event e) {
 		List<ActionGroup> actionGroups = dd.getActionGroups();
