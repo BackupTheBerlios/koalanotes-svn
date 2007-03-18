@@ -16,6 +16,20 @@ public class Document implements NoteHolder {
 		roots = new LinkedList<Note>();
 	}
 	
+	/**
+	 * Load the Notes from the given xml file and return them (keeps a reference to the file and
+	 * the Notes).
+	 * 
+	 * @throws KoalaException If the file could not be read from or the xml contained was invalid,
+	 * or the document could not be built.
+	 */
+	
+	public Document(File file) {
+		store = new XMLFileStore(file);
+		roots = new LinkedList<Note>();
+		store.loadNotes(this);
+	}
+	
 	public boolean hasStore() {
 		return (store != null);
 	}
@@ -25,20 +39,6 @@ public class Document implements NoteHolder {
 	public void addNote(Note note) {roots.add(note);}
 	public void addNote(Note note, int index) {roots.add(index, note);}
 	public void removeNote(Note note) {roots.remove(note);}
-	
-	/**
-	 * Load the Notes from the given xml file and return them (keeps a reference to the file and
-	 * the Notes).
-	 * 
-	 * @throws KoalaException If the file could not be read from or the xml contained was invalid,
-	 * or the document could not be built.
-	 */
-	public List<Note> loadNotes(File file) {
-		store = new XMLFileStore(file);
-		roots = new LinkedList<Note>();
-		store.loadNotes(this);
-		return roots;
-	}
 	
 	/**
 	 * Save the currently loaded Notes to the given file (the given file is remembered for future

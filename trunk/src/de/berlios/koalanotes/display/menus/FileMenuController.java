@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.FileDialog;
 
 import de.berlios.koalanotes.controllers.Controller;
 import de.berlios.koalanotes.controllers.Dispatcher;
+import de.berlios.koalanotes.data.Document;
 import de.berlios.koalanotes.data.Note;
 import de.berlios.koalanotes.display.DisplayedDocument;
 import de.berlios.koalanotes.display.DisplayedNote;
@@ -25,15 +26,26 @@ public class FileMenuController extends Controller {
 		this.dd = dd;
 	}
 	
+	public static final String FILE_NEW = getMethodDescriptor("fileNew");
+	public void fileNew(Event e) {
+		dd.getTabFolder().closeNoteTabs();
+		dd.getTree().removeAll();
+		dd.setDocument(new Document());
+		Note root = new Note("root", dd.getDocument(), "");
+		new DisplayedNote(dd, dd.getTree(), root);
+		dd.getShell().setText("Untitled Document - Koala Notes");
+	}
+	
 	public static final String FILE_OPEN = getMethodDescriptor("fileOpen");
 	public void fileOpen(Event e) {
 		FileDialog fileDialog = new FileDialog(dd.getShell(), SWT.OPEN);
 		String filePath = fileDialog.open();
 		if (filePath == null) return;
+		File file = new File(filePath);
 		dd.getTabFolder().closeNoteTabs();
 		dd.getTree().removeAll();
-		File file = new File(filePath);
-		List<Note> notes = dd.getDocument().loadNotes(file);
+		dd.setDocument(new Document(file));
+		List<Note> notes = dd.getDocument().getNotes();
 		for (Note root : notes) {
 			new DisplayedNote(dd, dd.getTree(), root);
 		}
@@ -56,5 +68,10 @@ public class FileMenuController extends Controller {
 			dd.getDocument().saveNotes(file);
 			dd.getShell().setText(file.getName() + " - Koala Notes");
 		}
+	}
+	
+	public static final String FILE_EXIT = getMethodDescriptor("fileExit");
+	public void fileExit(Event e) {
+		dd.getShell().dispose();
 	}
 }

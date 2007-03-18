@@ -42,7 +42,7 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 		
 		// Shell
 		this.shell = shell;
-		shell.setText("Koala Notes");
+		shell.setText("Untitled Document - Koala Notes");
 		shell.setLayout(new FillLayout(SWT.VERTICAL));
 		
 		// Document
@@ -71,7 +71,7 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 		
 		// Action Groups
 		actionGroups = new LinkedList<ActionGroup>();
-		actionGroups.add(new FileActionGroup(dispatcher, document));
+		actionGroups.add(new FileActionGroup(dispatcher, this));
 		actionGroups.add(new NoteActionGroup(dispatcher, tree));
 		for (ActionGroup ag : actionGroups) {
 			ag.populateMenuBar(menuBar);
@@ -86,6 +86,7 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 	}
 	
 	public Document getDocument() {return document;}
+	public void setDocument(Document d) {document = d;}
 	public Shell getShell() {return shell;}
 	public NoteTree getTree() {return tree;}
 	public NoteTabFolder getTabFolder() {return tabFolder;}
