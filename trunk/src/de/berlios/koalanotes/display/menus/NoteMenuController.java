@@ -105,16 +105,11 @@ public class NoteMenuController extends Controller {
 		DisplayedNoteHolder holder = null;
 		int index = 0;
 		if (dd.getTree().getSelectionCount() != 1) {
-			DisplayedNote lastNote = dd.getTree().getLastNote();
-			if (lastNote == null) {
-				holder = dd;
-			} else {
-				holder = lastNote.getHolder();
-			}
+			holder = dd;
 			index = holder.getDisplayedNoteCount();
 		} else if (child) {
 			holder = dd.getTree().getSelectedNote();
-			index = holder.getDisplayedNoteCount();
+			index = 0;
 		} else {
 			holder = dd.getTree().getSelectedNote().getHolder();
 			index = dd.getTree().getSelectedNote().getNote().getIndex();
@@ -137,6 +132,7 @@ public class NoteMenuController extends Controller {
 		for (Note copyMe : clipboardDocument.getNotes()) {
 			Note displayMe = copyMe.copy(holder.getNoteHolder(), index);
 			new DisplayedNote(holder, dd.getTree(), displayMe);
+			index++;
 		}
 	}
 	
@@ -164,23 +160,27 @@ public class NoteMenuController extends Controller {
 		int index = moveMe.getNote().getIndex();
 		if (index == 0) return;
 		DisplayedNote newHolder = moveMe.getHolder().getDisplayedNotes().get(index - 1);
-		moveMe.move(newHolder, dd.getTree(), newHolder.getDisplayedNotes().size());
+		moveMe.move(newHolder, dd.getTree(), 0);
 	}
 	
 	public static final String MOVE_NOTE_UP = getMethodDescriptor("moveNoteUp");
 	public void moveNoteUp(Event e) {
 		DisplayedNote moveMe = dd.getTree().getSelectedNote();
-		int index = moveMe.getNote().getIndex();
-		if (index == 0) return;
-		moveMe.move(moveMe.getHolder(), dd.getTree(), index - 1);
+		int index = moveMe.getNote().getIndex() - 1;
+		if (index == -1) {
+			index = moveMe.getHolder().getDisplayedNoteCount() - 1;
+		}
+		moveMe.move(moveMe.getHolder(), dd.getTree(), index);
 	}
 	
 	public static final String MOVE_NOTE_DOWN = getMethodDescriptor("moveNoteDown");
 	public void moveNoteDown(Event e) {
 		DisplayedNote moveMe = dd.getTree().getSelectedNote();
-		int index = moveMe.getNote().getIndex();
-		if (index == moveMe.getHolder().getDisplayedNotes().size() - 1) return;
-		moveMe.move(moveMe.getHolder(), dd.getTree(), index + 1);
+		int index = moveMe.getNote().getIndex() + 1;
+		if (index == moveMe.getHolder().getDisplayedNoteCount()) {
+			index = 0;
+		}
+		moveMe.move(moveMe.getHolder(), dd.getTree(), index);
 	}
 	
 	public static final String RENAME_NOTE = getMethodDescriptor("renameNote");

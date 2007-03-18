@@ -121,17 +121,6 @@ public class NoteTree {
 		return result;
 	}
 	
-	public DisplayedNote getLastNote() {
-		TreeItem[] items = tree.getItems();
-		TreeItem lastItem = null;
-		if (items == null || items.length == 0) return null;
-		while (items != null && items.length > 0) {
-			lastItem = items[items.length - 1];
-			items = lastItem.getItems();
-		}
-		return ((NoteTreeNode) lastItem.getData()).getDisplayedNote();
-	}
-	
 	public NoteTreeNode addRootNode(DisplayedNote displayedNote) {
 		return new NoteTreeNode(tree, displayedNote);
 	}

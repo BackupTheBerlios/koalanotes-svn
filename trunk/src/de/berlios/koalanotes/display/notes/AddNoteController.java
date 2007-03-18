@@ -11,7 +11,7 @@ import de.berlios.koalanotes.display.DisplayedNote;
 public class AddNoteController extends Controller {
 	
 	private DisplayedDocument dd;
-	private boolean after;
+	private boolean sibling;
 	private AddNoteDialog addNoteDialog;
 	
 	public static String getMethodDescriptor(String methodName) {
@@ -23,10 +23,10 @@ public class AddNoteController extends Controller {
 	 * selected note, false if _under_.
 	 */
 	public AddNoteController(Dispatcher d, DisplayedDocument dd,
-	                         boolean after, AddNoteDialog addNoteDialog) {
+	                         boolean sibling, AddNoteDialog addNoteDialog) {
 		super(d);
 		this.dd = dd;
-		this.after = after;
+		this.sibling = sibling;
 		this.addNoteDialog = addNoteDialog;
 		addNoteDialog.open();
 	}
@@ -44,11 +44,11 @@ public class AddNoteController extends Controller {
 		} else {
 			DisplayedNote dn = dd.getTree().getSelectedNote();
 			Note note = dn.getNote();
-			if (after) { // add after
+			if (sibling) { // add sibling
 				Note newNote = new Note(addNoteDialog.getName(), note.getHolder(),
-				                        note.getIndex() + 1, "");
+				                        note.getIndex(), "");
 				newDn = new DisplayedNote(dn.getHolder(), dd.getTree(), newNote);
-			} else { // add under
+			} else { // add child
 				Note newNote = new Note(addNoteDialog.getName(), note, 0, "");
 				newDn = new DisplayedNote(dn, dd.getTree(), newNote);
 			}

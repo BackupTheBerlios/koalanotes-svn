@@ -51,6 +51,7 @@ class NoteTreeDragNDropSupport extends DropTargetAdapter implements DragSourceLi
 	NoteTreeDragNDropSupport(NoteTree noteTree, Tree tree, DisplayedDocument dd) {
 		this.noteTree = noteTree;
 		this.tree = tree;
+		this.dd = dd;
 		dragInProgress = false;
 		isLocalDrop = false;
 		isDropMove = false;
@@ -143,16 +144,11 @@ class NoteTreeDragNDropSupport extends DropTargetAdapter implements DragSourceLi
 		DisplayedNoteHolder holder = null;
 		int index = 0;
 		if (dropLocation == null) {
-			DisplayedNote lastNote = noteTree.getLastNote();
-			if (lastNote == null) {
-				holder = dd;
-			} else {
-				holder = lastNote.getHolder();
-			}
+			holder = dd;
 			index = holder.getDisplayedNoteCount();
 		} else if (dropAction == DND.FEEDBACK_SELECT) {
 			holder = dropLocation;
-			index = holder.getDisplayedNoteCount();
+			index = 0;
 		} else {
 			holder = dropLocation.getHolder();
 			index = dropLocation.getNote().getIndex();
@@ -203,12 +199,14 @@ class NoteTreeDragNDropSupport extends DropTargetAdapter implements DragSourceLi
 				for (DisplayedNote copyMe : noteTree.getSelectedNotes()) {
 					Note displayMe = copyMe.getNote().copy(holder.getNoteHolder(), index);
 					new DisplayedNote(holder, noteTree, displayMe);
+					index++;
 				}
 			} else {
 				Document transferDocument = (Document) event.data;
 				for (Note copyMe : transferDocument.getNotes()) {
 					Note displayMe = copyMe.copy(holder.getNoteHolder(), index);
 					new DisplayedNote(holder, noteTree, displayMe);
+					index++;
 				}
 			}
 		}
