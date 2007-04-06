@@ -28,9 +28,11 @@ public class Dialog {
 	private Composite buttonSection;
 	private List<Button> buttons;
 	
-	public Dialog(Shell parent, Dispatcher d) {
+	public Dialog(Shell parent, Dispatcher d, ImageRegistry imageRegistry, String title) {
 		this.d = d;
 		myDialog = new Shell(parent, SWT.DIALOG_TRIM);
+		myDialog.setText(title);
+		myDialog.setImage(imageRegistry.get(ImageRegistry.IMAGE_KOALA_SMALL));
 		RowLayout myDialogLayout = new RowLayout(SWT.VERTICAL);
 		myDialogLayout.fill = true;
 		myDialog.setLayout(myDialogLayout);
@@ -40,10 +42,17 @@ public class Dialog {
 		buttons = new LinkedList<Button>();
 	}
 	
-	public Dialog(Shell parent, Dispatcher d,
+	public Dialog(Shell parent, Dispatcher d, ImageRegistry imageRegistry, String title,
+	              String okControllerMethodDescriptor) {
+		this(parent, d, imageRegistry, title);
+		Button okButton = addButton(OK, okControllerMethodDescriptor);
+		myDialog.setDefaultButton(okButton);
+	}
+	
+	public Dialog(Shell parent, Dispatcher d, ImageRegistry imageRegistry, String title,
 	              String okControllerMethodDescriptor,
 	              String cancelMethodDescriptor) {
-		this(parent, d);
+		this(parent, d, imageRegistry, title);
 		Button okButton = addButton(OK, okControllerMethodDescriptor);
 		addButton(CANCEL, cancelMethodDescriptor);
 		myDialog.setDefaultButton(okButton);
@@ -54,6 +63,13 @@ public class Dialog {
 	}
 	
 	public Button addButton(String buttonName, String controllerMethodDescriptor) {
+		
+		// create the button
+		Button b = new Button(buttonSection, SWT.NONE);
+		b.setText(buttonName);
+		b.addListener(SWT.Selection, new Listener(d, controllerMethodDescriptor));
+		
+		// create the layout data
 		FormData fdata = new FormData();
 		fdata.top = new FormAttachment(0);
 		if (buttons.size() == 0) {
@@ -62,10 +78,13 @@ public class Dialog {
 			fdata.right = new FormAttachment(buttons.get(buttons.size() - 1));
 		}
 		fdata.bottom = new FormAttachment(100);
-		Button b = new Button(buttonSection, SWT.NONE);
-		b.setText(buttonName);
+		fdata.width = b.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+		if (fdata.width < 80) {
+			fdata.width = 80;
+		}
 		b.setLayoutData(fdata);
-		b.addListener(SWT.Selection, new Listener(d, controllerMethodDescriptor));
+		
+		// add the button
 		buttons.add(b);
 		return b;
 	}

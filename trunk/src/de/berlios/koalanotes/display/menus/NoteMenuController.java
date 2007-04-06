@@ -32,13 +32,13 @@ public class NoteMenuController extends Controller {
 	
 	public static final String NEW_CHILD_NOTE = getMethodDescriptor("newChildNote");
 	public void newChildNote(Event e) {
-		AddNoteDialog and = new AddNoteDialog(dd.getShell(), d);
+		AddNoteDialog and = new AddNoteDialog(dd.getShell(), d, dd.getImageRegistry());
 		new AddNoteController(d, dd, false, and);
 	}
 	
 	public static final String NEW_SIBLING_NOTE = getMethodDescriptor("newSiblingNote");
 	public void newSiblingNote(Event e) {
-		AddNoteDialog and = new AddNoteDialog(dd.getShell(), d);
+		AddNoteDialog and = new AddNoteDialog(dd.getShell(), d, dd.getImageRegistry());
 		new AddNoteController(d, dd, true, and);
 	}
 	

@@ -20,6 +20,8 @@ import de.berlios.koalanotes.data.Note;
 import de.berlios.koalanotes.data.NoteHolder;
 import de.berlios.koalanotes.display.menus.FileActionGroup;
 import de.berlios.koalanotes.display.menus.FileMenuController;
+import de.berlios.koalanotes.display.menus.HelpActionGroup;
+import de.berlios.koalanotes.display.menus.HelpMenuController;
 import de.berlios.koalanotes.display.menus.NoteActionGroup;
 import de.berlios.koalanotes.display.menus.NoteMenuController;
 
@@ -37,12 +39,17 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 	private MenuManager menuBar;
 	private MenuManager treeContextMenu;
 	private List<ActionGroup> actionGroups; // groups of menu/toolbar items
+	private ImageRegistry imageRegistry;
 	
 	public DisplayedDocument(Shell shell, Dispatcher dispatcher) {
+		
+		// ImageRegistry
+		imageRegistry = new ImageRegistry(shell.getDisplay());
 		
 		// Shell
 		this.shell = shell;
 		shell.setText("Untitled Document - Koala Notes");
+		shell.setImage(imageRegistry.get(ImageRegistry.IMAGE_KOALA_SMALL));
 		shell.setLayout(new FillLayout(SWT.VERTICAL));
 		
 		// Document
@@ -73,6 +80,7 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 		actionGroups = new LinkedList<ActionGroup>();
 		actionGroups.add(new FileActionGroup(dispatcher, this));
 		actionGroups.add(new NoteActionGroup(dispatcher, tree));
+		actionGroups.add(new HelpActionGroup(dispatcher));
 		for (ActionGroup ag : actionGroups) {
 			ag.populateMenuBar(menuBar);
 			ag.populateTreeContextMenu(treeContextMenu);
@@ -81,6 +89,7 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 		// Controllers
 		new FileMenuController(dispatcher, this);
 		new NoteMenuController(dispatcher, this);
+		new HelpMenuController(dispatcher, shell, imageRegistry);
 		new MainController(dispatcher, this);
 		new TreeController(dispatcher, tree);
 	}
@@ -93,6 +102,7 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 	public MenuManager getMenuBar() {return menuBar;}
 	public MenuManager getTreeContextMenu() {return treeContextMenu;}
 	public List<ActionGroup> getActionGroups() {return actionGroups;}
+	public ImageRegistry getImageRegistry() {return imageRegistry;}
 	
 	// Implement DisplayedNoteHolder
 	public List<DisplayedNote> getDisplayedNotes() {return displayedNotes;}
