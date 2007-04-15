@@ -7,12 +7,14 @@ import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.DropTarget;
-import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
+import de.berlios.koalanotes.controllers.Controller;
+import de.berlios.koalanotes.controllers.Dispatcher;
 import de.berlios.koalanotes.data.Document;
 import de.berlios.koalanotes.data.Note;
 import de.berlios.koalanotes.data.NoteTransfer;
@@ -29,7 +31,7 @@ import de.berlios.koalanotes.data.NoteTransfer;
  * drop
  * dragFinished
  */
-class NoteTreeDragNDropSupport extends DropTargetAdapter implements DragSourceListener {
+class NoteTreeDragNDropSupport extends Controller implements DragSourceListener, DropTargetListener {
 	private NoteTree noteTree;
 	private Tree tree;
 	private DisplayedDocument dd;
@@ -48,10 +50,11 @@ class NoteTreeDragNDropSupport extends DropTargetAdapter implements DragSourceLi
 	 * @param tree the SWT Tree used by the NoteTree
 	 * @param dd the DisplayedDocument to hold DisplayedNotes that get copied or moved to root level
 	 */
-	NoteTreeDragNDropSupport(NoteTree noteTree, Tree tree, DisplayedDocument dd) {
+	NoteTreeDragNDropSupport(Dispatcher d, DisplayedDocument dd, NoteTree noteTree, Tree tree) {
+		super(d);
+		this.dd = dd;
 		this.noteTree = noteTree;
 		this.tree = tree;
-		this.dd = dd;
 		dragInProgress = false;
 		isLocalDrop = false;
 		isDropMove = false;
@@ -66,7 +69,7 @@ class NoteTreeDragNDropSupport extends DropTargetAdapter implements DragSourceLi
 	}
 	
 	/**
-	 * Implements the method defined by DragSourceListener.
+	 * Implements DragSourceListener.dragStart().
 	 * 
 	 * The drag can only be started if NoteTree.isSelectionValidForMoving returns true.
 	 */
@@ -75,14 +78,23 @@ class NoteTreeDragNDropSupport extends DropTargetAdapter implements DragSourceLi
 		event.doit = dragInProgress;
 	}
 	
-	/** Implements the method defined by DragSourceListener. */
+	/** Implements DragSourceListener.dragFinished(). */
 	public void dragFinished(DragSourceEvent event) {
 		dragInProgress = false;
 		isLocalDrop = false;
 		isDropMove = false;
 	}
 	
-	/** Implements the method defined by DropTargetListener. */
+	/** Blank implementation of DropTargetListener.dragEnter(). */
+	public void dragEnter(DropTargetEvent event) {}
+	
+	/** Blank implementation of DropTargetListener.dragLeave(). */
+	public void dragLeave(DropTargetEvent event) {}
+	
+	/** Blank implementation of DropTargetListener.dragOperationChanged(). */
+	public void dragOperationChanged(DropTargetEvent event) {}
+	
+	/** Implements DropTargetListener.dropAccept(). */
 	public void dropAccept(DropTargetEvent event) {
 		
 		// We know it's a local drop if a drag is in progress when this method is called.
@@ -94,7 +106,7 @@ class NoteTreeDragNDropSupport extends DropTargetAdapter implements DragSourceLi
 	}
 	
 	/**
-	 * Implements the method defined by DropTargetListener.
+	 * Implements DropTargetListener.dragOver().
 	 * 
 	 * With the given cursor location, decide whether the drop data would be added above, below or
 	 * as a child of the tree item under the cursor, and give the user visual feedback on this.  If
@@ -107,7 +119,7 @@ class NoteTreeDragNDropSupport extends DropTargetAdapter implements DragSourceLi
 	}
 	
 	/**
-	 * Implements the method defined by DragSourceListener.
+	 * Implements DragSourceListener.dragSetData().
 	 * 
 	 * If the drop is local (i.e. within the same KoalaNotes window), then no data need be set.
 	 * Otherwise a NoteTransfer object is created containing an XML format of the drag data.
@@ -126,10 +138,11 @@ class NoteTreeDragNDropSupport extends DropTargetAdapter implements DragSourceLi
 	}
 	
 	/**
-	 * Implements the method defined by DropTargetListener.  When note/s are dropped on the tree,
-	 * move or copy them to the location at which they were dropped.  More specifically, if the drop
-	 * was on a note, append them to that note's children, or if it was on the space at the bottom,
-	 * append them as root notes.
+	 * Implements DropTargetListener.drop().
+	 * 
+	 * When note/s are dropped on the tree, move or copy them to the location at which they were
+	 * dropped.  More specifically, if the drop was on a note, append them to that note's children,
+	 * or if it was on the space at the bottom, append them as root notes.
 	 */
 	@SuppressWarnings("unchecked")
 	public void drop(DropTargetEvent event) {
@@ -210,6 +223,9 @@ class NoteTreeDragNDropSupport extends DropTargetAdapter implements DragSourceLi
 				}
 			}
 		}
+		
+		// Move complete, which means the document has been updated and the context changed.
+		documentUpdatedAndContextChanged(dd, null);
 	}
 	
 	/**

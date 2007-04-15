@@ -33,7 +33,13 @@ public class DisplayedNote implements DisplayedNoteHolder {
 	public DisplayedNoteHolder getHolder() {return holder;}
 	
 	public Note getNote() {
-		if (tab != null) note.setText(tab.getText());
+		if (tab != null) {
+			tab.saveToNote();
+		}
+		return note;
+	}
+	
+	protected Note getNoteWithoutUpdatingFromTab() {
 		return note;
 	}
 	

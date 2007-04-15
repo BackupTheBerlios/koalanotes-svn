@@ -8,7 +8,6 @@ import org.eclipse.swt.widgets.MessageBox;
 
 import de.berlios.koalanotes.controllers.Controller;
 import de.berlios.koalanotes.controllers.Dispatcher;
-import de.berlios.koalanotes.controllers.MainController;
 import de.berlios.koalanotes.data.Document;
 import de.berlios.koalanotes.data.Note;
 import de.berlios.koalanotes.data.NoteTransfer;
@@ -45,13 +44,13 @@ public class NoteMenuController extends Controller {
 	public static final String CUT_NOTE = getMethodDescriptor("cutNote");
 	public void cutNote(Event e) {
 		cutNCopyHelper(true);
-		d.invokeControllerMethod(MainController.CONTEXT_CHANGED, e);
+		documentUpdatedAndContextChanged(dd, e);
 	}
 	
 	public static final String COPY_NOTE = getMethodDescriptor("copyNote");
 	public void copyNote(Event e) {
 		cutNCopyHelper(false);
-		d.invokeControllerMethod(MainController.CONTEXT_CHANGED, e);
+		documentUpdatedAndContextChanged(dd, e);
 	}
 	
 	private void cutNCopyHelper(boolean cut) {
@@ -91,11 +90,13 @@ public class NoteMenuController extends Controller {
 	public static final String PASTE_CHILD_NOTE = getMethodDescriptor("pasteChildNote");
 	public void pasteChildNote(Event e) {
 		pasteHelper(true);
+		documentUpdatedAndContextChanged(dd, e);
 	}
 	
 	public static final String PASTE_SIBLING_NOTE = getMethodDescriptor("pasteSiblingNote");
 	public void pasteSiblingNote(Event e) {
 		pasteHelper(false);
+		documentUpdatedAndContextChanged(dd, e);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -142,7 +143,7 @@ public class NoteMenuController extends Controller {
 			DisplayedNote removeMe = dd.getTree().getSelectedNotes().get(0);
 			removeMe.delete();
 		}
-		d.invokeControllerMethod(MainController.CONTEXT_CHANGED, e);
+		documentUpdatedAndContextChanged(dd, e);
 	}
 	
 	public static final String MOVE_NOTE_LEFT = getMethodDescriptor("moveNoteLeft");
@@ -152,6 +153,7 @@ public class NoteMenuController extends Controller {
 		DisplayedNote holder = (DisplayedNote) moveMe.getHolder();
 		DisplayedNoteHolder newHolder = holder.getHolder();
 		moveMe.move(newHolder, dd.getTree(), holder.getNote().getIndex() + 1);
+		documentUpdated(dd, e);
 	}
 	
 	public static final String MOVE_NOTE_RIGHT = getMethodDescriptor("moveNoteRight");
@@ -161,6 +163,7 @@ public class NoteMenuController extends Controller {
 		if (index == 0) return;
 		DisplayedNote newHolder = moveMe.getHolder().getDisplayedNotes().get(index - 1);
 		moveMe.move(newHolder, dd.getTree(), 0);
+		documentUpdated(dd, e);
 	}
 	
 	public static final String MOVE_NOTE_UP = getMethodDescriptor("moveNoteUp");
@@ -171,6 +174,7 @@ public class NoteMenuController extends Controller {
 			index = moveMe.getHolder().getDisplayedNoteCount() - 1;
 		}
 		moveMe.move(moveMe.getHolder(), dd.getTree(), index);
+		documentUpdated(dd, e);
 	}
 	
 	public static final String MOVE_NOTE_DOWN = getMethodDescriptor("moveNoteDown");
@@ -181,6 +185,7 @@ public class NoteMenuController extends Controller {
 			index = 0;
 		}
 		moveMe.move(moveMe.getHolder(), dd.getTree(), index);
+		documentUpdated(dd, e);
 	}
 	
 	public static final String RENAME_NOTE = getMethodDescriptor("renameNote");

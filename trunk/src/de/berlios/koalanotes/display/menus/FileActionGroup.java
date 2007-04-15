@@ -31,7 +31,7 @@ public class FileActionGroup implements ActionGroup {
 	}
 	
 	public void update() {
-		if (dd.getDocument().hasStore()) save.setEnabled(true); else save.setEnabled(false);
+		save.setEnabled(dd.isModified() && dd.getDocument().hasStore());
 	}
 	
 	public void populateMenuBar(MenuManager menuBar) {

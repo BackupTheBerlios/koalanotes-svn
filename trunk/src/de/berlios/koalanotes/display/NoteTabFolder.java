@@ -8,15 +8,25 @@ import org.eclipse.swt.widgets.Composite;
 import de.berlios.koalanotes.controllers.Dispatcher;
 
 public class NoteTabFolder {
+	
+	// SWT tab folder
 	private CTabFolder tabFolder;
 	
 	public NoteTabFolder(Composite parent) {
 		tabFolder = new CTabFolder(parent, SWT.TOP | SWT.CLOSE);
 	}
 	
+	public NoteTab getSelectedNoteTab() {
+		if (tabFolder.getSelection() == null) {
+			return null;
+		} else {
+			return (NoteTab) tabFolder.getSelection().getData();
+		}
+	}
+	
 	public void saveNoteTabs() {
 		for (CTabItem tab : tabFolder.getItems()) {
-			((NoteTab) tab.getData()).getDisplayedNote().getNote();
+			((NoteTab) tab.getData()).saveToNote();
 		}
 	}
 	

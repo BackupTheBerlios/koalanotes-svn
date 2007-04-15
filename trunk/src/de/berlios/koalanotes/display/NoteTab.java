@@ -24,20 +24,37 @@ public class NoteTab implements DisposeListener {
 		tabItem.addDisposeListener(this);
 		text = new Text(parent, SWT.MULTI | SWT.WRAP);
 		text.setText(displayedNote.getNote().getText());
-		text.addListener(SWT.FocusIn, new Listener(d, MainController.CONTEXT_CHANGED));
+		text.addListener(SWT.FocusIn, new Listener(d, MainController.TAB_SELECTED));
+		text.addListener(SWT.FocusOut, new Listener(d, MainController.TAB_DESELECTED));
 		tabItem.setControl(text);
 		select();
 	}
 	
 	public DisplayedNote getDisplayedNote() {return displayedNote;}
-	public String getText() {return text.getText();}
+	
+	public void setName(String name) {tabItem.setText(name);}
+	
+	public void addModifyListener(Listener l) {
+		text.addListener(SWT.Modify, l);
+	}
+	public void removeModifyListener(Listener l) {
+		text.removeListener(SWT.Modify, l);
+	}
+	
+	public void saveToNote() {
+		displayedNote.getNoteWithoutUpdatingFromTab().setText(text.getText());
+	}
+	
+	public boolean hasUnsavedChanges() {
+		return !displayedNote.getNoteWithoutUpdatingFromTab().getText().equals(text.getText());
+	}
 	
 	public void select() {
 		tabItem.getParent().setSelection(tabItem);
 	}
 	
-	public void setName(String name) {
-		tabItem.setText(name);
+	public boolean isDisposed() {
+		return tabItem.isDisposed();
 	}
 	
 	public void dispose() {

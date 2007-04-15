@@ -62,6 +62,8 @@ public class AddNoteController extends Controller {
 		// The Add Note Dialog is disposed and the Add Note Controller is deregistered.
 		addNoteDialog.dispose();
 		deregister();
+		
+		documentUpdated(dd, e);
 	}
 	
 	public static final String CANCEL = getMethodDescriptor("cancel");

@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 
 import org.eclipse.swt.widgets.Event;
 
+import de.berlios.koalanotes.display.DisplayedDocument;
 import de.berlios.koalanotes.exceptions.KoalaException;
 
 public abstract class Controller {
@@ -60,5 +61,23 @@ public abstract class Controller {
 				throw (RuntimeException) itex.getCause();
 			} else throw new KoalaException(itex.getCause());
 		}
+	}
+	
+	protected void contextChanged(Event e) {
+		d.invokeControllerMethod(MainController.CONTEXT_CHANGED, e);
+	}
+	
+	protected void documentUpdated(DisplayedDocument dd, Event e) {
+		if (!dd.isModified()) {
+			dd.setModified(true);
+			d.invokeControllerMethod(MainController.CONTEXT_CHANGED, e);
+		}
+	}
+	
+	protected void documentUpdatedAndContextChanged(DisplayedDocument dd, Event e) {
+		if (!dd.isModified()) {
+			dd.setModified(true);
+		}
+		d.invokeControllerMethod(MainController.CONTEXT_CHANGED, e);
 	}
 }

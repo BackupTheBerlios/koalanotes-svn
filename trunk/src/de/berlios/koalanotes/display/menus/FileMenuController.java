@@ -34,6 +34,8 @@ public class FileMenuController extends Controller {
 		Note root = new Note("root", dd.getDocument(), "");
 		new DisplayedNote(dd, dd.getTree(), root);
 		dd.getShell().setText("Untitled Document - Koala Notes");
+		dd.setModified(false);
+		contextChanged(e);
 	}
 	
 	public static final String FILE_OPEN = getMethodDescriptor("fileOpen");
@@ -50,12 +52,16 @@ public class FileMenuController extends Controller {
 			new DisplayedNote(dd, dd.getTree(), root);
 		}
 		dd.getShell().setText(file.getName() + " - Koala Notes");
+		dd.setModified(false);
+		contextChanged(e);
 	}
 	
 	public static final String FILE_SAVE = getMethodDescriptor("fileSave");
 	public void fileSave(Event e) {
 		dd.getTabFolder().saveNoteTabs();
 		dd.getDocument().saveNotes();
+		dd.setModified(false);
+		contextChanged(e);
 	}
 	
 	public static final String FILE_SAVE_AS = getMethodDescriptor("fileSaveAs");
@@ -67,6 +73,8 @@ public class FileMenuController extends Controller {
 			dd.getTabFolder().saveNoteTabs();
 			dd.getDocument().saveNotes(file);
 			dd.getShell().setText(file.getName() + " - Koala Notes");
+			dd.setModified(false);
+			contextChanged(e);
 		}
 	}
 	

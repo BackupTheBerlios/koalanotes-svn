@@ -32,6 +32,7 @@ import de.berlios.koalanotes.display.menus.NoteMenuController;
  */
 public class DisplayedDocument implements DisplayedNoteHolder {
 	private Document document;
+	private boolean isModified; // whether there are unsaved changes to the document
 	private Shell shell;
 	private NoteTree tree;
 	private NoteTabFolder tabFolder;
@@ -91,11 +92,21 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 		new NoteMenuController(dispatcher, this);
 		new HelpMenuController(dispatcher, shell, imageRegistry);
 		new MainController(dispatcher, this);
-		new TreeController(dispatcher, tree);
+		new TreeController(dispatcher, this);
 	}
 	
 	public Document getDocument() {return document;}
 	public void setDocument(Document d) {document = d;}
+	public boolean isModified() {return isModified;}
+	public void setModified(boolean isModified) {
+		this.isModified = isModified;
+		boolean hasStar = shell.getText().endsWith("*");
+		if (isModified && !hasStar) {
+			shell.setText(shell.getText() + " *");
+		} else if (!isModified && hasStar) {
+			shell.setText(shell.getText().substring(0, shell.getText().length() - 2));
+		}
+	}
 	public Shell getShell() {return shell;}
 	public NoteTree getTree() {return tree;}
 	public NoteTabFolder getTabFolder() {return tabFolder;}
