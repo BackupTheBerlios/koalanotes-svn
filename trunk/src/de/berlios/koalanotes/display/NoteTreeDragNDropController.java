@@ -31,7 +31,7 @@ import de.berlios.koalanotes.data.NoteTransfer;
  * drop
  * dragFinished
  */
-class NoteTreeDragNDropSupport extends Controller implements DragSourceListener, DropTargetListener {
+class NoteTreeDragNDropController extends Controller implements DragSourceListener, DropTargetListener {
 	private NoteTree noteTree;
 	private Tree tree;
 	private DisplayedDocument dd;
@@ -50,7 +50,7 @@ class NoteTreeDragNDropSupport extends Controller implements DragSourceListener,
 	 * @param tree the SWT Tree used by the NoteTree
 	 * @param dd the DisplayedDocument to hold DisplayedNotes that get copied or moved to root level
 	 */
-	NoteTreeDragNDropSupport(Dispatcher d, DisplayedDocument dd, NoteTree noteTree, Tree tree) {
+	NoteTreeDragNDropController(Dispatcher d, DisplayedDocument dd, NoteTree noteTree, Tree tree) {
 		super(d);
 		this.dd = dd;
 		this.noteTree = noteTree;

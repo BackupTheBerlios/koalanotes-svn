@@ -32,7 +32,7 @@ public class NoteTree {
 		treeEditor.minimumWidth = 50;
 		
 		// Drag-n-drop support.
-		new NoteTreeDragNDropSupport(d, dd, this, tree);
+		new NoteTreeDragNDropController(d, dd, this, tree);
 		
 		// The context changed listener listens for all events that would change the context (eg
 		// selection of tree nodes), so it can notify the main controller.
