@@ -2,7 +2,9 @@ package de.berlios.koalanotes.controllers;
 
 import java.util.List;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.MessageBox;
 
 import de.berlios.koalanotes.display.DisplayedDocument;
 import de.berlios.koalanotes.display.DisplayedNote;
@@ -81,6 +83,22 @@ public class MainController extends Controller {
 				noteTabWithModifyListener.removeModifyListener(modifyListener);
 			}
 			noteTabWithModifyListener = null;
+		}
+	}
+	
+	/**
+	 * Called when the application is about to be closed (either through the close button or the
+	 * Exit menu item).
+	 */
+	public static final String EXITING_KOALA_NOTES = getMethodDescriptor("exitingKoalaNotes");
+	public void exitingKoalaNotes(Event e) {
+		if (dd.isModified()) {
+			MessageBox mb = new MessageBox(dd.getShell(), SWT.OK | SWT.CANCEL | SWT.ICON_WARNING);
+			mb.setText("Confirm Exit");
+			mb.setMessage("Exit even though there are unsaved changes?");
+			if (mb.open() == SWT.CANCEL) {
+				e.doit = false;
+			}
 		}
 	}
 }

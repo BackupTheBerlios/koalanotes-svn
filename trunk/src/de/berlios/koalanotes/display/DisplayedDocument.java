@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import de.berlios.koalanotes.controllers.ActionGroup;
 import de.berlios.koalanotes.controllers.Dispatcher;
+import de.berlios.koalanotes.controllers.Listener;
 import de.berlios.koalanotes.controllers.MainController;
 import de.berlios.koalanotes.controllers.TreeController;
 
@@ -52,6 +53,7 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 		shell.setText("Untitled Document - Koala Notes");
 		shell.setImage(imageRegistry.get(ImageRegistry.IMAGE_KOALA_SMALL));
 		shell.setLayout(new FillLayout(SWT.VERTICAL));
+		shell.addListener(SWT.Close, new Listener(dispatcher, MainController.EXITING_KOALA_NOTES));
 		
 		// Document
 		document = new Document();

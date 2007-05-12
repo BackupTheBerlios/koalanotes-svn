@@ -139,6 +139,21 @@ public class NoteMenuController extends Controller {
 	
 	public static final String DELETE_NOTES = getMethodDescriptor("removeNotes");
 	public void removeNotes(Event e) {
+		int selectedNoteCount = dd.getTree().getSelectedNotes().size();
+		String confirmMessage;
+		if (selectedNoteCount == 0) {
+			return;
+		} else if (selectedNoteCount == 1) {
+			confirmMessage = "Are you sure you want to delete this note?";
+		} else {
+			confirmMessage = "Are you sure you want to delete these notes?";
+		}
+		MessageBox mb = new MessageBox(dd.getShell(), SWT.OK | SWT.CANCEL | SWT.ICON_WARNING);
+		mb.setText("Confirm Delete");
+		mb.setMessage(confirmMessage);
+		if (mb.open() == SWT.CANCEL) {
+			return;
+		}
 		while (dd.getTree().getSelectedNotes().size() > 0) {
 			DisplayedNote removeMe = dd.getTree().getSelectedNotes().get(0);
 			removeMe.delete();

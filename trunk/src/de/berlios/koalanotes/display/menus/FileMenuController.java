@@ -80,6 +80,6 @@ public class FileMenuController extends Controller {
 	
 	public static final String FILE_EXIT = getMethodDescriptor("fileExit");
 	public void fileExit(Event e) {
-		dd.getShell().dispose();
+		dd.getShell().close();
 	}
 }
