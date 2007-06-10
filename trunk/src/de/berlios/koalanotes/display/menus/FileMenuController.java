@@ -10,6 +10,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import de.berlios.koalanotes.controllers.Controller;
 import de.berlios.koalanotes.controllers.Dispatcher;
 import de.berlios.koalanotes.data.Document;
+import de.berlios.koalanotes.data.DocumentViewSettings;
 import de.berlios.koalanotes.data.Note;
 import de.berlios.koalanotes.display.DisplayedDocument;
 import de.berlios.koalanotes.display.DisplayedNote;
@@ -40,26 +41,45 @@ public class FileMenuController extends Controller {
 	
 	public static final String FILE_OPEN = getMethodDescriptor("fileOpen");
 	public void fileOpen(Event e) {
+		
+		// Get file path from dialog.
 		FileDialog fileDialog = new FileDialog(dd.getShell(), SWT.OPEN);
 		String filePath = fileDialog.open();
 		if (filePath == null) return;
 		File file = new File(filePath);
+		
+		// Clear tab folder and tree.
 		dd.getTabFolder().closeNoteTabs();
 		dd.getTree().removeAll();
+		
+		// Load the new document.
 		dd.setDocument(new Document(file));
+		
+		// Load the notes.
 		List<Note> notes = dd.getDocument().getNotes();
 		for (Note root : notes) {
 			new DisplayedNote(dd, dd.getTree(), root);
 		}
+		
+		// Load the view settings.
+		DocumentViewSettings viewSettings = dd.getDocument().getViewSettings();
+		for (Note note : viewSettings.getNotesOpenInTabs()) {
+			DisplayedNote dn = dd.findDisplayedNoteForNote(note);
+			dn.displayTab(dd.getTabFolder(), d);
+		}
+		dd.getTabFolder().setSelectedNoteTab(viewSettings.getSelectedTab());
+		
+		// Set the window title.
 		dd.getShell().setText(file.getName() + " - Koala Notes");
 		dd.setModified(false);
+		
 		contextChanged(e);
 	}
 	
 	public static final String FILE_SAVE = getMethodDescriptor("fileSave");
 	public void fileSave(Event e) {
 		dd.getTabFolder().saveNoteTabs();
-		dd.getDocument().saveNotes();
+		dd.getDocument().saveDocument();
 		dd.setModified(false);
 		contextChanged(e);
 	}
@@ -71,7 +91,7 @@ public class FileMenuController extends Controller {
 		if (filePath != null) {
 			File file = new File(filePath);
 			dd.getTabFolder().saveNoteTabs();
-			dd.getDocument().saveNotes(file);
+			dd.getDocument().saveDocument(file);
 			dd.getShell().setText(file.getName() + " - Koala Notes");
 			dd.setModified(false);
 			contextChanged(e);

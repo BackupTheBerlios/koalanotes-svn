@@ -4,15 +4,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
 
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
-import de.berlios.koalanotes.data.Note;
-import de.berlios.koalanotes.data.NoteHolder;
+import de.berlios.koalanotes.data.Document;
 import de.berlios.koalanotes.exceptions.KoalaException;
 
 /**
@@ -35,12 +33,12 @@ public class XMLFileStore {
 	}
 	
 	/**
-	 * Load Notes from storage, putting them into the given NoteHolder.
+	 * Populate the given KoalaNotes document with settings and notes from the XML file store.
 	 * 
 	 * @throws KoalaException If the file could not be read from or the xml contained was invalid,
 	 * or the document could not be built.
 	 */
-	public void loadNotes(NoteHolder noteHolder) {
+	public void loadKoalaDocument(Document koalaDocument) {
 		org.jdom.Document jdomDocument = null;
 		try {
 			jdomDocument = new SAXBuilder().build(file);
@@ -49,16 +47,16 @@ public class XMLFileStore {
 		} catch (JDOMException jdomex) {
 			throw new KoalaException("Koala Notes could not build a document from file '" + file.getName() + "'.", jdomex);
 		}
-		XMLNoteSerializer.createNotesFromJDOMDocument(jdomDocument, noteHolder);
+		XMLSerializer.loadKoalaDocumentFromXML(koalaDocument, jdomDocument);
 	}
 	
 	/**
-	 * Save the given Notes to storage.
+	 * Save the given KoalaNotes document to storage.
 	 * 
 	 * @throws KoalaException If the file could not be found or could be not written to.
 	 */
-	public void saveNotes(List<Note> roots) {
-		org.jdom.Document jdomDocument = XMLNoteSerializer.createJDOMDocumentFromNotes(roots);
+	public void saveKoalaDocument(Document koalaDocument) {
+		org.jdom.Document jdomDocument = XMLSerializer.saveKoalaDocumentToXML(koalaDocument);
 		XMLOutputter out = new XMLOutputter(Format.getPrettyFormat());
 		FileOutputStream fos = null;
 		boolean exceptionThrown = false;

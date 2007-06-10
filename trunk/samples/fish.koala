@@ -1,8 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <koalanotesdocument version="0.1">
-  <note name="root" text="My fishy has a first name, it's fishy fishy fish.">
-    <note name="moonote" text="moomoomoo" />
-    <note name="baanote" text="baa baa baa" />
-  </note>
+  <viewsettings>
+    <tab selected="true">
+      <noteref>
+        <member index="0" name="root" />
+      </noteref>
+    </tab>
+    <tab>
+      <noteref>
+        <member index="0" name="root" />
+        <member index="0" name="moonote" />
+      </noteref>
+    </tab>
+  </viewsettings>
+  <notes>
+    <note name="root" text="My fishy has a first name, it's fishy fishy fish.">
+      <note name="moonote" text="moomoomoo" />
+      <note name="baanote" text="baa baa baa" />
+    </note>
+  </notes>
 </koalanotesdocument>
 

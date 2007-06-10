@@ -68,7 +68,7 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 		new DisplayedNote(this, tree, root);
 		
 		// TabFolder
-		tabFolder = new NoteTabFolder(sashForm);
+		tabFolder = new NoteTabFolder(sashForm, this);
 		
 		// Finish SashForm
 		sashForm.setWeights(new int[] {20, 80});
@@ -124,4 +124,33 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 	public void addDisplayedNote(DisplayedNote dn, int index) {displayedNotes.add(index, dn);}
 	public void removeDisplayedNote(DisplayedNote dn) {displayedNotes.remove(dn);}
 	public NoteHolder getNoteHolder() {return document;}
+	
+	/**
+	 * Find the displayed note for the given note, or null if not found.
+	 */
+	public DisplayedNote findDisplayedNoteForNote(Note note) {
+		List<Note> ancestorsTopFirst = new LinkedList<Note>();
+		while (note != null) {
+			ancestorsTopFirst.add(0, note);
+			if (note.getHolder() instanceof Note) {
+				note = (Note) note.getHolder();
+			} else {
+				note = null;
+			}
+		}
+		List<DisplayedNote> dns = displayedNotes;
+		DisplayedNote displayedNote = null;
+		for (Note n : ancestorsTopFirst) {
+			displayedNote = null;
+			for (DisplayedNote dn : dns) {
+				if (dn.getNote() == n) {
+					displayedNote = dn;
+					dns = displayedNote.getDisplayedNotes();
+					break;
+				}
+			}
+			if (displayedNote == null) return null;
+		}
+		return displayedNote;
+	}
 }

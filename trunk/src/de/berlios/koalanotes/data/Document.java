@@ -10,6 +10,8 @@ import de.berlios.koalanotes.persistence.XMLFileStore;
 
 public class Document implements NoteHolder {
 	private XMLFileStore store;
+	
+	private DocumentViewSettings viewSettings;
 	private List<Note> roots;
 	
 	public Document() {
@@ -17,22 +19,27 @@ public class Document implements NoteHolder {
 	}
 	
 	/**
-	 * Load the Notes from the given xml file and return them (keeps a reference to the file and
-	 * the Notes).
+	 * Load view settings and notes from the given xml file.
 	 * 
 	 * @throws KoalaException If the file could not be read from or the xml contained was invalid,
 	 * or the document could not be built.
 	 */
-	
 	public Document(File file) {
 		store = new XMLFileStore(file);
+		
+		viewSettings = new DocumentViewSettings();
 		roots = new LinkedList<Note>();
-		store.loadNotes(this);
+		
+		store.loadKoalaDocument(this);
 	}
 	
 	public boolean hasStore() {
 		return (store != null);
 	}
+	
+	// View Settings.
+	public DocumentViewSettings getViewSettings() {return viewSettings;}
+	public void setViewSettings(DocumentViewSettings viewSettings) {this.viewSettings = viewSettings;}
 	
 	// Implement NoteHolder
 	public List<Note> getNotes() {return roots;}
@@ -41,31 +48,32 @@ public class Document implements NoteHolder {
 	public void removeNote(Note note) {roots.remove(note);}
 	
 	/**
-	 * Save the currently loaded Notes to the given file (the given file is remembered for future
-	 * storage).
+	 * Save the currently loaded view settings and notes to the given file (the given file is
+	 * remembered for future storage).
 	 * 
 	 * @throws KoalaException If the file could not be found or could not be written to.
 	 */
-	public void saveNotes(File file) {
+	public void saveDocument(File file) {
 		store = new XMLFileStore(file);
-		saveNotes();
+		saveDocument();
 	}
 	
 	/**
-	 * Save the currently loaded Notes to the currently used storage.
+	 * Save the currently loaded view settings and notes to the currently used storage.
 	 * 
 	 * @throws KoalaException If there is no storage currently in use, or if there was a problem
 	 * writing to it.
 	 */
-	public void saveNotes() {
+	public void saveDocument() {
 		if (store == null) {
 			throw new KoalaException("Koala Notes does not know where to save to.");
 		}
-		store.saveNotes(roots);
+		store.saveKoalaDocument(this);
 	}
 	
 	/**
-	 * Save a backup of the currently loaded Notes, return a description of the backup location.
+	 * Save a backup of the currently loaded view settings and notes, return a description of the
+	 * backup location.
 	 */
 	public String saveBackup() {
 		XMLFileStore backupStore;
@@ -76,7 +84,7 @@ public class Document implements NoteHolder {
 			File f = new File(store.getFileAbsolutePath() + ".bak");
 			backupStore = new XMLFileStore(f);
 		}
-		backupStore.saveNotes(roots);
+		backupStore.saveKoalaDocument(this);
 		return backupStore.getFileAbsolutePath();
 	}
 }

@@ -12,7 +12,7 @@ import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
 import de.berlios.koalanotes.exceptions.KoalaException;
-import de.berlios.koalanotes.persistence.XMLNoteSerializer;
+import de.berlios.koalanotes.persistence.XMLSerializer;
 
 /**
  * For Dragging-n-dropping a KoalaNotes Document.
@@ -40,7 +40,7 @@ public class NoteTransfer extends ByteArrayTransfer {
 		
 		// Write data to a byte[].
 		Document koalaDocument = (Document) object;
-		org.jdom.Document jdomDocument = XMLNoteSerializer.createJDOMDocumentFromNotes(koalaDocument.getNotes());
+		org.jdom.Document jdomDocument = XMLSerializer.saveNotesToXML(koalaDocument.getNotes());
 		ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
 		XMLOutputter xmlOut = new XMLOutputter(Format.getRawFormat());
 		try {
@@ -72,9 +72,9 @@ public class NoteTransfer extends ByteArrayTransfer {
 			throw new KoalaException(ERROR_TEXT, jdomex);
 		}
 		Document koalaDocument = new Document();
-		XMLNoteSerializer.createNotesFromJDOMDocument(jdomDocument, koalaDocument);
+		XMLSerializer.loadKoalaDocumentFromXML(koalaDocument, jdomDocument);
 		return koalaDocument;
-	}	
+	}
 	
 	protected String[] getTypeNames() {
 		return new String[] {NOTE_TRANSFER_TYPE_NAME};
