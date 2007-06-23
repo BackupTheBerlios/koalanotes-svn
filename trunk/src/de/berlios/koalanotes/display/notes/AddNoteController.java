@@ -35,8 +35,8 @@ public class AddNoteController extends Controller {
 	public void ok(Event e) {
 		DisplayedNote newDn;
 		
-		// If the tree is empty the new note is added to the top.
-		if (dd.getTree().isEmpty()) {
+		// If the tree is empty or has no items selected the new note is added to the bottom.
+		if (dd.getTree().isEmpty() || dd.getTree().getSelectionCount() == 0) {
 			Note newNote = new Note(addNoteDialog.getName(), dd.getDocument(), "");
 			newDn = new DisplayedNote(dd, dd.getTree(), newNote);
 			
