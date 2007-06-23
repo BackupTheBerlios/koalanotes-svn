@@ -1,5 +1,6 @@
 package de.berlios.koalanotes.display.menus;
 
+import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.MenuManager;
 
 import de.berlios.koalanotes.controllers.Action;
@@ -23,6 +24,9 @@ public class HelpActionGroup implements ActionGroup {
 		helpMenu = new MenuManager("&Help");
 		helpMenu.add(about);
 		menuBar.add(helpMenu);
+	}
+	
+	public void populateCoolBar(CoolBarManager coolBar) {
 	}
 	
 	public void populateTreeContextMenu(MenuManager treeContextMenu) {

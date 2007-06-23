@@ -1,5 +1,6 @@
 package de.berlios.koalanotes.controllers;
 
+import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.MenuManager;
 
 /**
@@ -18,6 +19,9 @@ public interface ActionGroup {
 	
 	/** Populate the top menu bar with actions from this ActionGroup. */
 	public void populateMenuBar(MenuManager menuBar);
+	
+	/** Populate the tool bar with actions from this ActionGroup. */
+	public void populateCoolBar(CoolBarManager coolBar);
 	
 	/** Populate the tree context menu with actions from this ActionGroup. */
 	public void populateTreeContextMenu(MenuManager treeContextMenu);

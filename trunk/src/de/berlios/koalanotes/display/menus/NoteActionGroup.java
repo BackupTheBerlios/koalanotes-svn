@@ -1,5 +1,6 @@
 package de.berlios.koalanotes.display.menus;
 
+import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.SWT;
@@ -182,6 +183,9 @@ public class NoteActionGroup implements ActionGroup {
 		noteMenu.add(moveNoteSubmenuMenuBar);
 		ungroupedActions.addActionsToMenuManager(noteMenu);
 		menuBar.add(noteMenu);
+	}
+	
+	public void populateCoolBar(CoolBarManager coolBar) {
 	}
 	
 	public void populateTreeContextMenu(MenuManager treeContextMenu) {

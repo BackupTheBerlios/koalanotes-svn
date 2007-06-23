@@ -41,6 +41,7 @@ public class MainController extends Controller {
 		}
 		dd.getMenuBar().updateAll(true);
 		dd.getTreeContextMenu().updateAll(true);
+		dd.getCoolBar().update(true);
 		ensureNoteTabWithModifyListenerNull();
 		if (!dd.isModified()) {
 			noteTabWithModifyListener = dd.getTabFolder().getSelectedNoteTab();

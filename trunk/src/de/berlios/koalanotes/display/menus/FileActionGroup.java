@@ -1,13 +1,16 @@
 package de.berlios.koalanotes.display.menus;
 
+import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
 
 import de.berlios.koalanotes.controllers.Action;
 import de.berlios.koalanotes.controllers.ActionGroup;
 import de.berlios.koalanotes.controllers.Dispatcher;
 import de.berlios.koalanotes.display.DisplayedDocument;
+import de.berlios.koalanotes.display.ImageRegistry;
 
 public class FileActionGroup implements ActionGroup {
 	private DisplayedDocument dd;
@@ -26,6 +29,7 @@ public class FileActionGroup implements ActionGroup {
 		open = new Action(d, FileMenuController.FILE_OPEN, "&Open");
 		save = new Action(d, FileMenuController.FILE_SAVE, "&Save");
 		save.setAccelerator(SWT.CONTROL | 'S');
+		save.setImageDescriptor(dd.getImageRegistry().getDescriptor(ImageRegistry.ACTION_ICON_FILE_SAVE));
 		saveAs = new Action(d, FileMenuController.FILE_SAVE_AS, "Save &As");
 		exit = new Action(d, FileMenuController.FILE_EXIT, "E&xit");
 	}
@@ -44,6 +48,12 @@ public class FileActionGroup implements ActionGroup {
 		fileMenu.add(new Separator());
 		fileMenu.add(exit);
 		menuBar.add(fileMenu);
+	}
+	
+	public void populateCoolBar(CoolBarManager coolBar) {
+		ToolBarManager tbm = new ToolBarManager();
+		tbm.add(save);
+		coolBar.add(tbm);
 	}
 	
 	public void populateTreeContextMenu(MenuManager treeContextMenu) {

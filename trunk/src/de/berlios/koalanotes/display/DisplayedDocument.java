@@ -4,9 +4,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Shell;
 
@@ -39,6 +42,7 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 	private NoteTabFolder tabFolder;
 	private List<DisplayedNote> displayedNotes; // root notes
 	private MenuManager menuBar;
+	private CoolBarManager coolBar;
 	private MenuManager treeContextMenu;
 	private List<ActionGroup> actionGroups; // groups of menu/toolbar items
 	private ImageRegistry imageRegistry;
@@ -52,15 +56,39 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 		this.shell = shell;
 		shell.setText("Untitled Document - Koala Notes");
 		shell.setImage(imageRegistry.get(ImageRegistry.IMAGE_KOALA_SMALL));
-		shell.setLayout(new FillLayout(SWT.VERTICAL));
 		shell.addListener(SWT.Close, new Listener(dispatcher, MainController.EXITING_KOALA_NOTES));
+		
+		// Shell Layout
+		GridLayout shellLayout = new GridLayout(1, false);
+		shellLayout.horizontalSpacing = 0;
+		shellLayout.verticalSpacing = 0;
+		shell.setLayout(shellLayout);
 		
 		// Document
 		document = new Document();
 		Note root = new Note("root", document, "");
 		
+		// Cool Bar
+		coolBar = new CoolBarManager();
+		GridData coolBarLayoutData = new GridData();
+		coolBarLayoutData.horizontalAlignment = SWT.FILL;
+		coolBarLayoutData.grabExcessHorizontalSpace = true;
+		coolBarLayoutData.verticalAlignment = SWT.TOP;
+		coolBarLayoutData.grabExcessVerticalSpace = false;
+		CoolBar coolBarControl = coolBar.createControl(shell);
+		coolBarControl.setLayoutData(coolBarLayoutData);
+		
+		// Menu Bar
+		menuBar = new MenuManager();
+		shell.setMenuBar(menuBar.createMenuBar((Decorations) shell));
+		
 		// SashForm
 		SashForm sashForm = new SashForm(shell, SWT.HORIZONTAL);
+		GridData sashFormLayoutData = new GridData();
+		sashFormLayoutData.horizontalAlignment = SWT.FILL;
+		sashFormLayoutData.verticalAlignment = SWT.FILL;
+		sashFormLayoutData.grabExcessVerticalSpace = true;
+		sashForm.setLayoutData(sashFormLayoutData);
 		
 		// Tree and DisplayedNotes
 		this.displayedNotes = new LinkedList<DisplayedNote>();
@@ -73,11 +101,9 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 		// Finish SashForm
 		sashForm.setWeights(new int[] {20, 80});
 		
-		// Menu Bar and Tree Context Menu
-		menuBar = new MenuManager();
+		// Tree Context Menu
 		treeContextMenu = new MenuManager();
 		tree.setContextMenu(treeContextMenu);
-		shell.setMenuBar(menuBar.createMenuBar((Decorations) shell));
 		
 		// Action Groups
 		actionGroups = new LinkedList<ActionGroup>();
@@ -86,6 +112,7 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 		actionGroups.add(new HelpActionGroup(dispatcher));
 		for (ActionGroup ag : actionGroups) {
 			ag.populateMenuBar(menuBar);
+			ag.populateCoolBar(coolBar);
 			ag.populateTreeContextMenu(treeContextMenu);
 		}
 		
@@ -93,8 +120,11 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 		new FileMenuController(dispatcher, this);
 		new NoteMenuController(dispatcher, this);
 		new HelpMenuController(dispatcher, shell, imageRegistry);
-		new MainController(dispatcher, this);
+		MainController mc = new MainController(dispatcher, this);
 		new TreeController(dispatcher, this);
+		
+		mc.contextChanged(null);
+		shell.layout();
 	}
 	
 	public Document getDocument() {return document;}
@@ -113,6 +143,7 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 	public NoteTree getTree() {return tree;}
 	public NoteTabFolder getTabFolder() {return tabFolder;}
 	public MenuManager getMenuBar() {return menuBar;}
+	public CoolBarManager getCoolBar() {return coolBar;}
 	public MenuManager getTreeContextMenu() {return treeContextMenu;}
 	public List<ActionGroup> getActionGroups() {return actionGroups;}
 	public ImageRegistry getImageRegistry() {return imageRegistry;}
