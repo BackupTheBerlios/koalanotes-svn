@@ -15,6 +15,7 @@ public class Document implements NoteHolder {
 	private List<Note> roots;
 	
 	public Document() {
+		viewSettings = new DocumentViewSettings();
 		roots = new LinkedList<Note>();
 	}
 	
