@@ -107,6 +107,7 @@ public class NoteTree {
 	}
 	
 	public DisplayedNote getSelectedNote() {
+		if (tree.getSelectionCount() == 0) return null;
 		TreeItem ti = tree.getSelection()[0];
 		if (ti == null) return null;
 		return ((NoteTreeNode) ti.getData()).getDisplayedNote();
