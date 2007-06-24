@@ -12,6 +12,8 @@ public class ImageRegistry {
 	public static final String IMAGE_KOALA_BIG = "IMAGE_KOALA_BIG";
 	
 	public static final String ACTION_ICON_FILE_SAVE = "ACTION_ICON_FILE_SAVE";
+	public static final String ACTION_ICON_NOTE_NEW_CHILD = "ACTION_ICON_NOTE_NEW_CHILD";
+	public static final String ACTION_ICON_NOTE_NEW_SIBLING = "ACTION_ICON_NOTE_NEW_SIBLING";
 	
 	private org.eclipse.jface.resource.ImageRegistry jfaceImageRegistry;
 	
@@ -21,6 +23,8 @@ public class ImageRegistry {
 		put(IMAGE_KOALA_BIG, "../../../koala200.png");
 		
 		put(ACTION_ICON_FILE_SAVE, "../../../save.png");
+		put(ACTION_ICON_NOTE_NEW_CHILD, "../../../newchild.png");
+		put(ACTION_ICON_NOTE_NEW_SIBLING, "../../../newsibling.png");
 	}
 	
 	private void put(String key, String filename) {

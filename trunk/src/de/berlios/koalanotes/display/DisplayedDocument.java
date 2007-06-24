@@ -108,8 +108,8 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 		// Action Groups
 		actionGroups = new LinkedList<ActionGroup>();
 		actionGroups.add(new FileActionGroup(dispatcher, this));
-		actionGroups.add(new NoteActionGroup(dispatcher, tree));
-		actionGroups.add(new HelpActionGroup(dispatcher));
+		actionGroups.add(new NoteActionGroup(dispatcher, imageRegistry, tree));
+		actionGroups.add(new HelpActionGroup(dispatcher, imageRegistry));
 		for (ActionGroup ag : actionGroups) {
 			ag.populateMenuBar(menuBar);
 			ag.populateCoolBar(coolBar);

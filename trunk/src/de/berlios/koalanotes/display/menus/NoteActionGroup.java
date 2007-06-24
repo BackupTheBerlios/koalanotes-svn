@@ -3,6 +3,7 @@ package de.berlios.koalanotes.display.menus;
 import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.Display;
@@ -14,6 +15,7 @@ import de.berlios.koalanotes.controllers.Dispatcher;
 import de.berlios.koalanotes.controllers.Listener;
 import de.berlios.koalanotes.data.Document;
 import de.berlios.koalanotes.data.NoteTransfer;
+import de.berlios.koalanotes.display.ImageRegistry;
 import de.berlios.koalanotes.display.NoteTree;
 
 public class NoteActionGroup implements ActionGroup {
@@ -59,7 +61,7 @@ public class NoteActionGroup implements ActionGroup {
 	// keyboard listeners
 	private Listener cutOrCopyAttemptListener;
 	
-	public NoteActionGroup(Dispatcher d, NoteTree tree) {
+	public NoteActionGroup(Dispatcher d, ImageRegistry imageRegistry, NoteTree tree) {
 		this.tree = tree;
 		
 		// construct actions
@@ -89,6 +91,10 @@ public class NoteActionGroup implements ActionGroup {
 		moveNoteUp.setAccelerator(SWT.CONTROL | SWT.SHIFT | SWT.ARROW_UP);
 		moveNoteDown.setAccelerator(SWT.CONTROL | SWT.SHIFT | SWT.ARROW_DOWN);
 		deleteNotes.setAccelerator(SWT.DEL);
+		
+		// set icons
+		newChildNote.setImageDescriptor(imageRegistry.getDescriptor(ImageRegistry.ACTION_ICON_NOTE_NEW_CHILD));
+		newSiblingNote.setImageDescriptor(imageRegistry.getDescriptor(ImageRegistry.ACTION_ICON_NOTE_NEW_SIBLING));
 		
 		// construct action group helpers
 		allSubmenusAndActions = new ActionGroupHelper();
@@ -186,6 +192,10 @@ public class NoteActionGroup implements ActionGroup {
 	}
 	
 	public void populateCoolBar(CoolBarManager coolBar) {
+		ToolBarManager tbm = new ToolBarManager();
+		tbm.add(newChildNote);
+		tbm.add(newSiblingNote);
+		coolBar.add(tbm);
 	}
 	
 	public void populateTreeContextMenu(MenuManager treeContextMenu) {
