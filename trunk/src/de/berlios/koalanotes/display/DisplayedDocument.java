@@ -77,6 +77,7 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 		coolBarLayoutData.grabExcessVerticalSpace = false;
 		CoolBar coolBarControl = coolBar.createControl(shell);
 		coolBarControl.setLayoutData(coolBarLayoutData);
+		coolBarControl.addListener(SWT.MouseUp, new Listener(dispatcher, MainController.COOL_BAR_REARRANGED));
 		
 		// Menu Bar
 		menuBar = new MenuManager();

@@ -87,6 +87,12 @@ public class MainController extends Controller {
 		}
 	}
 	
+	public static final String COOL_BAR_REARRANGED = getMethodDescriptor("coolBarRearranged");
+	public void coolBarRearranged(Event e) {
+		dd.getCoolBar().refresh();
+		dd.getShell().layout();
+	}
+	
 	/**
 	 * Called when the application is about to be closed (either through the close button or the
 	 * Exit menu item).
