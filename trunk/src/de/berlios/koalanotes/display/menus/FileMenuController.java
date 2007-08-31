@@ -37,6 +37,7 @@ public class FileMenuController extends Controller {
 		dd.getShell().setText("Untitled Document - Koala Notes");
 		dd.setModified(false);
 		contextChanged(e);
+		dd.setStatusBarText("A brand new document.");
 	}
 	
 	public static final String FILE_OPEN = getMethodDescriptor("fileOpen");
@@ -46,6 +47,9 @@ public class FileMenuController extends Controller {
 		FileDialog fileDialog = new FileDialog(dd.getShell(), SWT.OPEN);
 		String filePath = fileDialog.open();
 		if (filePath == null) return;
+		
+		// Open the file.
+		dd.setStatusBarText("Opening document...");
 		File file = new File(filePath);
 		
 		// Clear tab folder and tree.
@@ -74,14 +78,17 @@ public class FileMenuController extends Controller {
 		dd.setModified(false);
 		
 		contextChanged(e);
+		dd.setStatusBarText("Document opened.");
 	}
 	
 	public static final String FILE_SAVE = getMethodDescriptor("fileSave");
 	public void fileSave(Event e) {
+		dd.setStatusBarText("Saving document...");
 		dd.getTabFolder().saveNoteTabs();
 		dd.getDocument().saveDocument();
 		dd.setModified(false);
 		contextChanged(e);
+		dd.setStatusBarText("Document saved.");
 	}
 	
 	public static final String FILE_SAVE_AS = getMethodDescriptor("fileSaveAs");
@@ -89,12 +96,14 @@ public class FileMenuController extends Controller {
 		FileDialog fileDialog = new FileDialog(dd.getShell(), SWT.SAVE);
 		String filePath = fileDialog.open();
 		if (filePath != null) {
+			dd.setStatusBarText("Saving document...");
 			File file = new File(filePath);
 			dd.getTabFolder().saveNoteTabs();
 			dd.getDocument().saveDocument(file);
 			dd.getShell().setText(file.getName() + " - Koala Notes");
 			dd.setModified(false);
 			contextChanged(e);
+			dd.setStatusBarText("Document saved.");
 		}
 	}
 	

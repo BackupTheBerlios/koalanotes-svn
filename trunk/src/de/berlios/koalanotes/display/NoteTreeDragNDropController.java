@@ -76,6 +76,11 @@ class NoteTreeDragNDropController extends Controller implements DragSourceListen
 	public void dragStart(DragSourceEvent event) {
 		dragInProgress = noteTree.isSelectionValidForMoving();
 		event.doit = dragInProgress;
+		if (dragInProgress) {
+			dd.setStatusBarText("Dragging...");
+		} else {
+			dd.setStatusBarText("Selection is not valid for moving, the notes being moved must all be under the same parent.");
+		}
 	}
 	
 	/** Implements DragSourceListener.dragFinished(). */
@@ -226,6 +231,11 @@ class NoteTreeDragNDropController extends Controller implements DragSourceListen
 		
 		// Move complete, which means the document has been updated and the context changed.
 		documentUpdatedAndContextChanged(dd, null);
+		if (isDropMove) {
+			dd.setStatusBarText("Notes moved.");
+		} else {
+			dd.setStatusBarText("Notes pasted.");
+		}
 	}
 	
 	/**

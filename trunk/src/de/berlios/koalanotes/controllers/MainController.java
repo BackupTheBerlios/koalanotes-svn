@@ -49,6 +49,7 @@ public class MainController extends Controller {
 				noteTabWithModifyListener.addModifyListener(modifyListener);
 			}
 		}
+		dd.setStatusBarText("");
 	}
 	
 	public static final String DISPLAY_TAB = getMethodDescriptor("displayTab");

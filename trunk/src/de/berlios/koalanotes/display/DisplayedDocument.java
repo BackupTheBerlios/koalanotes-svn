@@ -11,6 +11,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.Decorations;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import de.berlios.koalanotes.controllers.ActionGroup;
@@ -45,6 +46,7 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 	private CoolBarManager coolBar;
 	private MenuManager treeContextMenu;
 	private List<ActionGroup> actionGroups; // groups of menu/toolbar items
+	private Label statusBar;
 	private ImageRegistry imageRegistry;
 	
 	public DisplayedDocument(Shell shell, Dispatcher dispatcher) {
@@ -60,6 +62,8 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 		
 		// Shell Layout
 		GridLayout shellLayout = new GridLayout(1, false);
+		shellLayout.marginWidth = 0;
+		shellLayout.marginHeight = 0;
 		shellLayout.horizontalSpacing = 0;
 		shellLayout.verticalSpacing = 0;
 		shell.setLayout(shellLayout);
@@ -68,28 +72,33 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 		document = new Document();
 		Note root = new Note("root", document, "");
 		
+		// Menu Bar
+		menuBar = new MenuManager();
+		shell.setMenuBar(menuBar.createMenuBar((Decorations) shell));
+		
 		// Cool Bar
 		coolBar = new CoolBarManager();
 		GridData coolBarLayoutData = new GridData();
 		coolBarLayoutData.horizontalAlignment = SWT.FILL;
-		coolBarLayoutData.grabExcessHorizontalSpace = true;
-		coolBarLayoutData.verticalAlignment = SWT.TOP;
-		coolBarLayoutData.grabExcessVerticalSpace = false;
 		CoolBar coolBarControl = coolBar.createControl(shell);
 		coolBarControl.setLayoutData(coolBarLayoutData);
 		coolBarControl.addListener(SWT.MouseUp, new Listener(dispatcher, MainController.COOL_BAR_REARRANGED));
-		
-		// Menu Bar
-		menuBar = new MenuManager();
-		shell.setMenuBar(menuBar.createMenuBar((Decorations) shell));
 		
 		// SashForm
 		SashForm sashForm = new SashForm(shell, SWT.HORIZONTAL);
 		GridData sashFormLayoutData = new GridData();
 		sashFormLayoutData.horizontalAlignment = SWT.FILL;
 		sashFormLayoutData.verticalAlignment = SWT.FILL;
+		sashFormLayoutData.grabExcessHorizontalSpace = true;
 		sashFormLayoutData.grabExcessVerticalSpace = true;
 		sashForm.setLayoutData(sashFormLayoutData);
+		
+		// Status Bar
+		statusBar = new Label(shell, SWT.NONE);
+		GridData statusBarLayoutData = new GridData();
+		statusBarLayoutData.horizontalAlignment = SWT.FILL;
+		statusBarLayoutData.verticalIndent = 3;
+		statusBar.setLayoutData(statusBarLayoutData);
 		
 		// Tree and DisplayedNotes
 		this.displayedNotes = new LinkedList<DisplayedNote>();
@@ -124,7 +133,7 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 		MainController mc = new MainController(dispatcher, this);
 		new TreeController(dispatcher, this);
 		
-		mc.contextChanged(null);
+		mc.contextChanged(null);		
 		shell.layout();
 	}
 	
@@ -139,6 +148,9 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 		} else if (!isModified && hasStar) {
 			shell.setText(shell.getText().substring(0, shell.getText().length() - 2));
 		}
+	}
+	public void setStatusBarText(String text) {
+		statusBar.setText(text);
 	}
 	public Shell getShell() {return shell;}
 	public NoteTree getTree() {return tree;}
