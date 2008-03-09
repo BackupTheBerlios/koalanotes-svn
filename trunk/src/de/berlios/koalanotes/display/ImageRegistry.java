@@ -22,9 +22,9 @@ public class ImageRegistry {
 		put(IMAGE_KOALA_SMALL, "../../../koala16.png");
 		put(IMAGE_KOALA_BIG, "../../../koala200.png");
 		
-		put(ACTION_ICON_FILE_SAVE, "../../../save.png");
-		put(ACTION_ICON_NOTE_NEW_CHILD, "../../../newchild.png");
-		put(ACTION_ICON_NOTE_NEW_SIBLING, "../../../newsibling.png");
+		put(ACTION_ICON_FILE_SAVE, "../../../file_save.png");
+		put(ACTION_ICON_NOTE_NEW_CHILD, "../../../notes_new_child.png");
+		put(ACTION_ICON_NOTE_NEW_SIBLING, "../../../notes_new_sibling.png");
 	}
 	
 	private void put(String key, String filename) {
