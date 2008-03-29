@@ -31,6 +31,7 @@ public class FileMenuController extends Controller {
 	public void fileNew(Event e) {
 		dd.getTabFolder().closeNoteTabs();
 		dd.getTree().removeAll();
+		dd.getDisplayedNotes().clear();
 		dd.setDocument(new Document());
 		Note root = new Note("root", dd.getDocument(), "");
 		new DisplayedNote(dd, dd.getTree(), root);
@@ -52,9 +53,10 @@ public class FileMenuController extends Controller {
 		dd.setStatusBarText("Opening document...");
 		File file = new File(filePath);
 		
-		// Clear tab folder and tree.
+		// Clear tab folder, tree and DisplayedNote list.
 		dd.getTabFolder().closeNoteTabs();
 		dd.getTree().removeAll();
+		dd.getDisplayedNotes().clear();
 		
 		// Load the new document.
 		dd.setDocument(new Document(file));
