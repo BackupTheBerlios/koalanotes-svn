@@ -1,34 +1,43 @@
 package de.berlios.koalanotes.exceptions;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
-import de.berlios.koalanotes.KoalaNotes;
-
+/**
+ * A dialog to display a KoalaNotes error, handles KoalaExceptions and Throwables alike.  I have
+ * tried to prevent this class from having too many dependencies on the rest of KoalaNotes, because
+ * this needs to work when other parts of KoalaNotes have failed.
+ */
 public class KoalaErrorDialog {
-	private MessageBox dialog;
+	private Shell dialog;
+	private Label messageLabel;
+	private Text detailText;
+	private Button detailButton;
+	private FormData detailTextLayoutData;
 	
 	public KoalaErrorDialog(Shell shell, KoalaException ke) {
 		initialiseDialog(shell);
-		if (ke.getMessage() != null) {
-			dialog.setMessage(ke.getMessage());
-			if (ke.getCause() != null) {
-				dialog.setMessage(ke.getMessage() + "\n" + ke.getCause().getMessage());
-			}
-		} else if (ke.getCause() != null) {
-			dialog.setMessage(ke.getCause().getMessage());
-		} else {
-			dialog.setMessage("An error occurred.");
-		}
+		setMessage(getFirstMessage(ke));
+		setDetail(ke);
 	}
 	
 	public KoalaErrorDialog(Shell shell, Throwable t) {
 		initialiseDialog(shell);
-		dialog.setMessage("An unexpected error occurred:\n"
-		                  + t.getMessage()
-		                  + "\nThe application will be shut down."
-		                  + "\nFurther information has been printed to the logs at " + KoalaNotes.LOG_LOCATION + ".");
+		setMessage("An unexpected error occurred:\n"
+                   + getFirstMessage(t)
+                   + "\nThe application will be shut down.");
+		setDetail(t);
 	}
 	
 	public KoalaErrorDialog(Shell shell, Throwable t, String documentBackupLocation) {
@@ -37,18 +46,111 @@ public class KoalaErrorDialog {
 		if (documentBackupLocation != null) {
 			backupMessage = "A backup of your document has been saved at " + documentBackupLocation;
 		}
-		dialog.setMessage("An unexpected error occurred:\n"
-		                  + t.getMessage()
-		                  + "\nThe application will be shut down.\n"
-		                  + backupMessage
-		                  + "\nFurther information has been printed to the logs at "
-		                  + KoalaNotes.LOG_LOCATION + ".");
+		setMessage("An unexpected error occurred:\n"
+                   + getFirstMessage(t)
+                   + "\nThe application will be shut down.\n"
+                   + backupMessage);
+		setDetail(t);
 	}
 	
-	public void open() {dialog.open();}
+	private String getFirstMessage(Throwable t) {
+		if (t.getMessage() != null && t.getMessage().length() > 0) {
+			return t.getMessage();
+		} else if (t.getCause() != null) {
+			return getFirstMessage(t.getCause());
+		} else {
+			return "An error occurred.";
+		}
+	}
+	
+	public void open() {
+		dialog.pack();
+		dialog.open();
+	}
 	
 	private void initialiseDialog(Shell shell) {
-		dialog = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
+		
+		// dialog
+		dialog = new Shell(shell, SWT.SHELL_TRIM);
 		dialog.setText("Koala Notes Error");
+		
+		// dialog layout
+		FormLayout dialogLayout = new FormLayout();
+		dialogLayout.marginHeight = 10;
+		dialogLayout.marginWidth = 10;
+		dialog.setLayout(dialogLayout);
+		
+		// message label
+		messageLabel = new Label(dialog, SWT.WRAP);
+		
+		// detail text
+		detailText = new Text(dialog, SWT.MULTI | SWT.READ_ONLY | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		detailText.setVisible(false);
+		
+		// detail button
+		detailButton = new Button(dialog, SWT.NONE);
+		detailButton.setText("Show Detail");
+		detailButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event e) {
+				detailText.setVisible(!detailText.isVisible());
+				if (detailTextLayoutData.height == 0) {
+					detailTextLayoutData.height = 100;
+					detailButton.setText("Hide Detail");
+				} else {
+					detailTextLayoutData.height = 0;
+					detailButton.setText("Show Detail");
+				}
+				dialog.pack();
+			}
+		});
+		
+		// ok button
+		Button okButton = new Button(dialog, SWT.NONE);
+		okButton.setText("Ok");
+		okButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event e) {
+				dialog.close();
+			}
+		});
+		
+		// message label layout
+		FormData messageLabelLayoutData = new FormData();
+		messageLabelLayoutData.top = new FormAttachment(0);
+		messageLabelLayoutData.left = new FormAttachment(0);
+		messageLabelLayoutData.right = new FormAttachment(100);
+		messageLabel.setLayoutData(messageLabelLayoutData);
+		
+		// detail button layout
+		FormData detailButtonLayoutData = new FormData();
+		detailButtonLayoutData.top = new FormAttachment(messageLabel);
+		detailButtonLayoutData.right = new FormAttachment(100);
+		detailButton.setLayoutData(detailButtonLayoutData);
+		
+		// ok button layout
+		FormData okButtonFormData = new FormData();
+		okButtonFormData.bottom = new FormAttachment(100);
+		okButtonFormData.right = new FormAttachment(100);
+		okButtonFormData.width = detailButton.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+		okButton.setLayoutData(okButtonFormData);
+		
+		// detail text layout
+		detailTextLayoutData = new FormData();
+		detailTextLayoutData.top = new FormAttachment(detailButton);
+		detailTextLayoutData.bottom = new FormAttachment(okButton, -10);
+		detailTextLayoutData.left = new FormAttachment(0);
+		detailTextLayoutData.right = new FormAttachment(100);
+		detailTextLayoutData.height = 0;
+		detailTextLayoutData.width = 200;
+		detailText.setLayoutData(detailTextLayoutData);
+	}
+	
+	private void setMessage(String message) {
+		messageLabel.setText(message);
+	}
+	
+	private void setDetail(Throwable t) {
+		StringWriter sw = new StringWriter();
+		t.printStackTrace(new PrintWriter(sw));
+		detailText.setText(sw.toString());
 	}
 }
