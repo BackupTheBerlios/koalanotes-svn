@@ -1,0 +1,33 @@
+
+---
+SWT
+---
+Version: 3.3.2 Final Release 22/02/08
+License: Eclipse Public License
+Available from: http://www.eclipse.org/swt/
+Legal information: http://www.eclipse.org/legal/
+Redistributed as one of these jars:
+    swt-3.3.2-gtk-linux-x86.jar
+    swt-3.3.2-win32-win32-x86.jar
+
+---------------------------
+JFace and Eclipse Core Jars
+---------------------------
+Version: Eclipse 3.3 Europa
+License: Eclipse Public License
+Available from: www.eclipse.org/downloads
+    (I download the entire Eclipse and redistribute only the jars KoalaNotes needs)
+Legal information: http://www.eclipse.org/legal/
+Redistributed in these jars:
+    org.eclipse.core.commands_3.3.0.I20070605-0010.jar
+    org.eclipse.equinox.common_3.3.0.v20070426.jar
+    org.eclipse.jface_3.3.1.M20070910-0800b.jar
+
+----
+JDOM
+----
+Version: 1.1 13/11/07
+Available from: http://www.jdom.org/dist/binary/
+Redistributed in this jar:
+    jdom.jar
+
