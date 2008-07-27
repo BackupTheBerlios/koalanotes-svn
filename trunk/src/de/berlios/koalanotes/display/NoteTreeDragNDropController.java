@@ -149,7 +149,6 @@ class NoteTreeDragNDropController extends Controller implements DragSourceListen
 	 * dropped.  More specifically, if the drop was on a note, append them to that note's children,
 	 * or if it was on the space at the bottom, append them as root notes.
 	 */
-	@SuppressWarnings("unchecked")
 	public void drop(DropTargetEvent event) {
 		int dropAction = getDropAction(event);
 		

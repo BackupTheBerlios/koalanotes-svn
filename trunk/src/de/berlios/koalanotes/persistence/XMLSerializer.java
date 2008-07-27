@@ -163,7 +163,7 @@ public class XMLSerializer {
 		String name = getMandatoryAttributeValue(el, NOTE_NAME);
 		String text = getMandatoryAttributeValue(el, NOTE_TEXT);
 		Note n = new Note(name, holder, text);
-		List es = el.getChildren();
+		List<?> es = el.getChildren();
 		for (Object childElement : es) {
 			loadNoteFromElement((Element) childElement, n);
 		}

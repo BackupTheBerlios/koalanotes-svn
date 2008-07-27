@@ -99,7 +99,6 @@ public class NoteMenuController extends Controller {
 		documentUpdatedAndContextChanged(dd, e);
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void pasteHelper(boolean child) {
 		
 		// Get the DisplayedNoteHolder and index that the notes should be pasted into.

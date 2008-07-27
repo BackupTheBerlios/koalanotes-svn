@@ -10,7 +10,6 @@ import de.berlios.koalanotes.exceptions.KoalaException;
 
 public abstract class Controller {
 	
-	private static final Class[] METHOD_ARGS = new Class[] {Event.class};
 	private static final String SEPARATOR = ".";
 	
 	protected Dispatcher d;
@@ -24,7 +23,7 @@ public abstract class Controller {
 		d.deregisterController(this);
 	}
 	
-	protected static String getMethodDescriptor(Class controllerClass, String methodName) {
+	protected static String getMethodDescriptor(Class<? extends Controller> controllerClass, String methodName) {
 		return controllerClass.getCanonicalName() + SEPARATOR + methodName;
 	}
 	
@@ -46,7 +45,7 @@ public abstract class Controller {
 		}
 		int separator = controllerSignature.length();
 		try {
-			method = getClass().getMethod(methodDescriptor.substring(separator + 1), METHOD_ARGS);
+			method = getClass().getMethod(methodDescriptor.substring(separator + 1), Event.class);
 		} catch (NoSuchMethodException ex) {
 			throw new KoalaException("Koala Notes could not find method '" + methodDescriptor + "'.");
 		}
