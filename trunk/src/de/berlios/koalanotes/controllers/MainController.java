@@ -31,7 +31,6 @@ public class MainController extends Controller {
 	private DisplayedDocument dd;
 	
 	// Keep track of unsaved changes
-	private Listener modifyListener;
 	private NoteTab noteTabWithModifyListener;
 	
 	public static String getMethodDescriptor(String methodName) {
@@ -41,7 +40,6 @@ public class MainController extends Controller {
 	public MainController(Dispatcher d, DisplayedDocument displayedDocument) {
 		super(d);
 		this.dd = displayedDocument;
-		modifyListener = new Listener(d, MainController.NOTE_MODIFIED);
 	}
 	
 	/**
@@ -62,7 +60,8 @@ public class MainController extends Controller {
 		if (!dd.isModified()) {
 			noteTabWithModifyListener = dd.getTabFolder().getSelectedNoteTab();
 			if (noteTabWithModifyListener != null) {
-				noteTabWithModifyListener.addModifyListener(modifyListener);
+				NoteModifiedAction action = new NoteModifiedAction(this, dd, noteTabWithModifyListener); 
+				noteTabWithModifyListener.addNoteModifiedAction(action);
 			}
 		}
 		dd.setStatusBarText("");
@@ -86,19 +85,29 @@ public class MainController extends Controller {
 		ensureNoteTabWithModifyListenerNull();
 	}
 	
-	/** This event only gets called by the modifyListener controlled by this controller. */
-	private static final String NOTE_MODIFIED = getMethodDescriptor("noteModified");
-	public void noteModified(Event e) {
-		if (noteTabWithModifyListener.hasUnsavedChanges()) {
-			ensureNoteTabWithModifyListenerNull();
-			documentUpdated(dd, e);
+	public class NoteModifiedAction {
+		MainController mc;
+		DisplayedDocument dd;
+		NoteTab noteTab;
+		
+		private NoteModifiedAction(MainController mc, DisplayedDocument dd, NoteTab noteTab) {
+			this.mc = mc;
+			this.dd = dd;
+			this.noteTab = noteTab;
+		}
+		
+		public void invoke() {
+			if (noteTab.hasUnsavedChanges()) {
+				mc.ensureNoteTabWithModifyListenerNull();
+				mc.documentUpdated(dd, null);
+			}
 		}
 	}
 	
 	private void ensureNoteTabWithModifyListenerNull() {
 		if (noteTabWithModifyListener != null) {
 			if (!noteTabWithModifyListener.isDisposed()) {
-				noteTabWithModifyListener.removeModifyListener(modifyListener);
+				noteTabWithModifyListener.removeNoteModifiedAction();
 			}
 			noteTabWithModifyListener = null;
 		}

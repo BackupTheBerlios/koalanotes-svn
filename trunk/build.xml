@@ -73,7 +73,7 @@
         	</fileset>
             <manifest>
                 <attribute name="Main-Class" value="de.berlios.koalanotes.KoalaNotes" />
-            	<attribute name="Class-Path" value="lib/${swt-jar} lib/org.eclipse.jface_3.4.0.I20080606-1300.jar lib/org.eclipse.equinox.common_3.4.0.v20080421-2006.jar lib/org.eclipse.osgi_3.4.0.v20080605-1900.jar lib/org.eclipse.core.commands_3.4.0.I20080509-2000.jar lib/jdom.jar" />
+            	<attribute name="Class-Path" value="lib/${swt-jar} lib/org.eclipse.text_3.4.0.v20080605-1800.jar lib/org.eclipse.jface_3.4.0.I20080606-1300.jar lib/org.eclipse.jface.text_3.4.0.v20080603-2000.jar lib/org.eclipse.equinox.common_3.4.0.v20080421-2006.jar lib/org.eclipse.osgi_3.4.0.v20080605-1900.jar lib/org.eclipse.core.commands_3.4.0.I20080509-2000.jar lib/jdom.jar" />
             </manifest>
         </jar>
     </target>

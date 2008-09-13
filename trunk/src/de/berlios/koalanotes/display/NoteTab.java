@@ -16,12 +16,16 @@
  */
 package de.berlios.koalanotes.display;
 
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.ITextListener;
+import org.eclipse.jface.text.TextEvent;
+import org.eclipse.jface.text.TextViewer;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.widgets.Text;
 
 import de.berlios.koalanotes.controllers.Dispatcher;
 import de.berlios.koalanotes.controllers.Listener;
@@ -30,7 +34,8 @@ import de.berlios.koalanotes.controllers.MainController;
 public class NoteTab implements DisposeListener {
 	private DisplayedNote displayedNote;
 	private CTabItem tabItem;
-	private Text text;
+	private TextViewer textViewer;
+	private TextListener textListener;
 	
 	public NoteTab(final CTabFolder parent, DisplayedNote displayedNote, Dispatcher d) {
 		this.displayedNote = displayedNote;
@@ -38,11 +43,18 @@ public class NoteTab implements DisposeListener {
 		tabItem.setText(displayedNote.getName());
 		tabItem.setData(this);
 		tabItem.addDisposeListener(this);
-		text = new Text(parent, SWT.MULTI | SWT.WRAP);
-		text.setText(displayedNote.getNote().getText());
-		text.addListener(SWT.FocusIn, new Listener(d, MainController.TAB_SELECTED));
-		text.addListener(SWT.FocusOut, new Listener(d, MainController.TAB_DESELECTED));
-		tabItem.setControl(text);
+		
+		textViewer = new TextViewer(parent, SWT.WRAP);
+		textViewer.setDocument(new Document(displayedNote.getNote().getText()));
+		
+		//TextPresentation tp = new TextPresentation();
+		//tp.addStyleRange(new StyleRange(10, 10, new Color(parent.getDisplay(), new RGB(200,0,200)), new Color(parent.getDisplay(), new RGB(200,200,200)), SWT.BOLD));
+		//textViewer.changeTextPresentation(tp, false);
+		
+		textViewer.getTextWidget().addListener(SWT.FocusIn, new Listener(d, MainController.TAB_SELECTED));
+		textViewer.getTextWidget().addListener(SWT.FocusOut, new Listener(d, MainController.TAB_DESELECTED));
+		
+		tabItem.setControl(textViewer.getTextWidget());
 		select();
 	}
 	
@@ -50,19 +62,12 @@ public class NoteTab implements DisposeListener {
 	
 	public void setName(String name) {tabItem.setText(name);}
 	
-	public void addModifyListener(Listener l) {
-		text.addListener(SWT.Modify, l);
-	}
-	public void removeModifyListener(Listener l) {
-		text.removeListener(SWT.Modify, l);
-	}
-	
 	public void saveToNote() {
-		displayedNote.getNoteWithoutUpdatingFromTab().setText(text.getText());
+		displayedNote.getNoteWithoutUpdatingFromTab().setText(textViewer.getDocument().get());
 	}
 	
 	public boolean hasUnsavedChanges() {
-		return !displayedNote.getNoteWithoutUpdatingFromTab().getText().equals(text.getText());
+		return !displayedNote.getNoteWithoutUpdatingFromTab().getText().equals(textViewer.getDocument().get());
 	}
 	
 	public void select() {
@@ -78,7 +83,27 @@ public class NoteTab implements DisposeListener {
 	}
 	
 	public void widgetDisposed(DisposeEvent e) {
-		text.dispose();
+		textViewer.getTextWidget().dispose();
 		displayedNote.tabDisposed();
+	}
+	
+	public void addNoteModifiedAction(MainController.NoteModifiedAction action) {
+		textListener = new TextListener(action);
+		textViewer.addTextListener(textListener);
+	}
+	public void removeNoteModifiedAction() {
+		if (textListener != null) {
+			textViewer.removeTextListener(textListener);
+		}
+	}
+	
+	private class TextListener implements ITextListener {
+		private MainController.NoteModifiedAction action;
+		private TextListener(MainController.NoteModifiedAction action) {
+			this.action = action;
+		}
+		public void textChanged(TextEvent event) {
+			action.invoke();
+		}
 	}
 }
