@@ -20,6 +20,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -28,8 +30,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
-import de.berlios.koalanotes.controllers.Dispatcher;
-import de.berlios.koalanotes.controllers.Listener;
+import de.berlios.koalanotes.controllers.INoArgsAction;
 
 /**
  * A very generic dialog box, helpful but not mandatory.
@@ -38,14 +39,12 @@ public class Dialog {
 	private static final String OK = "Ok";
 	private static final String CANCEL = "Cancel";
 	
-	private Dispatcher d;
 	private Shell myDialog;
 	private Composite mainSection;
 	private Composite buttonSection;
 	private List<Button> buttons;
 	
-	public Dialog(Shell parent, Dispatcher d, ImageRegistry imageRegistry, String title) {
-		this.d = d;
+	public Dialog(Shell parent, ImageRegistry imageRegistry, String title) {
 		myDialog = new Shell(parent, SWT.DIALOG_TRIM);
 		myDialog.setText(title);
 		myDialog.setImage(imageRegistry.get(ImageRegistry.IMAGE_KOALA_SMALL));
@@ -58,19 +57,18 @@ public class Dialog {
 		buttons = new LinkedList<Button>();
 	}
 	
-	public Dialog(Shell parent, Dispatcher d, ImageRegistry imageRegistry, String title,
-	              String okControllerMethodDescriptor) {
-		this(parent, d, imageRegistry, title);
-		Button okButton = addButton(OK, okControllerMethodDescriptor);
+	public Dialog(Shell parent, ImageRegistry imageRegistry, String title,
+	              INoArgsAction okAction) {
+		this(parent, imageRegistry, title);
+		Button okButton = addButton(OK, okAction);
 		myDialog.setDefaultButton(okButton);
 	}
 	
-	public Dialog(Shell parent, Dispatcher d, ImageRegistry imageRegistry, String title,
-	              String okControllerMethodDescriptor,
-	              String cancelMethodDescriptor) {
-		this(parent, d, imageRegistry, title);
-		Button okButton = addButton(OK, okControllerMethodDescriptor);
-		addButton(CANCEL, cancelMethodDescriptor);
+	public Dialog(Shell parent, ImageRegistry imageRegistry, String title,
+	              INoArgsAction okAction, INoArgsAction cancelAction) {
+		this(parent, imageRegistry, title);
+		Button okButton = addButton(OK, okAction);
+		addButton(CANCEL, cancelAction);
 		myDialog.setDefaultButton(okButton);
 	}
 	
@@ -78,12 +76,16 @@ public class Dialog {
 		return mainSection;
 	}
 	
-	public Button addButton(String buttonName, String controllerMethodDescriptor) {
+	public Button addButton(String buttonName, final INoArgsAction action) {
 		
 		// create the button
 		Button b = new Button(buttonSection, SWT.NONE);
 		b.setText(buttonName);
-		b.addListener(SWT.Selection, new Listener(d, controllerMethodDescriptor));
+		b.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent arg0) {
+				action.invoke();
+			}
+		});
 		
 		// create the layout data
 		FormData fdata = new FormData();

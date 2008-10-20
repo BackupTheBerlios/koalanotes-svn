@@ -20,113 +20,114 @@ import java.io.File;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 
-import de.berlios.koalanotes.controllers.Controller;
-import de.berlios.koalanotes.controllers.Dispatcher;
+import de.berlios.koalanotes.controllers.INoArgsAction;
+import de.berlios.koalanotes.controllers.MainController;
 import de.berlios.koalanotes.data.Document;
 import de.berlios.koalanotes.data.DocumentViewSettings;
 import de.berlios.koalanotes.data.Note;
 import de.berlios.koalanotes.display.DisplayedDocument;
 import de.berlios.koalanotes.display.DisplayedNote;
 
-public class FileMenuController extends Controller {
+public class FileMenuController {
 	private DisplayedDocument dd;
+	private MainController mc;
 	
-	public static String getMethodDescriptor(String methodName) {
-		return getMethodDescriptor(FileMenuController.class, methodName);
-	}
-	
-	public FileMenuController(Dispatcher d, DisplayedDocument dd) {
-		super(d);
+	public FileMenuController(DisplayedDocument dd, MainController mc) {
 		this.dd = dd;
+		this.mc = mc;
 	}
 	
-	public static final String FILE_NEW = getMethodDescriptor("fileNew");
-	public void fileNew(Event e) {
-		dd.getTabFolder().closeNoteTabs();
-		dd.getTree().removeAll();
-		dd.getDisplayedNotes().clear();
-		dd.setDocument(new Document());
-		Note root = new Note("root", dd.getDocument(), "");
-		new DisplayedNote(dd, dd.getTree(), root);
-		dd.getShell().setText("Untitled Document - Koala Notes");
-		dd.setModified(false);
-		contextChanged(e);
-		dd.setStatusBarText("A brand new document.");
-	}
-	
-	public static final String FILE_OPEN = getMethodDescriptor("fileOpen");
-	public void fileOpen(Event e) {
-		
-		// Get file path from dialog.
-		FileDialog fileDialog = new FileDialog(dd.getShell(), SWT.OPEN);
-		String filePath = fileDialog.open();
-		if (filePath == null) return;
-		
-		// Open the file.
-		dd.setStatusBarText("Opening document...");
-		File file = new File(filePath);
-		
-		// Clear tab folder, tree and DisplayedNote list.
-		dd.getTabFolder().closeNoteTabs();
-		dd.getTree().removeAll();
-		dd.getDisplayedNotes().clear();
-		
-		// Load the new document.
-		dd.setDocument(new Document(file));
-		
-		// Load the notes.
-		List<Note> notes = dd.getDocument().getNotes();
-		for (Note root : notes) {
+	public class FileNewAction implements INoArgsAction {
+		public void invoke() {
+			dd.getTabFolder().closeNoteTabs();
+			dd.getTree().removeAll();
+			dd.getDisplayedNotes().clear();
+			dd.setDocument(new Document());
+			Note root = new Note("root", dd.getDocument(), "");
 			new DisplayedNote(dd, dd.getTree(), root);
+			dd.getShell().setText("Untitled Document - Koala Notes");
+			dd.setModified(false);
+			mc.contextChanged();
+			dd.setStatusBarText("A brand new document.");
 		}
-		
-		// Load the view settings.
-		DocumentViewSettings viewSettings = dd.getDocument().getViewSettings();
-		for (Note note : viewSettings.getNotesOpenInTabs()) {
-			DisplayedNote dn = dd.findDisplayedNoteForNote(note);
-			dn.displayTab(dd.getTabFolder(), d);
-		}
-		dd.getTabFolder().setSelectedNoteTab(viewSettings.getSelectedTab());
-		
-		// Set the window title.
-		dd.getShell().setText(file.getName() + " - Koala Notes");
-		dd.setModified(false);
-		
-		contextChanged(e);
-		dd.setStatusBarText("Document opened.");
 	}
 	
-	public static final String FILE_SAVE = getMethodDescriptor("fileSave");
-	public void fileSave(Event e) {
-		dd.setStatusBarText("Saving document...");
-		dd.getTabFolder().saveNoteTabs();
-		dd.getDocument().saveDocument();
-		dd.setModified(false);
-		contextChanged(e);
-		dd.setStatusBarText("Document saved.");
-	}
-	
-	public static final String FILE_SAVE_AS = getMethodDescriptor("fileSaveAs");
-	public void fileSaveAs(Event e) {
-		FileDialog fileDialog = new FileDialog(dd.getShell(), SWT.SAVE);
-		String filePath = fileDialog.open();
-		if (filePath != null) {
-			dd.setStatusBarText("Saving document...");
+	public class FileOpenAction implements INoArgsAction {
+		public void invoke() {
+			
+			// Get file path from dialog.
+			FileDialog fileDialog = new FileDialog(dd.getShell(), SWT.OPEN);
+			String filePath = fileDialog.open();
+			if (filePath == null) return;
+			
+			// Open the file.
+			dd.setStatusBarText("Opening document...");
 			File file = new File(filePath);
-			dd.getTabFolder().saveNoteTabs();
-			dd.getDocument().saveDocument(file);
+			
+			// Clear tab folder, tree and DisplayedNote list.
+			dd.getTabFolder().closeNoteTabs();
+			dd.getTree().removeAll();
+			dd.getDisplayedNotes().clear();
+			
+			// Load the new document.
+			dd.setDocument(new Document(file));
+			
+			// Load the notes.
+			List<Note> notes = dd.getDocument().getNotes();
+			for (Note root : notes) {
+				new DisplayedNote(dd, dd.getTree(), root);
+			}
+			
+			// Load the view settings.
+			DocumentViewSettings viewSettings = dd.getDocument().getViewSettings();
+			for (Note note : viewSettings.getNotesOpenInTabs()) {
+				DisplayedNote dn = dd.findDisplayedNoteForNote(note);
+				dn.displayTab(dd.getTabFolder(), mc.new TabSelectedAction(), mc.new TabDeselectedAction());
+			}
+			dd.getTabFolder().setSelectedNoteTab(viewSettings.getSelectedTab());
+			
+			// Set the window title.
 			dd.getShell().setText(file.getName() + " - Koala Notes");
 			dd.setModified(false);
-			contextChanged(e);
+			
+			mc.contextChanged();
+			dd.setStatusBarText("Document opened.");
+		}
+	}
+	
+	public class FileSaveAction implements INoArgsAction {
+		public void invoke() {
+			dd.setStatusBarText("Saving document...");
+			dd.getTabFolder().saveNoteTabs();
+			dd.getDocument().saveDocument();
+			dd.setModified(false);
+			mc.contextChanged();
 			dd.setStatusBarText("Document saved.");
 		}
 	}
 	
-	public static final String FILE_EXIT = getMethodDescriptor("fileExit");
-	public void fileExit(Event e) {
-		dd.getShell().close();
+	public class FileSaveAsAction implements INoArgsAction {
+		public void invoke() {
+			FileDialog fileDialog = new FileDialog(dd.getShell(), SWT.SAVE);
+			String filePath = fileDialog.open();
+			if (filePath != null) {
+				dd.setStatusBarText("Saving document...");
+				File file = new File(filePath);
+				dd.getTabFolder().saveNoteTabs();
+				dd.getDocument().saveDocument(file);
+				dd.getShell().setText(file.getName() + " - Koala Notes");
+				dd.setModified(false);
+				mc.contextChanged();
+				dd.setStatusBarText("Document saved.");
+			}
+		}
+	}
+	
+	public class FileExitAction implements INoArgsAction {
+		public void invoke() {
+			dd.getShell().close();
+		}
 	}
 }

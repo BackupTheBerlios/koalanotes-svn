@@ -19,7 +19,7 @@ package de.berlios.koalanotes.display;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.berlios.koalanotes.controllers.Dispatcher;
+import de.berlios.koalanotes.controllers.MainController;
 import de.berlios.koalanotes.data.Note;
 import de.berlios.koalanotes.data.NoteHolder;
 
@@ -79,9 +79,11 @@ public class DisplayedNote implements DisplayedNoteHolder {
 		if (selected && (tab != null)) tab.select();
 	}
 	
-	public void displayTab(NoteTabFolder tabFolder, Dispatcher d) {
+	public void displayTab(NoteTabFolder tabFolder,
+	                       MainController.TabSelectedAction tsa,
+	    	               MainController.TabDeselectedAction tdsa) {
 		if (tab == null) {
-			this.tab = tabFolder.addNoteTab(this, d);
+			this.tab = tabFolder.addNoteTab(this, tsa, tdsa);
 		} else {
 			tab.select();
 		}

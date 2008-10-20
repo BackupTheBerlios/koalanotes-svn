@@ -29,8 +29,7 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
-import de.berlios.koalanotes.controllers.Controller;
-import de.berlios.koalanotes.controllers.Dispatcher;
+import de.berlios.koalanotes.controllers.MainController;
 import de.berlios.koalanotes.data.Document;
 import de.berlios.koalanotes.data.Note;
 import de.berlios.koalanotes.data.NoteTransfer;
@@ -47,10 +46,11 @@ import de.berlios.koalanotes.data.NoteTransfer;
  * drop
  * dragFinished
  */
-class NoteTreeDragNDropController extends Controller implements DragSourceListener, DropTargetListener {
+public class NoteTreeDragNDropController implements DragSourceListener, DropTargetListener {
 	private NoteTree noteTree;
 	private Tree tree;
 	private DisplayedDocument dd;
+	private MainController mc;
 	
 	/** Whether there is a drag in progress (true between calls to dragStart and dragFinished). */
 	private boolean dragInProgress;
@@ -66,14 +66,19 @@ class NoteTreeDragNDropController extends Controller implements DragSourceListen
 	 * @param tree the SWT Tree used by the NoteTree
 	 * @param dd the DisplayedDocument to hold DisplayedNotes that get copied or moved to root level
 	 */
-	NoteTreeDragNDropController(Dispatcher d, DisplayedDocument dd, NoteTree noteTree, Tree tree) {
-		super(d);
+	public NoteTreeDragNDropController(DisplayedDocument dd, MainController mc) {
 		this.dd = dd;
-		this.noteTree = noteTree;
-		this.tree = tree;
+		this.mc = mc;
+		
 		dragInProgress = false;
 		isLocalDrop = false;
 		isDropMove = false;
+	}
+	
+	public void addToNoteTree(NoteTree noteTree, Tree tree) {
+		this.noteTree = noteTree;
+		this.tree = tree;
+		
 		int operations = DND.DROP_MOVE | DND.DROP_COPY;
 		Transfer[] types = new Transfer[] {NoteTransfer.getInstance()};
 		DragSource dragSource = new DragSource(tree, operations);
@@ -245,7 +250,7 @@ class NoteTreeDragNDropController extends Controller implements DragSourceListen
 		}
 		
 		// Move complete, which means the document has been updated and the context changed.
-		documentUpdatedAndContextChanged(dd, null);
+		mc.documentUpdatedAndContextChanged();
 		if (isDropMove) {
 			dd.setStatusBarText("Notes moved.");
 		} else {

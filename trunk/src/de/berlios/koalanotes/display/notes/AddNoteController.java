@@ -16,75 +16,70 @@
  */
 package de.berlios.koalanotes.display.notes;
 
-import org.eclipse.swt.widgets.Event;
-
-import de.berlios.koalanotes.controllers.Controller;
-import de.berlios.koalanotes.controllers.Dispatcher;
+import de.berlios.koalanotes.controllers.INoArgsAction;
+import de.berlios.koalanotes.controllers.MainController;
 import de.berlios.koalanotes.data.Note;
 import de.berlios.koalanotes.display.DisplayedDocument;
 import de.berlios.koalanotes.display.DisplayedNote;
 
-public class AddNoteController extends Controller {
+public class AddNoteController {
 	
+	private MainController mc;
 	private DisplayedDocument dd;
 	private boolean sibling;
 	private AddNoteDialog addNoteDialog;
-	
-	public static String getMethodDescriptor(String methodName) {
-		return getMethodDescriptor(AddNoteController.class, methodName);
-	}
 	
 	/**
 	 * @param after true if the new note is to be inserted _after_ the
 	 * selected note, false if _under_.
 	 */
-	public AddNoteController(Dispatcher d, DisplayedDocument dd,
-	                         boolean sibling, AddNoteDialog addNoteDialog) {
-		super(d);
+	public AddNoteController(DisplayedDocument dd, MainController mc, boolean sibling) {
+		this.mc = mc;
 		this.dd = dd;
 		this.sibling = sibling;
-		this.addNoteDialog = addNoteDialog;
+		this.addNoteDialog = new AddNoteDialog(dd.getShell(), dd.getImageRegistry(),
+		                                       new AddNoteOKAction(), new AddNoteCancelAction());
 		addNoteDialog.open();
 	}
 	
-	public static final String OK = getMethodDescriptor("ok");
-	public void ok(Event e) {
-		DisplayedNote newDn;
-		
-		// If the tree is empty or has no items selected the new note is added to the bottom.
-		if (dd.getTree().isEmpty() || dd.getTree().getSelectionCount() == 0) {
-			Note newNote = new Note(addNoteDialog.getName(), dd.getDocument(), "");
-			newDn = new DisplayedNote(dd, dd.getTree(), newNote);
+	public class AddNoteOKAction implements INoArgsAction {
+		public void invoke() {
+			DisplayedNote newDn;
 			
-		// If the tree has items then the new note is added near the selected note.
-		} else {
-			DisplayedNote dn = dd.getTree().getSelectedNote();
-			Note note = dn.getNote();
-			if (sibling) { // add sibling
-				Note newNote = new Note(addNoteDialog.getName(), note.getHolder(),
-				                        note.getIndex(), "");
-				newDn = new DisplayedNote(dn.getHolder(), dd.getTree(), newNote);
-			} else { // add child
-				Note newNote = new Note(addNoteDialog.getName(), note, 0, "");
-				newDn = new DisplayedNote(dn, dd.getTree(), newNote);
+			// If the tree is empty or has no items selected the new note is added to the bottom.
+			if (dd.getTree().isEmpty() || dd.getTree().getSelectionCount() == 0) {
+				Note newNote = new Note(addNoteDialog.getName(), dd.getDocument(), "");
+				newDn = new DisplayedNote(dd, dd.getTree(), newNote);
+				
+			// If the tree has items then the new note is added near the selected note.
+			} else {
+				DisplayedNote dn = dd.getTree().getSelectedNote();
+				Note note = dn.getNote();
+				if (sibling) { // add sibling
+					Note newNote = new Note(addNoteDialog.getName(), note.getHolder(),
+					                        note.getIndex(), "");
+					newDn = new DisplayedNote(dn.getHolder(), dd.getTree(), newNote);
+				} else { // add child
+					Note newNote = new Note(addNoteDialog.getName(), note, 0, "");
+					newDn = new DisplayedNote(dn, dd.getTree(), newNote);
+				}
+				dn.setSelected(false);
 			}
-			dn.setSelected(false);
+			
+			// The new note is selected and its contents diplayed in a tab.
+			newDn.setSelected(true);
+			newDn.displayTab(dd.getTabFolder(), mc.new TabSelectedAction(), mc.new TabDeselectedAction());
+			
+			// The Add Note Dialog is disposed and the Add Note Controller is deregistered.
+			addNoteDialog.dispose();
+			
+			mc.documentUpdated();
 		}
-		
-		// The new note is selected and its contents diplayed in a tab.
-		newDn.setSelected(true);
-		newDn.displayTab(dd.getTabFolder(), d);
-		
-		// The Add Note Dialog is disposed and the Add Note Controller is deregistered.
-		addNoteDialog.dispose();
-		deregister();
-		
-		documentUpdated(dd, e);
 	}
 	
-	public static final String CANCEL = getMethodDescriptor("cancel");
-	public void cancel(Event e) {
-		addNoteDialog.dispose();
-		deregister();
+	public class AddNoteCancelAction implements INoArgsAction {
+		public void invoke() {
+			addNoteDialog.dispose();
+		}
 	}
 }

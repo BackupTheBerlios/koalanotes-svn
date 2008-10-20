@@ -26,9 +26,9 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 
-import de.berlios.koalanotes.controllers.Dispatcher;
-import de.berlios.koalanotes.controllers.Listener;
 import de.berlios.koalanotes.controllers.MainController;
 
 public class NoteTab implements DisposeListener {
@@ -37,7 +37,10 @@ public class NoteTab implements DisposeListener {
 	private TextViewer textViewer;
 	private TextListener textListener;
 	
-	public NoteTab(final CTabFolder parent, DisplayedNote displayedNote, Dispatcher d) {
+	public NoteTab(CTabFolder parent,
+	               DisplayedNote displayedNote,
+	               final MainController.TabSelectedAction tsa,
+	               final MainController.TabDeselectedAction tdsa) {
 		this.displayedNote = displayedNote;
 		tabItem = new CTabItem(parent, SWT.NONE);
 		tabItem.setText(displayedNote.getName());
@@ -51,8 +54,14 @@ public class NoteTab implements DisposeListener {
 		//tp.addStyleRange(new StyleRange(10, 10, new Color(parent.getDisplay(), new RGB(200,0,200)), new Color(parent.getDisplay(), new RGB(200,200,200)), SWT.BOLD));
 		//textViewer.changeTextPresentation(tp, false);
 		
-		textViewer.getTextWidget().addListener(SWT.FocusIn, new Listener(d, MainController.TAB_SELECTED));
-		textViewer.getTextWidget().addListener(SWT.FocusOut, new Listener(d, MainController.TAB_DESELECTED));
+		textViewer.getTextWidget().addFocusListener(new FocusListener() {
+			public void focusGained(FocusEvent arg0) {
+				tsa.invoke();
+			}
+			public void focusLost(FocusEvent arg0) {
+				tdsa.invoke();	
+			}
+		});
 		
 		tabItem.setControl(textViewer.getTextWidget());
 		select();

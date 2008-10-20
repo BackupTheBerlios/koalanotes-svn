@@ -17,37 +17,40 @@
 package de.berlios.koalanotes.controllers;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.KeyEvent;
 
-import de.berlios.koalanotes.display.DisplayedDocument;
 import de.berlios.koalanotes.display.DisplayedNote;
+import de.berlios.koalanotes.display.NoteTree;
 
-public class TreeController extends Controller {
+public class TreeController {
 	
-	private DisplayedDocument dd;
+	private NoteTree tree;
+	private MainController mc;
 	
-	public static String getMethodDescriptor(String methodName) {
-		return getMethodDescriptor(TreeController.class, methodName);
+	public TreeController(NoteTree tree, MainController mc) {
+		this.tree = tree;
+		this.mc = mc;
+		tree.initialiseTreeEditor(new RenameNoteAction(), new FinishRenameNoteAction());
 	}
 	
-	public TreeController(Dispatcher d, DisplayedDocument dd) {
-		super(d);
-		this.dd = dd;
+	public class RenameNoteAction implements INoArgsAction {
+		public void invoke() {
+			String newName = tree.getTreeEditorText();
+			DisplayedNote dn = tree.getSelectedNote();
+			dn.setName(newName);
+			mc.documentUpdated();
+		}
 	}
 	
-	public static final String RENAME_NOTE = getMethodDescriptor("renameNote");
-	public void renameNote(Event e) {
-		String newName = dd.getTree().getTreeEditorText();
-		DisplayedNote dn = dd.getTree().getSelectedNote();
-		dn.setName(newName);
-		documentUpdated(dd, e);
-	}
-	
-	public static final String FINISH_RENAME_NOTE = getMethodDescriptor("finishRenameNote");
-	public void finishRenameNote(Event e) {
-		if ((e.type == SWT.KeyDown && e.keyCode == SWT.CR)
-				|| e.type == SWT.FocusOut) {
-			dd.getTree().disposeTreeEditor();
+	public class FinishRenameNoteAction {
+		public void invoke(KeyEvent e) {
+			if (e.keyCode == SWT.CR) {
+				tree.disposeTreeEditor();
+			}
+		}
+		public void invoke(FocusEvent e) {
+			tree.disposeTreeEditor();
 		}
 	}
 }

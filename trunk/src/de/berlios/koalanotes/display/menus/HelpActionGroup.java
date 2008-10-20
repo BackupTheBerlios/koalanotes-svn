@@ -21,7 +21,6 @@ import org.eclipse.jface.action.MenuManager;
 
 import de.berlios.koalanotes.controllers.Action;
 import de.berlios.koalanotes.controllers.ActionGroup;
-import de.berlios.koalanotes.controllers.Dispatcher;
 import de.berlios.koalanotes.display.ImageRegistry;
 
 public class HelpActionGroup implements ActionGroup {
@@ -30,8 +29,8 @@ public class HelpActionGroup implements ActionGroup {
 	
 	private Action about;
 
-	public HelpActionGroup(Dispatcher d, ImageRegistry imageRegistry) {
-		about = new Action(d, HelpMenuController.HELP_ABOUT, "&About");
+	public HelpActionGroup(HelpMenuController hmc, ImageRegistry imageRegistry) {
+		about = new Action(hmc.new HelpAboutAction(), "&About");
 		about.setImageDescriptor(imageRegistry.getDescriptor(ImageRegistry.IMAGE_KOALA_SMALL));
 	}
 	

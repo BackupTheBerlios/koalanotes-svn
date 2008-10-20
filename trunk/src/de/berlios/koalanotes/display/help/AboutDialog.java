@@ -34,7 +34,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
 
-import de.berlios.koalanotes.controllers.Dispatcher;
 import de.berlios.koalanotes.display.Dialog;
 import de.berlios.koalanotes.display.ImageRegistry;
 import de.berlios.koalanotes.display.menus.HelpMenuController;
@@ -43,9 +42,9 @@ import de.berlios.koalanotes.exceptions.KoalaException;
 public class AboutDialog {
 	private Dialog dialog;
 	
-	public AboutDialog(Shell shell, Dispatcher d, ImageRegistry imageRegistry) {		
-		dialog = new Dialog(shell, d, imageRegistry, "About Koala Notes",
-		                    HelpMenuController.HELP_ABOUT_OK_PRESSED);
+	public AboutDialog(Shell shell, ImageRegistry imageRegistry,
+	                   HelpMenuController.HelpAboutOKPressedAction okAction) {		
+		dialog = new Dialog(shell, imageRegistry, "About Koala Notes", okAction);
 		Composite mainSection = dialog.getMainSection();
 		RowLayout rl = new RowLayout(SWT.HORIZONTAL);
 		rl.fill = true;

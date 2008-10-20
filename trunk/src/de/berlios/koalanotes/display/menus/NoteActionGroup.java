@@ -27,8 +27,6 @@ import org.eclipse.swt.widgets.Display;
 import de.berlios.koalanotes.controllers.Action;
 import de.berlios.koalanotes.controllers.ActionGroup;
 import de.berlios.koalanotes.controllers.ActionGroupHelper;
-import de.berlios.koalanotes.controllers.Dispatcher;
-import de.berlios.koalanotes.controllers.Listener;
 import de.berlios.koalanotes.data.Document;
 import de.berlios.koalanotes.data.NoteTransfer;
 import de.berlios.koalanotes.display.ImageRegistry;
@@ -75,27 +73,27 @@ public class NoteActionGroup implements ActionGroup {
 	private Action renameNote;
 	
 	// keyboard listeners
-	private Listener cutOrCopyAttemptListener;
+	private NoteMenuController.NoteCutOrCopyAttemptAction cutOrCopyAttemptAction;
 	
-	public NoteActionGroup(Dispatcher d, ImageRegistry imageRegistry, NoteTree tree) {
+	public NoteActionGroup(NoteMenuController nmc, ImageRegistry imageRegistry, NoteTree tree) {
 		this.tree = tree;
 		
 		// construct actions
-		newChildNote = new Action(d, NoteMenuController.NEW_CHILD_NOTE, "New Child Note");
-		newSiblingNote = new Action(d, NoteMenuController.NEW_SIBLING_NOTE, "New Sibling Note");
-		cutNotes = new Action(d, NoteMenuController.CUT_NOTE, "Cu&t");
-		copyNotes = new Action(d, NoteMenuController.COPY_NOTE, "&Copy");
-		pasteChildNotes = new Action(d, NoteMenuController.PASTE_CHILD_NOTE, "&Paste As Child");
-		pasteSiblingNotes = new Action(d, NoteMenuController.PASTE_SIBLING_NOTE, "Paste As Si&bling");
-		deleteNotes = new Action(d, NoteMenuController.DELETE_NOTES, "&Delete");
-		moveNoteLeft = new Action(d, NoteMenuController.MOVE_NOTE_LEFT, "&Left");
-		moveNoteRight = new Action(d, NoteMenuController.MOVE_NOTE_RIGHT, "&Right");
-		moveNoteUp = new Action(d, NoteMenuController.MOVE_NOTE_UP, "&Up");
-		moveNoteDown = new Action(d, NoteMenuController.MOVE_NOTE_DOWN, "&Down");
-		renameNote = new Action(d, NoteMenuController.RENAME_NOTE, "Re&name");
+		newChildNote = new Action(nmc.new NoteNewChildAction(), "New Child Note");
+		newSiblingNote = new Action(nmc.new NoteNewSiblingAction(), "New Sibling Note");
+		cutNotes = new Action(nmc.new NoteCutAction(), "Cu&t");
+		copyNotes = new Action(nmc.new NoteCopyAction(), "&Copy");
+		pasteChildNotes = new Action(nmc.new NotePasteChildAction(), "&Paste As Child");
+		pasteSiblingNotes = new Action(nmc.new NotePasteSiblingAction(), "Paste As Si&bling");
+		deleteNotes = new Action(nmc.new NoteRemoveAction(), "&Delete");
+		moveNoteLeft = new Action(nmc.new NoteMoveLeftAction(), "&Left");
+		moveNoteRight = new Action(nmc.new NoteMoveRightAction(), "&Right");
+		moveNoteUp = new Action(nmc.new NoteMoveUpAction(), "&Up");
+		moveNoteDown = new Action(nmc.new NoteMoveDownAction(), "&Down");
+		renameNote = new Action(nmc.new NoteRenameAction(), "Re&name");
 		
 		// construct keyboard listeners
-		cutOrCopyAttemptListener = new Listener(d, NoteMenuController.CUT_OR_COPY_ATTEMPT);
+		cutOrCopyAttemptAction = nmc.new NoteCutOrCopyAttemptAction();
 		
 		// set action shortcut keys
 		cutNotes.setAccelerator(SWT.CONTROL | 'X');
@@ -149,7 +147,7 @@ public class NoteActionGroup implements ActionGroup {
 	}
 	
 	public void update() {
-		tree.removeKeydownListener(cutOrCopyAttemptListener);
+		tree.removeKeydownAction();
 		
 		// If the tree doesn't have focus, no actions from this group can be performed.
 		if (!tree.hasFocus()) {
@@ -177,7 +175,7 @@ public class NoteActionGroup implements ActionGroup {
 				cutNotes.setEnabled(true);
 				copyNotes.setEnabled(true);
 			} else {
-				tree.addKeydownListener(cutOrCopyAttemptListener);
+				tree.addKeydownAction(cutOrCopyAttemptAction);
 			}
 		}
 	}

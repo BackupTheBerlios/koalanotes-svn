@@ -24,7 +24,6 @@ import org.eclipse.swt.SWT;
 
 import de.berlios.koalanotes.controllers.Action;
 import de.berlios.koalanotes.controllers.ActionGroup;
-import de.berlios.koalanotes.controllers.Dispatcher;
 import de.berlios.koalanotes.display.DisplayedDocument;
 import de.berlios.koalanotes.display.ImageRegistry;
 
@@ -39,15 +38,15 @@ public class FileActionGroup implements ActionGroup {
 	private Action saveAs;
 	private Action exit;
 	
-	public FileActionGroup(Dispatcher d, DisplayedDocument dd) {
+	public FileActionGroup(FileMenuController fmc, DisplayedDocument dd) {
 		this.dd = dd;
-		newDocument = new Action(d, FileMenuController.FILE_NEW, "&New");
-		open = new Action(d, FileMenuController.FILE_OPEN, "&Open");
-		save = new Action(d, FileMenuController.FILE_SAVE, "&Save");
+		newDocument = new Action(fmc.new FileNewAction(), "&New");
+		open = new Action(fmc.new FileOpenAction(), "&Open");
+		save = new Action(fmc.new FileSaveAction(), "&Save");
 		save.setAccelerator(SWT.CONTROL | 'S');
 		save.setImageDescriptor(dd.getImageRegistry().getDescriptor(ImageRegistry.ACTION_ICON_FILE_SAVE));
-		saveAs = new Action(d, FileMenuController.FILE_SAVE_AS, "Save &As");
-		exit = new Action(d, FileMenuController.FILE_EXIT, "E&xit");
+		saveAs = new Action(fmc.new FileSaveAsAction(), "Save &As");
+		exit = new Action(fmc.new FileExitAction(), "E&xit");
 	}
 	
 	public void update() {

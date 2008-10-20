@@ -19,8 +19,7 @@ package de.berlios.koalanotes;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import de.berlios.koalanotes.controllers.Dispatcher;
-import de.berlios.koalanotes.display.DisplayedDocument;
+import de.berlios.koalanotes.controllers.MainController;
 import de.berlios.koalanotes.exceptions.KoalaErrorDialog;
 import de.berlios.koalanotes.exceptions.KoalaException;
 
@@ -34,8 +33,7 @@ public class KoalaNotes {
 		// Initialise and display.
 		Display display = new Display();
 		Shell shell = new Shell(display);
-		Dispatcher dispatcher = new Dispatcher();
-		DisplayedDocument dd = new DisplayedDocument(shell, dispatcher);
+		MainController mc = new MainController(shell);
 		shell.open();
 		
 		// Main event loop.
@@ -55,8 +53,7 @@ public class KoalaNotes {
 			} catch (Throwable t) {
 				String backupLocation = null;
 				try {
-					dd.getTabFolder().saveNoteTabs();
-					backupLocation = dd.getDocument().saveBackup();
+					backupLocation = mc.saveBackup();
 				} catch (Throwable t2) {
 					t2.printStackTrace();
 				}

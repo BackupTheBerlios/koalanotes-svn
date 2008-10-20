@@ -23,6 +23,10 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.CoolBar;
@@ -30,21 +34,11 @@ import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-import de.berlios.koalanotes.controllers.ActionGroup;
-import de.berlios.koalanotes.controllers.Dispatcher;
-import de.berlios.koalanotes.controllers.Listener;
 import de.berlios.koalanotes.controllers.MainController;
-import de.berlios.koalanotes.controllers.TreeController;
 
 import de.berlios.koalanotes.data.Document;
 import de.berlios.koalanotes.data.Note;
 import de.berlios.koalanotes.data.NoteHolder;
-import de.berlios.koalanotes.display.menus.FileActionGroup;
-import de.berlios.koalanotes.display.menus.FileMenuController;
-import de.berlios.koalanotes.display.menus.HelpActionGroup;
-import de.berlios.koalanotes.display.menus.HelpMenuController;
-import de.berlios.koalanotes.display.menus.NoteActionGroup;
-import de.berlios.koalanotes.display.menus.NoteMenuController;
 
 /**
  * DisplayedDocument holds the state of the display, as well the document being displayed.
@@ -61,11 +55,12 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 	private MenuManager menuBar;
 	private CoolBarManager coolBar;
 	private MenuManager treeContextMenu;
-	private List<ActionGroup> actionGroups; // groups of menu/toolbar items
 	private Label statusBar;
 	private ImageRegistry imageRegistry;
 	
-	public DisplayedDocument(Shell shell, Dispatcher dispatcher) {
+	public DisplayedDocument(Shell shell, Document document) {
+		
+		this.document = document;
 		
 		// ImageRegistry
 		imageRegistry = new ImageRegistry(shell.getDisplay());
@@ -74,7 +69,6 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 		this.shell = shell;
 		shell.setText("Untitled Document - Koala Notes");
 		shell.setImage(imageRegistry.get(ImageRegistry.IMAGE_KOALA_SMALL));
-		shell.addListener(SWT.Close, new Listener(dispatcher, MainController.EXITING_KOALA_NOTES));
 		
 		// Shell Layout
 		GridLayout shellLayout = new GridLayout(1, false);
@@ -83,10 +77,6 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 		shellLayout.horizontalSpacing = 0;
 		shellLayout.verticalSpacing = 0;
 		shell.setLayout(shellLayout);
-		
-		// Document
-		document = new Document();
-		Note root = new Note("root", document, "");
 		
 		// Menu Bar
 		menuBar = new MenuManager();
@@ -98,7 +88,6 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 		coolBarLayoutData.horizontalAlignment = SWT.FILL;
 		CoolBar coolBarControl = coolBar.createControl(shell);
 		coolBarControl.setLayoutData(coolBarLayoutData);
-		coolBarControl.addListener(SWT.MouseUp, new Listener(dispatcher, MainController.COOL_BAR_REARRANGED));
 		
 		// SashForm
 		SashForm sashForm = new SashForm(shell, SWT.HORIZONTAL);
@@ -118,8 +107,10 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 		
 		// Tree and DisplayedNotes
 		this.displayedNotes = new LinkedList<DisplayedNote>();
-		tree = new NoteTree(sashForm, dispatcher, this);
-		new DisplayedNote(this, tree, root);
+		tree = new NoteTree(sashForm, this);
+		for (Note root : document.getNotes()) {
+			new DisplayedNote(this, tree, root);
+		}
 		
 		// TabFolder
 		tabFolder = new NoteTabFolder(sashForm, this);
@@ -130,27 +121,25 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 		// Tree Context Menu
 		treeContextMenu = new MenuManager();
 		tree.setContextMenu(treeContextMenu);
-		
-		// Action Groups
-		actionGroups = new LinkedList<ActionGroup>();
-		actionGroups.add(new FileActionGroup(dispatcher, this));
-		actionGroups.add(new NoteActionGroup(dispatcher, imageRegistry, tree));
-		actionGroups.add(new HelpActionGroup(dispatcher, imageRegistry));
-		for (ActionGroup ag : actionGroups) {
-			ag.populateMenuBar(menuBar);
-			ag.populateCoolBar(coolBar);
-			ag.populateTreeContextMenu(treeContextMenu);
-		}
-		
-		// Controllers
-		new FileMenuController(dispatcher, this);
-		new NoteMenuController(dispatcher, this);
-		new HelpMenuController(dispatcher, shell, imageRegistry);
-		MainController mc = new MainController(dispatcher, this);
-		new TreeController(dispatcher, this);
-		
-		mc.contextChanged(null);		
-		shell.layout();
+	}
+	
+	public void hookUpActions(final MainController.ExitingKoalaNotesAction exitingKoalaNotesAction,
+	                          final MainController.CoolBarRearrangedAction coolBarRearrangedAction,
+	                          final MainController.ContextChangedAction contextChangedAction,
+	      	                  final MainController.DocumentUpdatedAndContextChangedAction duccAction,
+	    	                  final MainController.DisplayTabAction displayTabAction,
+	    	                  final NoteTreeDragNDropController noteTreeDragNDropController) {
+		shell.addShellListener(new ShellAdapter() {
+			public void shellClosed(ShellEvent e) {
+				exitingKoalaNotesAction.invoke(e);
+			}
+		});
+		coolBar.getControl().addMouseListener(new MouseAdapter() {
+			public void mouseUp(MouseEvent arg0) {
+				coolBarRearrangedAction.invoke();
+			}
+		});
+		tree.hookUpActions(contextChangedAction, duccAction, displayTabAction, noteTreeDragNDropController);
 	}
 	
 	public Document getDocument() {return document;}
@@ -174,7 +163,6 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 	public MenuManager getMenuBar() {return menuBar;}
 	public CoolBarManager getCoolBar() {return coolBar;}
 	public MenuManager getTreeContextMenu() {return treeContextMenu;}
-	public List<ActionGroup> getActionGroups() {return actionGroups;}
 	public ImageRegistry getImageRegistry() {return imageRegistry;}
 	
 	// Implement DisplayedNoteHolder

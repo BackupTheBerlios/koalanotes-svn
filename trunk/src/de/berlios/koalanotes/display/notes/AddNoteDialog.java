@@ -23,7 +23,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import de.berlios.koalanotes.controllers.Dispatcher;
 import de.berlios.koalanotes.display.Dialog;
 import de.berlios.koalanotes.display.ImageRegistry;
 
@@ -31,9 +30,10 @@ public class AddNoteDialog {
 	private Dialog dialog;
 	private Text name;
 	
-	public AddNoteDialog(Shell shell, Dispatcher d, ImageRegistry imageRegistry) {
-		dialog = new Dialog(shell, d, imageRegistry, "Add Note",
-		                    AddNoteController.OK, AddNoteController.CANCEL);
+	public AddNoteDialog(Shell shell, ImageRegistry imageRegistry,
+	                     AddNoteController.AddNoteOKAction okAction,
+	                     AddNoteController.AddNoteCancelAction cancelAction) {
+		dialog = new Dialog(shell, imageRegistry, "Add Note", okAction, cancelAction);
 		Composite mainSection = dialog.getMainSection();
 		mainSection.setLayout(new RowLayout());
 		name = new Text(dialog.getMainSection(), SWT.LEFT);

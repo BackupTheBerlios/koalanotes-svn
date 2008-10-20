@@ -22,22 +22,33 @@ import java.util.List;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
-import de.berlios.koalanotes.controllers.Dispatcher;
-import de.berlios.koalanotes.controllers.Listener;
 import de.berlios.koalanotes.controllers.MainController;
 import de.berlios.koalanotes.controllers.TreeController;
+import de.berlios.koalanotes.display.menus.NoteMenuController;
 
 public class NoteTree {
 	private Tree tree;
 	private TreeEditor treeEditor;
+	private KeyListener keyListener;
 	
-	public NoteTree(Composite parent, Dispatcher d, DisplayedDocument dd) {
+	public NoteTree(Composite parent, DisplayedDocument dd) {
 		
 		// Tree.
 		tree = new Tree(parent, SWT.MULTI);
@@ -46,21 +57,46 @@ public class NoteTree {
 		treeEditor = new TreeEditor(tree);
 		treeEditor.grabHorizontal = true;
 		treeEditor.minimumWidth = 50;
-		
-		// Drag-n-drop support.
-		new NoteTreeDragNDropController(d, dd, this, tree);
-		
-		// The context changed listener listens for all events that would change the context (eg
-		// selection of tree nodes), so it can notify the main controller.
-		Listener contextChangedListener = new Listener(d, MainController.CONTEXT_CHANGED);
-		
-		// Events.
-		tree.addListener(SWT.MouseDoubleClick, new Listener(d, MainController.DISPLAY_TAB));
-		tree.addListener(SWT.FocusIn, contextChangedListener);
-		tree.addListener(SWT.Selection, contextChangedListener);
-		tree.addListener(SWT.DefaultSelection, contextChangedListener);
 	}
 	
+	/**
+	 * 
+	 * @param contextChangedAction To notify the main controller when the context changes (eg. when
+	 *                             a tree node is selected).
+	 * @param duccAction           To notify the main controller when the document is updated (eg.
+	 *                             when a tree node is drag-dropped).
+	 * @param displayTabAction     To notify the main controller when it is time to display a tab
+	 *                             (eg. when a tree node is double-clicked).
+	 */
+	public void hookUpActions(final MainController.ContextChangedAction contextChangedAction,
+	      	                  final MainController.DocumentUpdatedAndContextChangedAction duccAction,
+	    	                  final MainController.DisplayTabAction displayTabAction,
+	    	                  final NoteTreeDragNDropController noteTreeDragNDropController) {
+		
+		// Drag-n-drop controller is its own listener, it is more closely tied to the SWT display
+		// than the main controller.
+		noteTreeDragNDropController.addToNoteTree(this, tree);
+		
+		// Events.
+		tree.addMouseListener(new MouseAdapter() {
+			public void mouseDoubleClick(MouseEvent arg0) {
+				displayTabAction.invoke();
+			}
+		});
+		tree.addFocusListener(new FocusAdapter() {
+			public void focusGained(FocusEvent arg0) {
+				contextChangedAction.invoke();
+			}
+		});
+		tree.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+				contextChangedAction.invoke();
+			}
+			public void widgetSelected(SelectionEvent arg0) {
+				contextChangedAction.invoke();
+			}
+		});
+	}
 	
 	// Tree
 	
@@ -68,12 +104,19 @@ public class NoteTree {
 		return tree.isFocusControl();
 	}
 	
-	public void addKeydownListener(Listener l) {
-		tree.addListener(SWT.KeyDown, l);
+	public void addKeydownAction(final NoteMenuController.NoteCutOrCopyAttemptAction a) {
+		keyListener = new KeyAdapter() {
+			public void keyReleased(KeyEvent e) {
+				a.invoke(e);
+			}
+		};
+		tree.addKeyListener(keyListener);
 	}
 	
-	public void removeKeydownListener(Listener l) {
-		tree.removeListener(SWT.KeyDown, l);
+	public void removeKeydownAction() {
+		if (keyListener != null) {
+			tree.removeKeyListener(keyListener);
+		}
 	}
 	
 	
@@ -86,7 +129,8 @@ public class NoteTree {
 	
 	// Tree Editor
 	
-	public void initialiseTreeEditor(Dispatcher d) {
+	public void initialiseTreeEditor(final TreeController.RenameNoteAction rna,
+	                                 final TreeController.FinishRenameNoteAction frna) {
 		TreeItem ti = tree.getSelection()[0];
 		if (ti == null) return;
 		Text treeTextEditor = new Text(tree, SWT.NONE);
@@ -94,10 +138,21 @@ public class NoteTree {
 		treeTextEditor.selectAll();
 		treeTextEditor.setFocus();
 		treeEditor.setEditor(treeTextEditor, ti);
-		treeTextEditor.addListener(SWT.Modify, new Listener(d, TreeController.RENAME_NOTE));
-		Listener finishRenameListener = new Listener(d, TreeController.FINISH_RENAME_NOTE);
-		treeTextEditor.addListener(SWT.FocusOut, finishRenameListener);
-		treeTextEditor.addListener(SWT.KeyDown, finishRenameListener);
+		treeTextEditor.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent me) {
+				rna.invoke();
+			}
+		});
+		treeTextEditor.addFocusListener(new FocusAdapter() {
+			public void focusLost(FocusEvent fe) {
+				frna.invoke(fe);
+			}
+		});
+		treeTextEditor.addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent ke) {
+				frna.invoke(ke);
+			}
+		});
 	}
 	
 	public String getTreeEditorText() {
