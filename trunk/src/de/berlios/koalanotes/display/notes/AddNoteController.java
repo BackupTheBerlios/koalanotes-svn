@@ -68,7 +68,11 @@ public class AddNoteController {
 			
 			// The new note is selected and its contents diplayed in a tab.
 			newDn.setSelected(true);
-			newDn.displayTab(dd.getTabFolder(), mc.new TabSelectedAction(), mc.new TabDeselectedAction());
+			newDn.displayTab(dd.getTabFolder(),
+			                 dd.getKoalaStyleManager(),
+			                 mc.new TabSelectedAction(),
+			                 mc.new TabDeselectedAction(),
+			                 mc.new TextSelectionChangedAction());
 			
 			// The Add Note Dialog is disposed and the Add Note Controller is deregistered.
 			addNoteDialog.dispose();

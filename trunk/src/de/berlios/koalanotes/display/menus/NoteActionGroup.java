@@ -48,7 +48,7 @@ public class NoteActionGroup implements ActionGroup {
 	private ActionGroupHelper ungroupedActions;
 	
 	// menu managers
-	private MenuManager noteMenu;
+	private DisableableMenuManager noteMenu;
 	private DisableableMenuManager moveNoteSubmenuMenuBar;
 	private DisableableMenuManager moveNoteSubmenuTree;
 	
@@ -149,6 +149,8 @@ public class NoteActionGroup implements ActionGroup {
 	public void update() {
 		tree.removeKeydownAction();
 		
+		noteMenu.setEnabled(tree.hasFocus());
+		
 		// If the tree doesn't have focus, no actions from this group can be performed.
 		if (!tree.hasFocus()) {
 			allSubmenusAndActions.setEnabled(false);
@@ -195,7 +197,7 @@ public class NoteActionGroup implements ActionGroup {
 	}
 	
 	public void populateMenuBar(MenuManager menuBar) {
-		noteMenu = new MenuManager("&Note");
+		noteMenu = new DisableableMenuManager("&Note");
 		newNoteActions.addActionsToMenuManager(noteMenu);
 		noteMenu.add(new Separator());
 		clipboardActions.addActionsToMenuManager(noteMenu);

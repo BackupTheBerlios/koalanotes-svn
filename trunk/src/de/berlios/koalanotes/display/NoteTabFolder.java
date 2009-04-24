@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import de.berlios.koalanotes.controllers.MainController;
 import de.berlios.koalanotes.data.DocumentViewSettings;
 import de.berlios.koalanotes.data.Note;
+import de.berlios.koalanotes.display.text.KoalaStyleManager;
 
 public class NoteTabFolder {
 	private DisplayedDocument displayedDocument;
@@ -82,8 +83,10 @@ public class NoteTabFolder {
 	}
 	
 	public NoteTab addNoteTab(DisplayedNote displayedNote,
+	                          KoalaStyleManager koalaStyleManager,
 	                          MainController.TabSelectedAction tsa,
-	                          MainController.TabDeselectedAction tdsa) {
-		return new NoteTab(tabFolder, displayedNote, tsa, tdsa);
+	                          MainController.TabDeselectedAction tdsa,
+	                          MainController.TextSelectionChangedAction tsca) {
+		return new NoteTab(tabFolder, displayedNote, koalaStyleManager, tsa, tdsa, tsca);
 	}
 }

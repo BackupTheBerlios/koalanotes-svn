@@ -37,9 +37,9 @@ public class NoteMenuController {
 	private DisplayedDocument dd;
 	private MainController mc;
 	
-	public NoteMenuController(DisplayedDocument dd, MainController mc) {
-		this.dd = dd;
+	public NoteMenuController(MainController mc, DisplayedDocument dd) {
 		this.mc = mc;
+		this.dd = dd;
 	}
 	
 	public class NoteNewChildAction implements INoArgsAction {

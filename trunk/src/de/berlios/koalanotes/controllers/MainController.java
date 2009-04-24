@@ -36,6 +36,8 @@ import de.berlios.koalanotes.display.NoteTab;
 import de.berlios.koalanotes.display.menus.FileMenuController;
 import de.berlios.koalanotes.display.menus.HelpMenuController;
 import de.berlios.koalanotes.display.menus.NoteMenuController;
+import de.berlios.koalanotes.display.text.TextActionGroup;
+import de.berlios.koalanotes.display.text.TextController;
 
 /**
  * The controllers control KoalaNotes, they are the classes that listen and act and direct, they
@@ -53,13 +55,16 @@ import de.berlios.koalanotes.display.menus.NoteMenuController;
  */
 public class MainController {
 
-	// The one and only... Displayed Document!
+	/** The one and only... Displayed Document! */
 	private DisplayedDocument dd;
 	
-	// groups of menu/toolbar items
+	/** Groups of menu/toolbar items. */
 	private List<ActionGroup> actionGroups;
 	
-	// Keep track of unsaved changes.
+	/** This action group is sometimes the only one that needs updating. */
+	private TextActionGroup textActionGroup;
+	
+	/** Keep track of unsaved changes. */
 	private NoteTab noteTabWithModifyListener;
 	
 	public MainController(Shell shell) {
@@ -78,14 +83,17 @@ public class MainController {
 						 new NoteTreeDragNDropController(dd, this));
 		
 		// Controllers
-		FileMenuController fmc = new FileMenuController(dd, this);
-		NoteMenuController nmc = new NoteMenuController(dd, this);
+		FileMenuController fmc = new FileMenuController(this, dd);
+		NoteMenuController nmc = new NoteMenuController(this, dd);
+		TextController tc = new TextController(this, dd);
 		HelpMenuController hmc = new HelpMenuController(shell, dd.getImageRegistry());
 		
 		// Action Groups
 		actionGroups = new LinkedList<ActionGroup>();
 		actionGroups.add(new FileActionGroup(fmc, dd));
 		actionGroups.add(new NoteActionGroup(nmc, dd.getImageRegistry(), dd.getTree()));
+		textActionGroup = new TextActionGroup(tc, dd.getTabFolder(), dd.getKoalaStyleManager(), dd.getImageRegistry());
+		actionGroups.add(textActionGroup);
 		actionGroups.add(new HelpActionGroup(hmc, dd.getImageRegistry()));
 		for (ActionGroup ag : actionGroups) {
 			ag.populateMenuBar(dd.getMenuBar());
@@ -121,6 +129,15 @@ public class MainController {
 			dd.setModified(true);
 		}
 		contextChanged();
+	}
+	
+	public void documentUpdatedAndTextSelectionChanged() {
+		documentUpdated();
+		textSelectionChanged();
+	}
+	
+	public void textSelectionChanged() {
+		textActionGroup.update();
 	}
 	
 	private void ensureNoteTabWithModifyListenerNull() {
@@ -177,7 +194,7 @@ public class MainController {
 		public void invoke() {
 			List<DisplayedNote> selectedNotes = dd.getTree().getSelectedNotes();
 			for (DisplayedNote selectedNote : selectedNotes) {
-				selectedNote.displayTab(dd.getTabFolder(), new TabSelectedAction(), new TabDeselectedAction());
+				selectedNote.displayTab(dd.getTabFolder(), dd.getKoalaStyleManager(), new TabSelectedAction(), new TabDeselectedAction(), new TextSelectionChangedAction());
 			}
 		}
 	}
@@ -191,6 +208,12 @@ public class MainController {
 	public class TabDeselectedAction implements INoArgsAction {
 		public void invoke() {
 			ensureNoteTabWithModifyListenerNull();
+		}
+	}
+	
+	public class TextSelectionChangedAction implements INoArgsAction {
+		public void invoke() {
+			textSelectionChanged();
 		}
 	}
 	

@@ -39,6 +39,7 @@ import de.berlios.koalanotes.controllers.MainController;
 import de.berlios.koalanotes.data.Document;
 import de.berlios.koalanotes.data.Note;
 import de.berlios.koalanotes.data.NoteHolder;
+import de.berlios.koalanotes.display.text.KoalaStyleManager;
 
 /**
  * DisplayedDocument holds the state of the display, as well the document being displayed.
@@ -57,13 +58,15 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 	private MenuManager treeContextMenu;
 	private Label statusBar;
 	private ImageRegistry imageRegistry;
+	private KoalaStyleManager koalaStyleManager;
 	
 	public DisplayedDocument(Shell shell, Document document) {
 		
 		this.document = document;
 		
-		// ImageRegistry
+		// ImageRegistry, KoalaStyleManager
 		imageRegistry = new ImageRegistry(shell.getDisplay());
+		koalaStyleManager = new KoalaStyleManager();
 		
 		// Shell
 		this.shell = shell;
@@ -164,6 +167,7 @@ public class DisplayedDocument implements DisplayedNoteHolder {
 	public CoolBarManager getCoolBar() {return coolBar;}
 	public MenuManager getTreeContextMenu() {return treeContextMenu;}
 	public ImageRegistry getImageRegistry() {return imageRegistry;}
+	public KoalaStyleManager getKoalaStyleManager() {return koalaStyleManager;}
 	
 	// Implement DisplayedNoteHolder
 	public List<DisplayedNote> getDisplayedNotes() {return displayedNotes;}

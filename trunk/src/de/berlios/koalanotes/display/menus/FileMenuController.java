@@ -34,9 +34,9 @@ public class FileMenuController {
 	private DisplayedDocument dd;
 	private MainController mc;
 	
-	public FileMenuController(DisplayedDocument dd, MainController mc) {
-		this.dd = dd;
+	public FileMenuController(MainController mc, DisplayedDocument dd) {
 		this.mc = mc;
+		this.dd = dd;
 	}
 	
 	public class FileNewAction implements INoArgsAction {
@@ -84,7 +84,11 @@ public class FileMenuController {
 			DocumentViewSettings viewSettings = dd.getDocument().getViewSettings();
 			for (Note note : viewSettings.getNotesOpenInTabs()) {
 				DisplayedNote dn = dd.findDisplayedNoteForNote(note);
-				dn.displayTab(dd.getTabFolder(), mc.new TabSelectedAction(), mc.new TabDeselectedAction());
+				dn.displayTab(dd.getTabFolder(),
+				              dd.getKoalaStyleManager(),
+				              mc.new TabSelectedAction(),
+				              mc.new TabDeselectedAction(),
+				              mc.new TextSelectionChangedAction());
 			}
 			dd.getTabFolder().setSelectedNoteTab(viewSettings.getSelectedTab());
 			

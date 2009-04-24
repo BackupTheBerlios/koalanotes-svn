@@ -16,103 +16,93 @@
  */
 package de.berlios.koalanotes.display;
 
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.ITextListener;
-import org.eclipse.jface.text.TextEvent;
-import org.eclipse.jface.text.TextViewer;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
 
 import de.berlios.koalanotes.controllers.MainController;
+import de.berlios.koalanotes.display.text.KoalaStyleManager;
+import de.berlios.koalanotes.display.text.KoalaStyledText;
 
 public class NoteTab implements DisposeListener {
 	private DisplayedNote displayedNote;
 	private CTabItem tabItem;
-	private TextViewer textViewer;
-	private TextListener textListener;
+	private KoalaStyledText koalaStyledText;
 	
 	public NoteTab(CTabFolder parent,
 	               DisplayedNote displayedNote,
+	               KoalaStyleManager koalaStyleManager,
 	               final MainController.TabSelectedAction tsa,
-	               final MainController.TabDeselectedAction tdsa) {
+	               final MainController.TabDeselectedAction tdsa,
+	               final MainController.TextSelectionChangedAction tsca) {
 		this.displayedNote = displayedNote;
+		
 		tabItem = new CTabItem(parent, SWT.NONE);
 		tabItem.setText(displayedNote.getName());
 		tabItem.setData(this);
 		tabItem.addDisposeListener(this);
 		
-		textViewer = new TextViewer(parent, SWT.WRAP);
-		textViewer.setDocument(new Document(displayedNote.getNote().getText()));
+		koalaStyledText = new KoalaStyledText(parent, tabItem,
+		                                      displayedNote.getNote().getText(),
+		                                      koalaStyleManager,
+		                                      tsa, tdsa, tsca);
 		
-		//TextPresentation tp = new TextPresentation();
-		//tp.addStyleRange(new StyleRange(10, 10, new Color(parent.getDisplay(), new RGB(200,0,200)), new Color(parent.getDisplay(), new RGB(200,200,200)), SWT.BOLD));
-		//textViewer.changeTextPresentation(tp, false);
-		
-		textViewer.getTextWidget().addFocusListener(new FocusListener() {
-			public void focusGained(FocusEvent arg0) {
-				tsa.invoke();
-			}
-			public void focusLost(FocusEvent arg0) {
-				tdsa.invoke();	
-			}
-		});
-		
-		tabItem.setControl(textViewer.getTextWidget());
 		select();
 	}
 	
-	public DisplayedNote getDisplayedNote() {return displayedNote;}
+	// Disposing
 	
-	public void setName(String name) {tabItem.setText(name);}
-	
-	public void saveToNote() {
-		displayedNote.getNoteWithoutUpdatingFromTab().setText(textViewer.getDocument().get());
+	/** Call the dispose method of the tab item. */
+	public void dispose() {
+		tabItem.dispose();
 	}
 	
-	public boolean hasUnsavedChanges() {
-		return !displayedNote.getNoteWithoutUpdatingFromTab().getText().equals(textViewer.getDocument().get());
-	}
-	
-	public void select() {
-		tabItem.getParent().setSelection(tabItem);
+	/**
+	 * Implements DisposeListener.widgetDisposed.  When the dispose event of the tab item is heard: 
+	 * make sure the text is written back to the document, dispose the styled text widget and
+	 * notify the DisplayedNote that the tab is no longer showing.
+	 */
+	public void widgetDisposed(DisposeEvent e) {
+		saveToNote();
+		koalaStyledText.dispose();
+		displayedNote.tabDisposed();
 	}
 	
 	public boolean isDisposed() {
 		return tabItem.isDisposed();
 	}
 	
-	public void dispose() {
-		tabItem.dispose();
+	// Getters and Setters
+	
+	public DisplayedNote getDisplayedNote() {return displayedNote;}
+	public KoalaStyledText getKoalaStyledText() {return koalaStyledText;}
+	
+	public void setName(String name) {tabItem.setText(name);}
+	
+	// Saving
+	
+	public void saveToNote() {
+		displayedNote.getNoteWithoutUpdatingFromTab().setText(koalaStyledText.getText());
 	}
 	
-	public void widgetDisposed(DisposeEvent e) {
-		textViewer.getTextWidget().dispose();
-		displayedNote.tabDisposed();
+	public boolean hasUnsavedChanges() {
+		return !displayedNote.getNoteWithoutUpdatingFromTab().getText().equals(koalaStyledText.getText());
 	}
+	
+	// Selecting
+	
+	public void select() {
+		tabItem.getParent().setSelection(tabItem);
+	}
+	
+	// Listeners
 	
 	public void addNoteModifiedAction(MainController.NoteModifiedAction action) {
-		textListener = new TextListener(action);
-		textViewer.addTextListener(textListener);
+		koalaStyledText.addNoteModifiedAction(action);
 	}
 	public void removeNoteModifiedAction() {
-		if (textListener != null) {
-			textViewer.removeTextListener(textListener);
-		}
-	}
-	
-	private class TextListener implements ITextListener {
-		private MainController.NoteModifiedAction action;
-		private TextListener(MainController.NoteModifiedAction action) {
-			this.action = action;
-		}
-		public void textChanged(TextEvent event) {
-			action.invoke();
-		}
+		koalaStyledText.removeNoteModifiedAction();
 	}
 }

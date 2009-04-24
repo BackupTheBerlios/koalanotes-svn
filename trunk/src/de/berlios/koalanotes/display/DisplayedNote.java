@@ -22,6 +22,7 @@ import java.util.List;
 import de.berlios.koalanotes.controllers.MainController;
 import de.berlios.koalanotes.data.Note;
 import de.berlios.koalanotes.data.NoteHolder;
+import de.berlios.koalanotes.display.text.KoalaStyleManager;
 
 public class DisplayedNote implements DisplayedNoteHolder {
 	private NoteTab tab;
@@ -80,10 +81,12 @@ public class DisplayedNote implements DisplayedNoteHolder {
 	}
 	
 	public void displayTab(NoteTabFolder tabFolder,
+	                       KoalaStyleManager koalaStyleManager,
 	                       MainController.TabSelectedAction tsa,
-	    	               MainController.TabDeselectedAction tdsa) {
+	    	               MainController.TabDeselectedAction tdsa,
+	    	               MainController.TextSelectionChangedAction tsca) {
 		if (tab == null) {
-			this.tab = tabFolder.addNoteTab(this, tsa, tdsa);
+			this.tab = tabFolder.addNoteTab(this, koalaStyleManager, tsa, tdsa, tsca);
 		} else {
 			tab.select();
 		}
